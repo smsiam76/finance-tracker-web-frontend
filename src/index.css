@@ -1,7 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: light --default;
+};
 
 @plugin "daisyui/theme" {
   name: "mytheme";
@@ -20,4 +22,11 @@
 
 body{
   font-family: "Inter", sans-serif;
+}
+
+
+.dash-nav .active {
+  background-color: #006c4a46;
+  color: #006C49;
+  font-weight: bold;
 }

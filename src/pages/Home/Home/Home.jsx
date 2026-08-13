@@ -1,10 +1,20 @@
 
+import Hero from "../../../component/Hero/Hero";
+import FAQPage from "../FAQPage/FAQPage";
+import ManageFinance from "../ManageFinance/ManageFinance";
+import TransformPage from "../TransformPage/TransformPage";
+
 
 const Home = () => {
     return (
-        <div>
-            <h1 className="text-5xl font-medium">This is Home Page</h1>
-        </div>
+        <>
+
+            <Hero />
+            <ManageFinance />
+            <FAQPage />
+            <TransformPage />
+        </>
+           
     );
 };
 
