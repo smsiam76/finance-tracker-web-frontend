@@ -1,0 +1,127 @@
+[
+  {
+    "_id": "book1",
+    "userId": "user1",
+    "bookName": "Daily Expenses",
+    "description": "Personal household & food",
+    "currentBalance": 12500,
+    "totalIncome": 45000,
+    "totalExpense": 32500,
+    "status": "ACTIVE",
+    "type": "STANDARD",
+    "icon": "shopping-cart",
+    "budgets": [
+      {
+        "categoryId": "cat1",
+        "monthlyLimit": 300
+      }
+    ],
+    "createdAt": "2026-01-01T00:00:00Z",
+    "updatedAt": "2026-08-05T10:00:00Z"
+  },
+  {
+    "_id": "book2",
+    "userId": "user1",
+    "bookName": "Family Expenses",
+    "description": "Shared costs for dependents",
+    "currentBalance": 8200,
+    "totalIncome": 20000,
+    "totalExpense": 11800,
+    "status": "ACTIVE",
+    "type": "STANDARD",
+    "icon": "users",
+    "budgets": [
+      {
+        "categoryId": "cat2",
+        "monthlyLimit": 500
+      }
+    ],
+    "createdAt": "2026-01-10T00:00:00Z",
+    "updatedAt": "2026-08-05T10:00:00Z"
+  },
+  {
+    "_id": "book3",
+    "userId": "user1",
+    "bookName": "Business",
+    "description": "Consulting & freelancing ops",
+    "currentBalance": 145000,
+    "totalIncome": 320000,
+    "totalExpense": 175000,
+    "status": "ACTIVE",
+    "type": "STANDARD",
+    "icon": "briefcase",
+    "budgets": [
+      {
+        "categoryId": "cat3",
+        "monthlyLimit": 2000
+      }
+    ],
+    "createdAt": "2026-02-01T00:00:00Z",
+    "updatedAt": "2026-08-05T10:00:00Z"
+  },
+{
+  "_id": "book4",
+  "userId": "user1",
+  "bookName": "Savings",
+  "description": "Long-term wealth building",
+  "currentBalance": 50000,
+  "totalIncome": 50000,
+  "totalExpense": 0,
+  "status": "ACTIVE",
+  "type": "SAVINGS",
+  "note": "Compound interest enabled",
+  "icon": "wallet",
+  "budgets": [],
+
+  "transactions": [
+    {
+      "_id": "transaction1",
+      "date": "2026-08-05",
+      "title": "Salary Credit",
+      "subtitle": "Monthly Salary",
+      "category": "Income",
+      "type": "Income",
+      "amount": 50000,
+      "isIncome": true
+    }
+  ],
+
+  "lentBorrowed": [],
+
+  "createdAt": "2026-01-01T00:00:00Z",
+  "updatedAt": "2026-08-05T10:00:00Z"
+},
+  {
+    "_id": "book5",
+    "userId": "user1",
+    "bookName": "Emergency Fund",
+    "description": "6 months of safety net",
+    "currentBalance": 25000,
+    "targetAmount": 62500,
+    "totalIncome": 25000,
+    "totalExpense": 0,
+    "status": "ACTIVE",
+    "type": "TARGET_PROGRESS",
+    "progressPercent": 40,
+    "icon": "shield",
+    "budgets": [],
+    "createdAt": "2026-03-01T00:00:00Z",
+    "updatedAt": "2026-08-05T10:00:00Z"
+  },
+  {
+    "_id": "book6",
+    "userId": "user1",
+    "bookName": "December Tour",
+    "description": "Sajek Valley Trip 2024",
+    "currentBalance": 5000,
+    "targetRemaining": 15000,
+    "totalIncome": 5000,
+    "totalExpense": 0,
+    "status": "ACTIVE",
+    "type": "TARGET_REMAINING",
+    "icon": "navigation",
+    "budgets": [],
+    "createdAt": "2026-04-15T00:00:00Z",
+    "updatedAt": "2026-08-05T10:00:00Z"
+  }
+]
