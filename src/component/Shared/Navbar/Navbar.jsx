@@ -103,7 +103,7 @@ const Navbar = () => {
 
             <div className="navbar-center hidden lg:flex">{navLinks}</div>
 
-            <div className="navbar-end gap-3">
+            <div className="navbar-end gap-3 hidden md:block">
               <Link
                 to="/sign-in"
                 className="px-4 py-2 font-medium rounded-md hover:bg-primary hover:text-white transition-all duration-300 ease-in-out cursor-pointer"

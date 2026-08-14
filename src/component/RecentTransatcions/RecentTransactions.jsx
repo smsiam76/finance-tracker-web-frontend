@@ -60,23 +60,23 @@ const RecentTransactions = ({ transactions = transactionsData }) => {
           return (
             <div 
               key={item._id} 
-              className="flex items-center justify-between px-10 py-4 hover:bg-primary/5 transition-all duration-300 group cursor-pointer"
+              className="flex items-center justify-between px-4 md:px-10 py-4 hover:bg-primary/5 transition-all duration-300 group cursor-pointer"
             >
               {/* Left Column: Dynamic Icon & Metadata */}
               <div className="flex items-center space-x-4 min-w-0">
                 <div 
-                  className={`w-12 h-12 rounded-2xl ${item.iconBg || 'bg-gray-100'} flex items-center justify-center shrink-0 transition-transform group-hover:scale-105`}
+                  className={`p-2 md:p-0 md:w-12 md:h-12 rounded-2xl ${item.iconBg || 'bg-gray-100'} flex items-center justify-center shrink-0 transition-transform group-hover:scale-105`}
                 >
                   {/* Icon name is pulled dynamically from JSON */}
                   <DynamicIcon 
                     iconName={item.icon} 
-                    className={`text-xl ${item.iconColor || 'text-gray-600'}`} 
+                    className={`md:text-xl ${item.iconColor || 'text-gray-600'}`} 
                   />
                 </div>
 
                 <div className="truncate">
                   <div className="flex items-center space-x-2">
-                    <h3 className="font-semibold text-gray-900 text-base truncate">
+                    <h3 className="text-xs font-semibold text-gray-900 md:text-base truncate">
                       {item.title}
                     </h3>
                     {item.receiptUrl && (

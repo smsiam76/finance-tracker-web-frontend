@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import SocialLogin from "../../../../component/Shared/SocialLogin/SocialLogin";
+
 import { easeInOut, motion } from "framer-motion";
 
 import {
@@ -10,8 +10,9 @@ import {
   //   FiLeaf
 } from "react-icons/fi";
 import { Link } from "react-router";
-import Logo from "../../../../component/Logo/Logo";
-import DemoLogin from "../../../../component/Shared/DemoLogin/DemoLogin";
+import Logo from "../../../component/Logo/Logo";
+import DemoLogin from "../../../component/Shared/DemoLogin/DemoLogin";
+import SocialLogin from "../../../component/Shared/SocialLogin/SocialLogin";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);

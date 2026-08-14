@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import SocialLogin from "../../../component/Shared/SocialLogin/SocialLogin";
 import { Link } from "react-router";
 import Logo from "../../../component/Logo/Logo";
 import { motion } from "framer-motion";
 
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import DemoLogin from "../../../component/Shared/DemoLogin/DemoLogin";
+import SocialLogin from "../../../component/Shared/SocialLogin/SocialLogin";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -158,7 +158,7 @@ const SignIn = () => {
           </div>
 
           {/* Google Sign In */}
-          <SocialLogin />
+          <SocialLogin/>
           <DemoLogin />
         </form>
 
