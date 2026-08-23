@@ -9,6 +9,10 @@ import SignUp from "../pages/Authentication/SignUp/SignUp";
 import MyBooks from "../pages/Dashboard/DashboardBooks/DashboardBooks";
 import BookDetails from "../pages/Dashboard/DashboardBooks/BookDetails";
 import ErrorPage from "../component/Shared/ErrorPage/ErrorPage";
+import { CashIn } from "../pages/Dashboard/Transactions/CashIn/CashIn";
+import { CashOut } from "../pages/Dashboard/Transactions/Cashout.jsx/Cashout";
+import TransferMoney from "../pages/Dashboard/Transactions/TransferMoney/TransferMoney";
+
 
 
 const router = createBrowserRouter([
@@ -40,7 +44,19 @@ const router = createBrowserRouter([
       {
         path: "my-books/:id",
         element: <BookDetails />
-      }
+      },
+      {
+        path: "cash-in",
+        element: <CashIn />
+      },
+      {
+        path: "cash-out",
+        element: <CashOut />
+      },
+      {
+        path: "transfer-money",
+        element: <TransferMoney />
+      },
     ]
   },
 

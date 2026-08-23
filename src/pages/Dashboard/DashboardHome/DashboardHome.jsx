@@ -6,12 +6,13 @@ import {
   FaExchangeAlt,
   FaPlus,
 } from "react-icons/fa";
-import { FaBook, FaMinus } from "react-icons/fa6";
+import { FaBook } from "react-icons/fa6";
 import { GiTakeMyMoney } from "react-icons/gi";
 import { IoMdTrendingDown, IoMdTrendingUp } from "react-icons/io";
 import { Link } from "react-router";
 import ExpenseByCategoryChart from "../../../component/ExpenseByCategoryChart/ExpenseByCategoryChart";
 import RecentTransactions from "../../../component/RecentTransatcions/RecentTransactions";
+import { BanknoteArrowDown, BanknoteArrowUp } from "lucide-react";
 
 const DashboardHome = () => {
   const quickActions = [
@@ -23,12 +24,12 @@ const DashboardHome = () => {
     {
       title: "Cash In",
       route: "/dashboard/cash-in",
-      icon: <FaPlus />,
+      icon: <BanknoteArrowDown />,
     },
     {
       title: "Cash Out",
       route: "/dashboard/cash-out",
-      icon: <FaMinus />,
+      icon: <BanknoteArrowUp />,
     },
     {
       title: "Transfer Money",

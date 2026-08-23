@@ -6,6 +6,8 @@ import { FiSearch } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { HiBookOpen } from "react-icons/hi";
 import { FaArrowLeft } from "react-icons/fa6";
+import { BanknoteArrowDown, BanknoteArrowUp } from "lucide-react";
+import { BiTransferAlt } from "react-icons/bi";
 
 const DashboardLayout = () => {
   const location = useLocation();
@@ -50,6 +52,27 @@ const DashboardLayout = () => {
       >
         <HiBookOpen className="font-medium text-xl" />
         <span>Books</span>
+      </NavLink>
+      <NavLink
+        to="/dashboard/cash-in"
+        className="flex gap-2.5 items-center py-3 px-4 rounded-md font-medium hover:bg-primary hover:text-base-100 transition-all duration-300 ease-linear "
+      >
+        <BanknoteArrowDown className="font-medium text-xl" />
+        <span>Cash In</span>
+      </NavLink>
+      <NavLink
+        to="/dashboard/cash-out"
+        className="flex gap-2.5 items-center py-3 px-4 rounded-md font-medium hover:bg-primary hover:text-base-100 transition-all duration-300 ease-linear "
+      >
+        <BanknoteArrowUp className="font-medium text-xl" />
+        <span>Cash Out</span>
+      </NavLink>
+      <NavLink
+        to="/dashboard/transfer-money"
+        className="flex gap-2.5 items-center py-3 px-4 rounded-md font-medium hover:bg-primary hover:text-base-100 transition-all duration-300 ease-linear "
+      >
+        <BiTransferAlt className="font-medium text-xl" />
+        <span>Transfer Money</span>
       </NavLink>
       <NavLink
         to="/settings"
