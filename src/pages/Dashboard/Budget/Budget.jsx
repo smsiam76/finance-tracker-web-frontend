@@ -232,7 +232,7 @@ export const Budget = () => {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.15, ease: "easeInOut" }}
               viewport={{ once: true, amount: 0.1 }}
-              className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-4"
+              className="bg-white p-5 rounded-2xl border border-base-100 shadow-xl space-y-4"
             >
               <div className="flex items-center gap-2 text-primary">
                 <PlusCircle className="w-5 h-5" />
@@ -339,7 +339,7 @@ export const Budget = () => {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.22, ease: "easeInOut" }}
               viewport={{ once: true, amount: 0.1 }}
-              className="bg-primary/5 p-5 rounded-2xl border border-primary/10 space-y-3"
+              className="bg-primary/5 p-5 rounded-2xl border border-primary/10 space-y-3 shadow-xl"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -381,7 +381,7 @@ export const Budget = () => {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.15, ease: "easeInOut" }}
               viewport={{ once: true, amount: 0.1 }}
-              className="bg-white p-3.5 rounded-2xl border border-base-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 mb-8"
+              className="bg-white p-3.5 rounded-2xl border border-base-100 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 mb-8"
             >
               <div className="flex items-center gap-2 ">
                 <Filter className="w-4 h-4 text-primary" />
@@ -409,7 +409,7 @@ export const Budget = () => {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.22, ease: "easeInOut" }}
               viewport={{ once: true, amount: 0.1 }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-4 auto-rows-max"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-8 auto-rows-max"
             >
               {filteredBudgets.length > 0 ? (
                 filteredBudgets.map((item) => {
@@ -426,7 +426,7 @@ export const Budget = () => {
                   return (
                     <div
                       key={item.id}
-                      className={`bg-white p-5 rounded-2xl border shadow-sm space-y-4 flex flex-col justify-between transition relative ${
+                      className={`bg-white p-5 rounded-2xl border shadow-lg space-y-4 flex flex-col justify-between transition relative ${
                         isExceeded ? "border-red-200" : "border-base-100"
                       }`}
                     >
@@ -563,7 +563,7 @@ export const Budget = () => {
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.25, ease: "easeInOut" }}
           viewport={{ once: true, amount: 0.1 }}
-          className="bg-primary text-white p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden"
+          className="bg-primary text-white p-6 rounded-2xl flex flex-col md:flex-row items-center shadow-2xl justify-between gap-6 relative overflow-hidden"
         >
           <div className="space-y-1 z-10 max-w-xl">
             <h4 className="font-bold text-base ">

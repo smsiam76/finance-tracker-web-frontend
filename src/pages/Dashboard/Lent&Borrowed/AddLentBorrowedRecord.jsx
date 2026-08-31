@@ -1,6 +1,6 @@
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { X, ArrowUpRight, ArrowDownLeft, Save, PlusCircle } from "lucide-react";
-import { motion } from "framer-motion";
+
 
 export const AddLentBorrowedRecord = () => {
   const {
@@ -47,10 +47,10 @@ export const AddLentBorrowedRecord = () => {
 
   return (
     <div className="flex items-center justify-cente backdrop-blur-sm p-4">
-      <div className="bg-white w-full rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200">
+      <div className="bg-white rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200">
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <div className="flex items-center gap-2 text-[#005A36]">
+          <div className="flex items-center gap-2 text-primary">
             <PlusCircle className="w-5 h-5" />
             <h3 className="font-bold text-base">Add New Record</h3>
           </div>
@@ -70,7 +70,7 @@ export const AddLentBorrowedRecord = () => {
         >
           {/* TRANSACTION TYPE */}
           <div className="space-y-1.5">
-            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+            <label className="text-[11px] font-bold  uppercase tracking-wider">
               Transaction Type
             </label>
             <div className="bg-gray-100/80 p-1 rounded-xl flex items-center gap-1">
@@ -79,8 +79,8 @@ export const AddLentBorrowedRecord = () => {
                 onClick={() => setValue("type", "LENT")}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold transition ${
                   selectedType === "LENT"
-                    ? "bg-[#005A36] text-white shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "bg-primary text-white shadow-sm"
+                    : " hover:text-gray-700"
                 }`}
               >
                 <ArrowUpRight className="w-4 h-4" />
@@ -91,8 +91,8 @@ export const AddLentBorrowedRecord = () => {
                 onClick={() => setValue("type", "BORROWED")}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-bold transition ${
                   selectedType === "BORROWED"
-                    ? "bg-[#005A36] text-white shadow-sm"
-                    : "text-gray-500 hover:text-gray-700"
+                    ? "bg-primary text-white shadow-sm"
+                    : " hover:text-gray-700"
                 }`}
               >
                 <ArrowDownLeft className="w-4 h-4" />
@@ -104,14 +104,14 @@ export const AddLentBorrowedRecord = () => {
           {/* PERSON NAME & PHONE NUMBER */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+              <label className="text-[11px] font-bold  uppercase tracking-wider">
                 Person Name
               </label>
               <input
                 type="text"
                 placeholder="e.g. Rahim Ahmed"
                 {...register("personName", { required: "Name is required" })}
-                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#005A36] transition"
+                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-primary transition"
               />
               {errors.personName && (
                 <p className="text-[10px] font-semibold text-rose-500">
@@ -121,21 +121,21 @@ export const AddLentBorrowedRecord = () => {
             </div>
 
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+              <label className="text-[11px] font-bold  uppercase tracking-wider">
                 Phone Number (Optional)
               </label>
               <input
                 type="text"
                 placeholder="+880 1XXX-XXXXXX"
                 {...register("phoneNumber")}
-                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#005A36] transition"
+                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-primary transition"
               />
             </div>
           </div>
 
           {/* AMOUNT (BDT ৳) */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+            <label className="text-[11px] font-bold  uppercase tracking-wider">
               Amount (BDT ৳)
             </label>
             <div className="relative">
@@ -150,7 +150,7 @@ export const AddLentBorrowedRecord = () => {
                   required: "Amount is required",
                   min: 1,
                 })}
-                className="w-full pl-7 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold focus:outline-none focus:border-[#005A36] transition"
+                className="w-full pl-7 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold focus:outline-none focus:border-primary transition"
               />
             </div>
             {errors.principalAmount && (
@@ -162,52 +162,52 @@ export const AddLentBorrowedRecord = () => {
 
           {/* REASON */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+            <label className="text-[11px] font-bold  uppercase tracking-wider">
               Reason
             </label>
             <input
               type="text"
               placeholder="e.g. Business Loan, Emergency"
               {...register("reason")}
-              className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#005A36] transition"
+              className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-primary transition"
             />
           </div>
 
           {/* DATE & DUE DATE */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+              <label className="text-[11px] font-bold  uppercase tracking-wider">
                 Date
               </label>
               <input
                 type="date"
                 {...register("createdDate", { required: true })}
-                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium text-gray-700 focus:outline-none focus:border-[#005A36] transition"
+                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium text-gray-700 focus:outline-none focus:border-primary transition"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+              <label className="text-[11px] font-bold  uppercase tracking-wider">
                 Due Date
               </label>
               <input
                 type="date"
                 {...register("dueDate")}
-                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium text-gray-700 focus:outline-none focus:border-[#005A36] transition"
+                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium text-gray-700 focus:outline-none focus:border-primary transition"
               />
             </div>
           </div>
 
           {/* NOTES */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+            <label className="text-[11px] font-bold  uppercase tracking-wider">
               Notes
             </label>
             <textarea
               rows="3"
               placeholder="Additional details..."
               {...register("note")}
-              className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-[#005A36] transition resize-none"
+              className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:border-primary transition resize-none"
             />
           </div>
 
@@ -223,7 +223,7 @@ export const AddLentBorrowedRecord = () => {
             </button>
             <button
               type="submit"
-              className="flex items-center gap-1.5 px-5 py-2 bg-[#005A36] text-white rounded-xl text-xs font-bold hover:bg-[#00472B] transition shadow-sm"
+              className="flex items-center gap-1.5 px-5 py-2 bg-primary text-white rounded-xl text-xs font-bold hover:bg-[#00472B] transition shadow-sm"
             >
               <Save className="w-4 h-4" />
               Save Record

@@ -10,7 +10,7 @@ import MyBooks from "../pages/Dashboard/DashboardBooks/DashboardBooks";
 import BookDetails from "../pages/Dashboard/DashboardBooks/BookDetails";
 import ErrorPage from "../component/Shared/ErrorPage/ErrorPage";
 import { CashIn } from "../pages/Dashboard/Transactions/CashIn/CashIn";
-import { CashOut } from "../pages/Dashboard/Transactions/Cashout.jsx/Cashout";
+import { CashOut } from "../pages/Dashboard/Transactions/CashOut/Cashout";
 import TransferMoney from "../pages/Dashboard/Transactions/TransferMoney/TransferMoney";
 import { ReportAnalysis } from "../pages/Dashboard/ReportAnalysis/ReportAnalysis";
 import { TransactionHistory } from "../pages/Dashboard/TransactionHistory/TransactionHistory";
@@ -18,19 +18,17 @@ import { LentAndBorrowed } from "../pages/Dashboard/Lent&Borrowed/Lent&Borrowed"
 import { SettingsPage } from "../pages/Dashboard/Settings/SettingsPage";
 import { Budget } from "../pages/Dashboard/Budget/Budget";
 
-
-
 const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
     errorElement: <ErrorPage />,
     children: [
-        {
-            index: true,
-            Component: Home
-        },
-    ]
+      {
+        index: true,
+        Component: Home,
+      },
+    ],
   },
 
   {
@@ -40,66 +38,63 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <DashboardHome />
+        element: <DashboardHome />,
       },
       {
         path: "my-books",
-        element: <MyBooks />
+        element: <MyBooks />,
       },
       {
         path: "my-books/:id",
-        element: <BookDetails />
+        element: <BookDetails />,
       },
       {
         path: "cash-in",
-        element: <CashIn />
+        element: <CashIn />,
       },
       {
         path: "cash-out",
-        element: <CashOut />
+        element: <CashOut />,
       },
       {
         path: "transfer-money",
-        element: <TransferMoney />
+        element: <TransferMoney />,
       },
       {
         path: "reports",
-        element: <ReportAnalysis />
+        element: <ReportAnalysis />,
       },
       {
         path: "transaction-history",
-        element: <TransactionHistory />
+        element: <TransactionHistory />,
       },
       {
         path: "lent-and-borrowed",
-        element: <LentAndBorrowed />
+        element: <LentAndBorrowed />,
       },
       {
         path: "budget-management",
-        element: <Budget />
+        element: <Budget />,
       },
       {
         path: "settings",
-        element: <SettingsPage />
-      }
-    ]
+        element: <SettingsPage />,
+      },
+    ],
   },
-
-
 
   {
     path: "/sign-in",
-    Component: SignIn
+    Component: SignIn,
   },
   {
     path: "/sign-up",
-    Component: SignUp
+    Component: SignUp,
   },
   {
     path: "*",
-    element: <ErrorPage />
-  }
-
+    element: <ErrorPage />,
+  },
 ]);
 
 export default router;
