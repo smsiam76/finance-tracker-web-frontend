@@ -27,7 +27,7 @@ const TransferMoney = () => {
       whileInView={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, delay: 0.2, ease: "easeInOut" }}
       viewport={{ once: true }}
-      className="w-full max-w-1/2 mx-auto p-4 sm:p-6 flex flex-col justify-center"
+      className="w-full max-w-1/2 mx-auto pt-6 pb-12 sm:p-6 flex flex-col justify-center"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Form Container Card */}

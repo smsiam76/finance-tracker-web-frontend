@@ -1,13 +1,20 @@
 import { Link, NavLink, Outlet, useLocation } from "react-router";
 import LogoDashboard from "../component/Shared/LogoDashboard/LogoDashboard";
 import { MdOutlineDashboard } from "react-icons/md";
-import { CiSettings } from "react-icons/ci";
 import { FiSearch } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { HiBookOpen } from "react-icons/hi";
 import { FaArrowLeft } from "react-icons/fa6";
-import { BanknoteArrowDown, BanknoteArrowUp } from "lucide-react";
-import { BiTransferAlt } from "react-icons/bi";
+import {
+  ArrowLeftRight,
+  BanknoteArrowDown,
+  BanknoteArrowUp,
+  ChartNoAxesCombined,
+  RotateCcwClock,
+  Settings,
+  Vault,
+  Wallet,
+} from "lucide-react";
 
 const DashboardLayout = () => {
   const location = useLocation();
@@ -71,14 +78,44 @@ const DashboardLayout = () => {
         to="/dashboard/transfer-money"
         className="flex gap-2.5 items-center py-3 px-4 rounded-md font-medium hover:bg-primary hover:text-base-100 transition-all duration-300 ease-linear "
       >
-        <BiTransferAlt className="font-medium text-xl" />
+        <ArrowLeftRight className="font-medium text-xl" />
         <span>Transfer Money</span>
       </NavLink>
       <NavLink
-        to="/settings"
+        to="/dashboard/budget-management"
         className="flex gap-2.5 items-center py-3 px-4 rounded-md font-medium hover:bg-primary hover:text-base-100 transition-all duration-300 ease-linear "
       >
-        <CiSettings className="font-medium text-xl" /> <span>Settings</span>
+        <Wallet className="font-medium text-xl" />
+        <span>Budget Management</span>
+      </NavLink>
+      <NavLink
+        to="/dashboard/reports"
+        className="flex gap-2.5 items-center py-3 px-4 rounded-md font-medium hover:bg-primary hover:text-base-100 transition-all duration-300 ease-linear "
+      >
+        <ChartNoAxesCombined className="font-medium text-xl" />
+        <span>Reports</span>
+      </NavLink>
+      <NavLink
+        to="/dashboard/transaction-history"
+        className="flex gap-2.5 items-center py-3 px-4 rounded-md font-medium hover:bg-primary hover:text-base-100 transition-all duration-300 ease-linear "
+      >
+        <RotateCcwClock className="font-medium text-xl" />
+
+        <span>Transaction History</span>
+      </NavLink>
+      <NavLink
+        to="/dashboard/lent-and-borrowed"
+        className="flex gap-2.5 items-center py-3 px-4 rounded-md font-medium hover:bg-primary hover:text-base-100 transition-all duration-300 ease-linear "
+      >
+        <Vault className="font-medium text-xl" />
+        <span>Lent & Borrowed</span>
+      </NavLink>
+      <NavLink
+        to="/dashboard/settings"
+        className="flex gap-2.5 items-center py-3 px-4 rounded-md font-medium hover:bg-primary hover:text-base-100 transition-all duration-300 ease-linear "
+      >
+        <Settings className="font-medium text-xl" />
+        <span>Settings</span>
       </NavLink>
     </>
   );

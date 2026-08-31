@@ -12,6 +12,11 @@ import ErrorPage from "../component/Shared/ErrorPage/ErrorPage";
 import { CashIn } from "../pages/Dashboard/Transactions/CashIn/CashIn";
 import { CashOut } from "../pages/Dashboard/Transactions/Cashout.jsx/Cashout";
 import TransferMoney from "../pages/Dashboard/Transactions/TransferMoney/TransferMoney";
+import { ReportAnalysis } from "../pages/Dashboard/ReportAnalysis/ReportAnalysis";
+import { TransactionHistory } from "../pages/Dashboard/TransactionHistory/TransactionHistory";
+import { LentAndBorrowed } from "../pages/Dashboard/Lent&Borrowed/Lent&Borrowed";
+import { SettingsPage } from "../pages/Dashboard/Settings/SettingsPage";
+import { Budget } from "../pages/Dashboard/Budget/Budget";
 
 
 
@@ -57,6 +62,26 @@ const router = createBrowserRouter([
         path: "transfer-money",
         element: <TransferMoney />
       },
+      {
+        path: "reports",
+        element: <ReportAnalysis />
+      },
+      {
+        path: "transaction-history",
+        element: <TransactionHistory />
+      },
+      {
+        path: "lent-and-borrowed",
+        element: <LentAndBorrowed />
+      },
+      {
+        path: "budget-management",
+        element: <Budget />
+      },
+      {
+        path: "settings",
+        element: <SettingsPage />
+      }
     ]
   },
 

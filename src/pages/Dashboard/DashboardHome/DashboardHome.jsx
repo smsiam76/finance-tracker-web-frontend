@@ -70,7 +70,7 @@ const DashboardHome = () => {
   };
 
   return (
-    <div className="py-12">
+    <div className="pt-6 pb-12">
       {/* ------------------------------
           Part 1: Key Financial Metrics
       ------------------------------ */}

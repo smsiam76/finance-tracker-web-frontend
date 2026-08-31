@@ -103,7 +103,7 @@ export const CashIn = () => {
       whileInView={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, delay: 0.25, ease: "easeInOut" }}
       viewport={{ once: true }}
-      className="flex items-center justify-center p-4"
+      className="flex items-center justify-center pt-6 pb-12"
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
