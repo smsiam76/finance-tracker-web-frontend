@@ -182,7 +182,7 @@ export const Categories = () => {
   };
 
   return (
-    <div>
+    <div className="pt-6 pb-12">
       {/* Top Filter Tabs */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
