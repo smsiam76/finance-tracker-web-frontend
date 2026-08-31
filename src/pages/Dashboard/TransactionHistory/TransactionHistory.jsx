@@ -193,7 +193,7 @@ export const TransactionHistory = () => {
 
   return (
     <div className="pt-6 pb-12">
-      <div className="space-y-6">
+      <div className="space-y-10">
         {/* --- Top 4 Stat Cards --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Card 1: Total Transactions */}
@@ -291,110 +291,111 @@ export const TransactionHistory = () => {
           </motion.div>
         </div>
 
-        {/* --- Search, Filter Controls & Exports --- */}
-        <div className="space-y-4">
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.4, delay: 0.27, ease: "easeInOut" }}
-            viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-4 rounded-2xl border border-base-100 shadow-lg flex flex-col lg:flex-row lg:items-center justify-between gap-4"
-          >
-            {/* Search Input */}
-            <div className="relative flex-1">
-              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 " />
-              <input
-                type="text"
-                placeholder="Search by description or book..."
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="w-full pl-10 pr-4 py-2 bg-primary/5/50 border border-primary/10 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition"
-              />
-            </div>
-
-            {/* Dropdowns & Type Pills */}
-            <div className="flex flex-wrap items-center gap-2">
-              {/* Date Range Dropdown */}
-              <div className="relative">
-                <select
-                  value={dateRangeFilter}
+        <div>
+          {/* --- Search, Filter Controls & Exports --- */}
+          <div className="space-y-4">
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.4, delay: 0.27, ease: "easeInOut" }}
+              viewport={{ once: true, amount: 0.1 }}
+              className="bg-white mb-8 p-4 rounded-2xl border border-base-100 shadow-md flex flex-col lg:flex-row lg:items-center justify-between gap-4"
+            >
+              {/* Search Input */}
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 " />
+                <input
+                  type="text"
+                  placeholder="Search by description or book..."
+                  value={searchTerm}
                   onChange={(e) => {
-                    setDateRangeFilter(e.target.value);
+                    setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="appearance-none pl-8 pr-8 py-2 bg-white border border-primary/10 rounded-xl text-xs font-semibold  hover:bg-primary/5 focus:outline-none cursor-pointer"
-                >
-                  <option value="ALL">All Dates</option>
-                  <option value="LAST_7_DAYS">Last 7 Days</option>
-                  <option value="THIS_MONTH">This Month (July 2026)</option>
-                </select>
-                <Calendar className="w-3.5 h-3.5  absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <ChevronDown className="w-3.5 h-3.5  absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  className="w-full pl-10 pr-4 py-2 bg-primary/5/50 border border-primary/10 rounded-xl text-sm focus:outline-none focus:border-emerald-500 transition"
+                />
               </div>
 
-              {/* Category Dropdown */}
-              <div className="relative">
-                <select
-                  value={categoryFilter}
-                  onChange={(e) => {
-                    setCategoryFilter(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="appearance-none pl-8 pr-8 py-2 bg-white border border-primary/10 rounded-xl text-xs font-semibold  hover:bg-primary/5 focus:outline-none cursor-pointer"
-                >
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat === "ALL" ? "All Categories" : cat}
-                    </option>
-                  ))}
-                </select>
-                <Filter className="w-3.5 h-3.5  absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <ChevronDown className="w-3.5 h-3.5  absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
-
-              {/* Type Switcher Pills */}
-              <div className="bg-base-100 p-1 rounded-xl flex items-center gap-1">
-                {[
-                  { label: "All", value: "ALL" },
-                  { label: "Income", value: "INCOME" },
-                  { label: "Expense", value: "EXPENSE" },
-                  { label: "Transfer", value: "TRANSFER" },
-                ].map((tab) => (
-                  <button
-                    key={tab.value}
-                    onClick={() => {
-                      setTypeFilter(tab.value);
+              {/* Dropdowns & Type Pills */}
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Date Range Dropdown */}
+                <div className="relative">
+                  <select
+                    value={dateRangeFilter}
+                    onChange={(e) => {
+                      setDateRangeFilter(e.target.value);
                       setCurrentPage(1);
                     }}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold transition ${
-                      typeFilter === tab.value
-                        ? "bg-white text-emerald-700 shadow-sm"
-                        : " hover:"
-                    }`}
+                    className="appearance-none pl-8 pr-8 py-2 bg-white border border-primary/10 rounded-xl text-xs font-semibold  hover:bg-primary/5 focus:outline-none cursor-pointer"
                   >
-                    {tab.label}
-                  </button>
-                ))}
+                    <option value="ALL">All Dates</option>
+                    <option value="LAST_7_DAYS">Last 7 Days</option>
+                    <option value="THIS_MONTH">This Month (July 2026)</option>
+                  </select>
+                  <Calendar className="w-3.5 h-3.5  absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-3.5 h-3.5  absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+
+                {/* Category Dropdown */}
+                <div className="relative">
+                  <select
+                    value={categoryFilter}
+                    onChange={(e) => {
+                      setCategoryFilter(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="appearance-none pl-8 pr-8 py-2 bg-white border border-primary/10 rounded-xl text-xs font-semibold  hover:bg-primary/5 focus:outline-none cursor-pointer"
+                  >
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat === "ALL" ? "All Categories" : cat}
+                      </option>
+                    ))}
+                  </select>
+                  <Filter className="w-3.5 h-3.5  absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-3.5 h-3.5  absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+
+                {/* Type Switcher Pills */}
+                <div className="bg-base-100 p-1 rounded-xl flex items-center gap-1">
+                  {[
+                    { label: "All", value: "ALL" },
+                    { label: "Income", value: "INCOME" },
+                    { label: "Expense", value: "EXPENSE" },
+                    { label: "Transfer", value: "TRANSFER" },
+                  ].map((tab) => (
+                    <button
+                      key={tab.value}
+                      onClick={() => {
+                        setTypeFilter(tab.value);
+                        setCurrentPage(1);
+                      }}
+                      className={`px-3 py-1 rounded-lg text-xs font-bold transition ${
+                        typeFilter === tab.value
+                          ? "bg-white text-emerald-700 shadow-sm"
+                          : " hover:"
+                      }`}
+                    >
+                      {tab.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Sort Order Dropdown */}
+                <button
+                  onClick={() =>
+                    setSortOrder(sortOrder === "NEWEST" ? "OLDEST" : "NEWEST")
+                  }
+                  className="flex items-center gap-2 px-3 py-2 bg-white border border-primary/10 rounded-xl text-xs font-semibold  hover:bg-primary/5"
+                >
+                  {sortOrder === "NEWEST" ? "Newest First" : "Oldest First"}
+                  <ChevronDown className="w-3.5 h-3.5 " />
+                </button>
               </div>
+            </motion.div>
 
-              {/* Sort Order Dropdown */}
-              <button
-                onClick={() =>
-                  setSortOrder(sortOrder === "NEWEST" ? "OLDEST" : "NEWEST")
-                }
-                className="flex items-center gap-2 px-3 py-2 bg-white border border-primary/10 rounded-xl text-xs font-semibold  hover:bg-primary/5"
-              >
-                {sortOrder === "NEWEST" ? "Newest First" : "Oldest First"}
-                <ChevronDown className="w-3.5 h-3.5 " />
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Export Buttons */}
-          {/* <div className="flex justify-end gap-3">
+            {/* Export Buttons */}
+            {/* <div className="flex justify-end gap-3">
             <button className="flex items-center gap-2 bg-white border border-primary/10  px-4 py-2 rounded-xl text-xs font-bold hover:bg-primary/5 transition shadow-sm">
               <Download className="w-4 h-4 " />
               Export PDF
@@ -404,200 +405,201 @@ export const TransactionHistory = () => {
               Export Excel
             </button>
           </div> */}
-        </div>
+          </div>
 
-        {/* --- Data Table --- */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          whileInView={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.30, ease: "easeInOut" }}
-          viewport={{ once: true, amount: 0.1 }}
-          className="bg-white rounded-2xl border border-base-100 shadow-2xl overflow-hidden"
-        >
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-base-100 text-[11px] font-bold  uppercase tracking-wider bg-primary/5/50">
-                  <th className="py-4 px-6">Date</th>
-                  <th className="py-4 px-6">Description</th>
-                  <th className="py-4 px-6">Category</th>
-                  <th className="py-4 px-6">Book</th>
-                  <th className="py-4 px-6">Type</th>
-                  <th className="py-4 px-6">Payment</th>
-                  <th className="py-4 px-6">Amount(৳)</th>
-                  <th className="py-4 px-6">Status</th>
-                  <th className="py-4 px-6 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-base-100 text-xs font-medium">
-                {paginatedData.length > 0 ? (
-                  paginatedData.map((tx) => {
-                    const txDate = new Date(tx.date);
-                    const formattedDate = `${txDate.getDate()} ${txDate.toLocaleString("default", { month: "short" })} ${txDate.getFullYear()}`;
-
-                    return (
-                      <tr
-                        key={tx._id}
-                        className="hover:bg-primary/5/60 transition"
-                      >
-                        {/* Date */}
-                        <td className="py-4 px-6  w-24">
-                          <span className="font-semibold block text-slate-700">
-                            {formattedDate}
-                          </span>
-                        </td>
-
-                        {/* Description */}
-                        <td className="py-4 px-6">
-                          <div className="font-bold text-xs">{tx.note}</div>
-                          <div className="text-[10px]  mt-0.5">
-                            {tx.subtitle}
-                          </div>
-                        </td>
-
-                        {/* Category */}
-                        <td className="py-4 px-6">
-                          <span className="inline-block px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md text-[11px]">
-                            {tx.categoryName}
-                          </span>
-                        </td>
-
-                        {/* Book */}
-                        <td className="py-4 px-6  font-medium">
-                          {tx.bookName}
-                        </td>
-
-                        {/* Type */}
-                        <td className="py-4 px-6">
-                          <span
-                            className={`font-bold text-[11px] ${
-                              tx.type === "CASH_IN"
-                                ? "text-emerald-600"
-                                : tx.type === "CASH_OUT"
-                                  ? "text-red-500"
-                                  : "text-slate-600"
-                            }`}
-                          >
-                            {tx.type === "CASH_IN"
-                              ? "Income"
-                              : tx.type === "CASH_OUT"
-                                ? "Expense"
-                                : "Transfer"}
-                          </span>
-                        </td>
-
-                        {/* Payment */}
-                        <td className="py-4 px-6 ">
-                          <div className="flex items-center gap-1.5 font-medium">
-                            {getPaymentIcon(tx.paymentMethod)}
-                            <span>{tx.paymentMethod}</span>
-                          </div>
-                        </td>
-
-                        {/* Amount */}
-                        <td className="py-4 px-6">
-                          <span
-                            className={`font-boldtext-xs ${
-                              tx.type === "CASH_IN"
-                                ? "text-emerald-600"
-                                : tx.type === "CASH_OUT"
-                                  ? "text-red-500"
-                                  : "text-slate-700"
-                            }`}
-                          >
-                            {tx.type === "CASH_IN"
-                              ? "+"
-                              : tx.type === "CASH_OUT"
-                                ? "-"
-                                : "-"}
-                            ৳{tx.amount.toLocaleString()}
-                          </span>
-                        </td>
-
-                        {/* Status */}
-                        <td className="py-4 px-6">
-                          <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-full text-[10px]">
-                            {tx.status}
-                          </span>
-                        </td>
-
-                        {/* Action */}
-                        <td className="py-4 px-6 text-right">
-                          <button className="p-1 hover:bg-base-100 rounded-lg hover:">
-                            <MoreVertical className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td colSpan="9" className="text-center py-8  font-medium">
-                      No transactions found matching your filter.
-                    </td>
+          {/* --- Data Table --- */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.3, ease: "easeInOut" }}
+            viewport={{ once: true, amount: 0.1 }}
+            className="bg-white rounded-2xl border border-base-100 shadow-2xl overflow-hidden"
+          >
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-base-100 text-[11px] font-bold  uppercase tracking-wider bg-primary/5/50">
+                    <th className="py-4 px-6">Date</th>
+                    <th className="py-4 px-6">Description</th>
+                    <th className="py-4 px-6">Category</th>
+                    <th className="py-4 px-6">Book</th>
+                    <th className="py-4 px-6">Type</th>
+                    <th className="py-4 px-6">Payment</th>
+                    <th className="py-4 px-6">Amount(৳)</th>
+                    <th className="py-4 px-6">Status</th>
+                    <th className="py-4 px-6 text-right">Action</th>
                   </tr>
+                </thead>
+                <tbody className="divide-y divide-base-100 text-xs font-medium">
+                  {paginatedData.length > 0 ? (
+                    paginatedData.map((tx) => {
+                      const txDate = new Date(tx.date);
+                      const formattedDate = `${txDate.getDate()} ${txDate.toLocaleString("default", { month: "short" })} ${txDate.getFullYear()}`;
+
+                      return (
+                        <tr
+                          key={tx._id}
+                          className="hover:bg-primary/5/60 transition"
+                        >
+                          {/* Date */}
+                          <td className="py-4 px-6  w-24">
+                            <span className="font-semibold block text-slate-700">
+                              {formattedDate}
+                            </span>
+                          </td>
+
+                          {/* Description */}
+                          <td className="py-4 px-6">
+                            <div className="font-bold text-xs">{tx.note}</div>
+                            <div className="text-[10px]  mt-0.5">
+                              {tx.subtitle}
+                            </div>
+                          </td>
+
+                          {/* Category */}
+                          <td className="py-4 px-6">
+                            <span className="inline-block px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md text-[11px]">
+                              {tx.categoryName}
+                            </span>
+                          </td>
+
+                          {/* Book */}
+                          <td className="py-4 px-6  font-medium">
+                            {tx.bookName}
+                          </td>
+
+                          {/* Type */}
+                          <td className="py-4 px-6">
+                            <span
+                              className={`font-bold text-[11px] ${
+                                tx.type === "CASH_IN"
+                                  ? "text-emerald-600"
+                                  : tx.type === "CASH_OUT"
+                                    ? "text-red-500"
+                                    : "text-slate-600"
+                              }`}
+                            >
+                              {tx.type === "CASH_IN"
+                                ? "Income"
+                                : tx.type === "CASH_OUT"
+                                  ? "Expense"
+                                  : "Transfer"}
+                            </span>
+                          </td>
+
+                          {/* Payment */}
+                          <td className="py-4 px-6 ">
+                            <div className="flex items-center gap-1.5 font-medium">
+                              {getPaymentIcon(tx.paymentMethod)}
+                              <span>{tx.paymentMethod}</span>
+                            </div>
+                          </td>
+
+                          {/* Amount */}
+                          <td className="py-4 px-6">
+                            <span
+                              className={`font-boldtext-xs ${
+                                tx.type === "CASH_IN"
+                                  ? "text-emerald-600"
+                                  : tx.type === "CASH_OUT"
+                                    ? "text-red-500"
+                                    : "text-slate-700"
+                              }`}
+                            >
+                              {tx.type === "CASH_IN"
+                                ? "+"
+                                : tx.type === "CASH_OUT"
+                                  ? "-"
+                                  : "-"}
+                              ৳{tx.amount.toLocaleString()}
+                            </span>
+                          </td>
+
+                          {/* Status */}
+                          <td className="py-4 px-6">
+                            <span className="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-full text-[10px]">
+                              {tx.status}
+                            </span>
+                          </td>
+
+                          {/* Action */}
+                          <td className="py-4 px-6 text-right">
+                            <button className="p-1 hover:bg-base-100 rounded-lg hover:">
+                              <MoreVertical className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan="9" className="text-center py-8  font-medium">
+                        No transactions found matching your filter.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* --- Pagination Footer --- */}
+            <div className="p-4 bg-emerald-50/30 border-t border-base-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium ">
+              <div>
+                Showing{" "}
+                <span className="font-bold ">
+                  {filteredData.length === 0
+                    ? 0
+                    : (currentPage - 1) * itemsPerPage + 1}
+                </span>{" "}
+                to{" "}
+                <span className="font-bold ">
+                  {Math.min(currentPage * itemsPerPage, filteredData.length)}
+                </span>{" "}
+                of <span className="font-bold ">{filteredData.length}</span>{" "}
+                transactions
+              </div>
+
+              <div className="flex items-center gap-1">
+                {/* Previous Button */}
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-primary/10 bg-white  disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/5 transition"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                  Previous
+                </button>
+
+                {/* Page Numbers */}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-8 h-8 rounded-lg font-bold text-xs transition ${
+                        currentPage === page
+                          ? "bg-primary text-white shadow-sm"
+                          : "bg-white border border-primary/10  hover:bg-primary/5"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ),
                 )}
-              </tbody>
-            </table>
-          </div>
 
-          {/* --- Pagination Footer --- */}
-          <div className="p-4 bg-emerald-50/30 border-t border-base-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-medium ">
-            <div>
-              Showing{" "}
-              <span className="font-bold ">
-                {filteredData.length === 0
-                  ? 0
-                  : (currentPage - 1) * itemsPerPage + 1}
-              </span>{" "}
-              to{" "}
-              <span className="font-bold ">
-                {Math.min(currentPage * itemsPerPage, filteredData.length)}
-              </span>{" "}
-              of <span className="font-bold ">{filteredData.length}</span>{" "}
-              transactions
+                {/* Next Button */}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-primary/10 bg-white  disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/5 transition"
+                >
+                  Next
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
-
-            <div className="flex items-center gap-1">
-              {/* Previous Button */}
-              <button
-                onClick={() => handlePageChange(currentPage - 1)}
-                disabled={currentPage === 1}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-primary/10 bg-white  disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/5 transition"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-                Previous
-              </button>
-
-              {/* Page Numbers */}
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`w-8 h-8 rounded-lg font-bold text-xs transition ${
-                      currentPage === page
-                        ? "bg-primary text-white shadow-sm"
-                        : "bg-white border border-primary/10  hover:bg-primary/5"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ),
-              )}
-
-              {/* Next Button */}
-              <button
-                onClick={() => handlePageChange(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-primary/10 bg-white  disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/5 transition"
-              >
-                Next
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
     </div>
   );

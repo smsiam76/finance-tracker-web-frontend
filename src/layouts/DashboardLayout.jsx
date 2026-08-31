@@ -12,6 +12,7 @@ import {
   ChartNoAxesCombined,
   RotateCcwClock,
   Settings,
+  Tags,
   Vault,
   Wallet,
 } from "lucide-react";
@@ -24,19 +25,44 @@ const DashboardLayout = () => {
     name: "Tanvir Ahmed",
     email: "tanvir@gmail.com",
     photoURL:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200", // Sample avatar
+      "https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D", // Sample avatar
     role: "Member", // Or status/authProvider from schema
   };
 
   // Determine header title based on current URL path
   const getHeaderTitle = () => {
+    const { pathname } = location;
+
+    if (pathname.startsWith("/dashboard/my-books/book-details/")) {
+    return location.state?.bookTitle 
+      ? `Book Details: ${location.state.bookTitle}` 
+      : "Book Details";
+  }
     switch (location.pathname) {
       case "/dashboard/my-books":
         return "My Books";
       case "/settings":
         return "Settings";
-      // case "/dashboard/my-books/ ":
-      //   return "My-books";
+      case "/dashboard/cash-in":
+        return "Cash In";
+      case "/dashboard/cash-out":
+        return "Cash Out";
+      case "/dashboard/transfer-money":
+        return "Transfer Money";
+      case "/dashboard/reports":
+        return "Reports and Analytics";
+      case "/dashboard/categories":
+        return "Categories";
+      case "/dashboard/transaction-history":
+        return "Transaction History";
+      case "/dashboard/lent-and-borrowed":
+        return "Lent And Borrowed";
+      case "/dashboard/budget-management":
+        return "Budget";
+      case "/dashboard/settings":
+        return "Settings";
+      // case `/dashboard/my-books/book-details/`:
+      //   return "Books Details";
       case "/dashboard":
       default:
         return `Welcome Back, ${user?.name}`;
@@ -94,6 +120,13 @@ const DashboardLayout = () => {
       >
         <ChartNoAxesCombined className="font-medium text-xl" />
         <span>Reports</span>
+      </NavLink>
+      <NavLink
+        to="/dashboard/categories"
+        className="flex gap-2.5 items-center py-3 px-4 rounded-md font-medium hover:bg-primary hover:text-base-100 transition-all duration-300 ease-linear "
+      >
+        <Tags className="font-medium text-xl" />
+        <span>Categories</span>
       </NavLink>
       <NavLink
         to="/dashboard/transaction-history"

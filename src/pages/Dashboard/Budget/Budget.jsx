@@ -339,7 +339,7 @@ export const Budget = () => {
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.22, ease: "easeInOut" }}
               viewport={{ once: true, amount: 0.1 }}
-              className="bg-primary/5 p-5 rounded-2xl border border-primary/10 space-y-3 shadow-xl"
+              className="bg-white p-5 rounded-2xl border border-primary/10 space-y-3 shadow-xl"
             >
               <div className="flex items-center justify-between">
                 <div>
