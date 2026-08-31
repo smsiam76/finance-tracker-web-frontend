@@ -112,7 +112,8 @@ const BooksCard = ({ book, renderIcon, formatCurrency }) => {
 
       {/* View Details Button */}
       <Link
-        to={`/dashboard/my-books/${book._id}`}
+        to={`/dashboard/my-books/book-details/${book._id}`}
+        state={{ bookTitle: book.title }}
         className="w-full py-2.5 px-4 rounded-xl bg-primary/10 border border-primary/10 hover:bg-primary hover:border-primary/50 text-primary hover:text-white text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-300 ease-linear cursor-pointer"
       >
         View Details <FiArrowRight />

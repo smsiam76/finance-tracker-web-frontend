@@ -31,7 +31,7 @@ const TransferMoney = () => {
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Form Container Card */}
-        <div className="bg-primary/5 rounded-xl p-6 sm:p-8 shadow-sm border border-primary/10 space-y-6">
+        <div className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-primary/10 space-y-6">
           {/* Top Row: Dropdowns */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             {/* From Book */}
@@ -49,8 +49,9 @@ const TransferMoney = () => {
                   <option value="Savings Account (Main)">
                     Savings Account (Main)
                   </option>
-                  <option value="Checking Account">Checking Account</option>
-                  <option value="Investment Book">Investment Book</option>
+                  <option value="Daily Expense">Daily Expense</option>
+                  <option value="Family Expense">Family Expense</option>
+                  <option value="December Toru">December Tour</option>
                 </select>
                 <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary pointer-events-none stroke-[2.5]" />
               </div>
@@ -76,15 +77,12 @@ const TransferMoney = () => {
                   <option value="" disabled selected hidden>
                     Select Destination
                   </option>
-                  <option value="Emergency Reserve" className="">
-                    Emergency Reserve
+                  <option value="Savings Account (Main)">
+                    Savings Account (Main)
                   </option>
-                  <option value="Quarterly Vault" className="">
-                    Quarterly Vault
-                  </option>
-                  <option value="Operating Expenses" className="">
-                    Operating Expenses
-                  </option>
+                  <option value="Daily Expense">Daily Expense</option>
+                  <option value="Family Expense">Family Expense</option>
+                  <option value="December Toru">December Tour</option>
                 </select>
                 <ChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary pointer-events-none stroke-[2.5]" />
               </div>

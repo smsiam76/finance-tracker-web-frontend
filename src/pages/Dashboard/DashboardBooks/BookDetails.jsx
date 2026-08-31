@@ -2,10 +2,10 @@ import { Link, useParams } from "react-router";
 import { useEffect, useState, useMemo } from "react";
 import {
   TrendingUp,
-  Minus,
   Search,
-  PlusCircle,
   ChevronDown,
+  Wallet,
+  ArrowLeftRight,
 } from "lucide-react";
 import Loader from "../../../component/Shared/Loader/Loader";
 import { motion } from "framer-motion";
@@ -216,21 +216,21 @@ const BookDetails = () => {
           </p>
           <div className="flex flex-col gap-2">
             <Link
-              to="/dashboard/cash-in"
+              to="/dashboard/budget-management"
               className="w-full bg-primary hover:bg-[#008f5b] text-white font-medium md:py-1 md:px-2 lg:py-2 lg:px-4 rounded-xl text-sm flex items-center justify-center gap-2 transition-colors"
             >
-              <PlusCircle className="text-lg md:text-base lg:text-lg" />
-              Cash In
+              <Wallet className="text-lg md:text-base lg:text-lg" />
+              Budget Manegement
             </Link>
             <Link
-              to="/dashboard/cash-out"
-              className="w-full bg-white hover:bg-rose-50 text-[#D9383A] border border-rose-200 font-medium py-2 px-4 rounded-xl text-sm flex items-center justify-center gap-2 transition-colors"
+              to="/dashboard/transfer-money"
+              className="w-full bg-white hover:bg-emerald-50 text-primary border border-emerald-200 font-medium py-2 px-4 rounded-xl text-sm flex items-center justify-center gap-2 transition-colors"
             >
-              <Minus
+              <ArrowLeftRight
                 size={18}
-                className="rounded-full border border-[#D9383A]"
+                className="rounded-full border border-primary"
               />
-              Cash Out
+              Transfer Money
             </Link>
           </div>
         </motion.div>

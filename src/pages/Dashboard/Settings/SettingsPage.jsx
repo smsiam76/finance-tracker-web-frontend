@@ -80,14 +80,14 @@ export const SettingsPage = () => {
     <div className="pt-6 pb-12">
       <div className="mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ================= LEFT COLUMN ================= */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-10">
           {/* 1. Account Settings Card */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.15, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-6 rounded-2xl border border-base-100 shadow-sm space-y-5"
+            className="bg-white p-6 rounded-2xl border border-base-100 shadow-lg space-y-5"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 ">
@@ -151,7 +151,7 @@ export const SettingsPage = () => {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.18, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-6 rounded-2xl border border-base-100 shadow-sm space-y-4"
+            className="bg-white p-6 rounded-2xl border border-base-100 shadow-lg space-y-4"
           >
             <div className="flex items-center gap-2 ">
               <Sliders className="w-5 h-5 text-primary" />
@@ -215,7 +215,7 @@ export const SettingsPage = () => {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.21, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-6 rounded-2xl border border-base-100 shadow-sm space-y-4"
+            className="bg-white p-6 rounded-2xl border border-base-100 shadow-lg space-y-4"
           >
             <div className="flex items-center gap-2 ">
               <Bell className="w-5 h-5 text-primary" />
@@ -280,7 +280,7 @@ export const SettingsPage = () => {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.24, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-6 rounded-2xl border border-base-100 shadow-sm space-y-4"
+            className="bg-white p-6 rounded-2xl border border-base-100 shadow-lg space-y-4"
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 ">
@@ -310,7 +310,7 @@ export const SettingsPage = () => {
         </div>
 
         {/* ================= RIGHT COLUMN ================= */}
-        <div className="space-y-6">
+        <div className="space-y-10">
           {/* 1. Security Card */}
           <motion.div
             initial={{ y: -20, opacity: 0 }}
@@ -345,7 +345,7 @@ export const SettingsPage = () => {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.24, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-4"
+            className="bg-white p-5 rounded-2xl border border-base-100 shadow-lg space-y-4"
           >
             <span className="text-[10px] font-bold  uppercase tracking-wider">
               Data Management
@@ -377,7 +377,7 @@ export const SettingsPage = () => {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.18, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-3"
+            className="bg-white p-5 rounded-2xl border border-base-100 shadow-lg space-y-3"
           >
             <span className="text-[10px] font-bold  uppercase tracking-wider">
               About

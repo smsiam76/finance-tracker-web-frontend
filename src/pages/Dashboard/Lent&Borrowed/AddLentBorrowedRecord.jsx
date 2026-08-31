@@ -46,7 +46,7 @@ export const AddLentBorrowedRecord = () => {
   };
 
   return (
-    <div className="flex items-center justify-cente backdrop-blur-sm p-4">
+    <div className="flex items-center justify-cente p-4">
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden animate-in fade-in zoom-in duration-200">
         {/* Modal Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">

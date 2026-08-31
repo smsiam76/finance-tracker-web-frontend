@@ -108,7 +108,7 @@ export const LentAndBorrowed = () => {
 
   return (
     <div className="pt-6 pb-12">
-      <div className="space-y-6">
+      <div className="space-y-10">
         {/* --- Top 4 Stat Cards --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Card 1: Total Lent */}
@@ -239,7 +239,7 @@ export const LentAndBorrowed = () => {
             </div>
 
             {/* Itemized Record List */}
-            <div className="space-y-4">
+            <div className="space-y-6">
               {filteredRecords.length > 0 ? (
                 filteredRecords.map((record) => {
                   const createdDateStr = new Date(
@@ -260,7 +260,7 @@ export const LentAndBorrowed = () => {
                   return (
                     <div
                       key={record._id}
-                      className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-4"
+                      className="bg-white p-5 rounded-2xl border border-base-100 shadow-md space-y-4"
                     >
                       {/* Top Person Info */}
                       <div className="flex items-start justify-between">
@@ -378,7 +378,7 @@ export const LentAndBorrowed = () => {
                 onClick={() =>
                   document.getElementById("my_modal_5").showModal()
                 }
-                className="flex items-center gap-2 bg-primary text-white px-5 py-3 rounded-2xl font-bold text-xs hover:bg-[#00472B] transition shadow-md"
+                className="flex items-center gap-2 cursor-pointer bg-primary text-white px-5 py-3 rounded-2xl font-bold text-xs hover:bg-[#00472B] transition-all duration-300 shadow-md"
               >
                 <Plus className="w-4 h-4" />
                 Add Record
@@ -400,10 +400,10 @@ export const LentAndBorrowed = () => {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.30, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="space-y-6"
+            className="space-y-10"
           >
             {/* Chart: Lent vs Borrowed Stacked Bar */}
-            <div className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-4">
+            <div className="bg-white p-5 rounded-2xl border border-base-100 shadow-lg space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold  text-sm">Lent vs Borrowed</h3>
                 <button className=" hover:text-gray-600">
@@ -454,7 +454,7 @@ export const LentAndBorrowed = () => {
             </div>
 
             {/* Upcoming Reminders Card */}
-            <div className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-4">
+            <div className="bg-white p-5 rounded-2xl border border-base-100 shadow-lg space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold  text-sm">Upcoming Reminders</h3>
                 <button className="text-xs font-bold text-emerald-700 hover:underline">

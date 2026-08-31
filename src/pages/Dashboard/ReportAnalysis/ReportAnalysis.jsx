@@ -263,7 +263,7 @@ export const ReportAnalysis = () => {
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.2, ease: "easeInOut" }}
           viewport={{ once: true, amount: 0.1 }}
-          className="flex items-center gap-8 border-b border-base-100 pb-1 bg-white pt-4 px-4 rounded-md"
+          className="flex items-center gap-8 border-b border-base-100 pb-2 bg-white pt-4 px-4 rounded-lg"
           role="tablist"
         >
           {["Daily", "Weekly", "Monthly", "Yearly"].map((tab) => (
@@ -290,10 +290,10 @@ export const ReportAnalysis = () => {
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.25, ease: "easeInOut" }}
           viewport={{ once: true, amount: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-5"
+          className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8"
         >
           {/* Income Card */}
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-base-100 flex justify-between items-start">
+          <div className="bg-white p-5 rounded-2xl shadow-lg border border-base-100 flex justify-between items-start">
             <div className="space-y-1">
               <span className="text-xs font-semibold uppercase tracking-wider">
                 Total Income
@@ -312,7 +312,7 @@ export const ReportAnalysis = () => {
           </div>
 
           {/* Expense Card */}
-          <div className="bg-white p-5 rounded-2xl shadow-sm border border-base-100 flex justify-between items-start">
+          <div className="bg-white p-5 rounded-2xl shadow-lg border border-base-100 flex justify-between items-start">
             <div className="space-y-1">
               <span className="text-xs font-semibold  uppercase tracking-wider">
                 Total Expense
@@ -331,7 +331,7 @@ export const ReportAnalysis = () => {
           </div>
 
           {/* Net Savings Highlight Card */}
-          <div className="bg-primary p-5 rounded-2xl shadow-sm text-white flex justify-between items-start relative overflow-hidden">
+          <div className="bg-primary p-5 rounded-2xl shadow-lg text-white flex justify-between items-start relative overflow-hidden">
             <div className="space-y-1 z-10">
               <span className="text-xs font-medium text-emerald-200">
                 Net Savings
@@ -361,7 +361,7 @@ export const ReportAnalysis = () => {
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.15, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-base-100"
+            className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg border border-base-100"
           >
             <div className="flex items-center justify-between mb-6">
               <div>
@@ -424,7 +424,7 @@ export const ReportAnalysis = () => {
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.18, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-6 rounded-2xl shadow-sm border border-base-100 flex flex-col justify-between"
+            className="bg-white p-6 rounded-2xl shadow-lg border border-base-100 flex flex-col justify-between"
           >
             <div>
               <h3 className="font-bold  text-lg mb-4">Expense by Category</h3>
@@ -489,7 +489,7 @@ export const ReportAnalysis = () => {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.23, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-6 rounded-2xl shadow-sm border border-base-100 space-y-6"
+            className="bg-white p-6 rounded-2xl shadow-lg border border-base-100 space-y-6"
           >
             <h3 className="font-bold  text-lg">{activeTab} Comparison</h3>
 
@@ -498,7 +498,7 @@ export const ReportAnalysis = () => {
                 <span className="">{activeData.comparison.label1}</span>
                 <span className="">{activeData.comparison.v1}</span>
               </div>
-              <div className="h-3 w-full bg-red-100 rounded-full overflow-hidden flex">
+              <div className="h-3 w-full bg-red-200 rounded-full overflow-hidden flex">
                 <div
                   className="h-full bg-emerald-500 rounded-full"
                   style={{ width: "80%" }}
@@ -537,7 +537,7 @@ export const ReportAnalysis = () => {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.25, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-6 rounded-2xl shadow-sm border border-base-100 space-y-4"
+            className="bg-white p-6 rounded-2xl shadow-lg border border-base-100 space-y-4"
           >
             <div className="flex items-center justify-between">
               <h3 className="font-bold  text-lg">Transaction History</h3>

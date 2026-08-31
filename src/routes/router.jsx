@@ -17,6 +17,7 @@ import { TransactionHistory } from "../pages/Dashboard/TransactionHistory/Transa
 import { LentAndBorrowed } from "../pages/Dashboard/Lent&Borrowed/Lent&Borrowed";
 import { SettingsPage } from "../pages/Dashboard/Settings/SettingsPage";
 import { Budget } from "../pages/Dashboard/Budget/Budget";
+import { Categories } from "../pages/Dashboard/Categories/Categories";
 
 const router = createBrowserRouter([
   {
@@ -45,7 +46,7 @@ const router = createBrowserRouter([
         element: <MyBooks />,
       },
       {
-        path: "my-books/:id",
+        path: "my-books/book-details/:id",
         element: <BookDetails />,
       },
       {
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
       {
         path: "reports",
         element: <ReportAnalysis />,
+      },
+      {
+        path: "categories",
+        element: <Categories />,
       },
       {
         path: "transaction-history",
