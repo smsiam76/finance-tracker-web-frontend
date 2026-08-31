@@ -220,7 +220,7 @@ const BookDetails = () => {
               className="w-full bg-primary hover:bg-[#008f5b] text-white font-medium md:py-1 md:px-2 lg:py-2 lg:px-4 rounded-xl text-sm flex items-center justify-center gap-2 transition-colors"
             >
               <Wallet className="text-lg md:text-base lg:text-lg" />
-              Budget Manegement
+              Create Budget
             </Link>
             <Link
               to="/dashboard/transfer-money"

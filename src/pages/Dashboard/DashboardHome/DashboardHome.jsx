@@ -1,8 +1,6 @@
 import { BsPiggyBank } from "react-icons/bs";
 import { motion } from "framer-motion";
 import {
-  FaBolt,
-  FaCalendarAlt,
   FaExchangeAlt,
   FaPlus,
 } from "react-icons/fa";
@@ -38,7 +36,7 @@ const DashboardHome = () => {
     },
     {
       title: "Create Category",
-      route: "/dashboard/create-category",
+      route: "/dashboard/categories",
       icon: <FaPlus />,
     },
   ];
@@ -63,11 +61,11 @@ const DashboardHome = () => {
     borrowed: 12000,
   };
 
-  const reminderData = {
-    id: 1,
-    title: "Electricity Bill",
-    dueDate: "15/10/2024",
-  };
+  // const reminderData = {
+  //   id: 1,
+  //   title: "Electricity Bill",
+  //   dueDate: "15/10/2024",
+  // };
 
   return (
     <div className="pt-6 pb-12">
@@ -83,7 +81,7 @@ const DashboardHome = () => {
           className="bg-primary text-white p-8 border border-primary shadow-md rounded-md"
         >
           <div className="flex items-center justify-between">
-            <h4 className="md:text-xl font-semibold mb-3">Total Balance</h4>
+            <h4 className="md:text-xl font-semibold mb-3">Total Net Balance</h4>
             <div className="w-fit p-2.5 flex items-center justify-center bg-base-100 text-primary rounded-full">
               <GiTakeMyMoney className="text-3xl" />
             </div>
@@ -99,7 +97,7 @@ const DashboardHome = () => {
           className="bg-white p-8 border border-primary/20 shadow-md rounded-md"
         >
           <div className="flex items-center justify-between">
-            <h4 className="md:text-xl font-semibold mb-3">Total Income</h4>
+            <h4 className="md:text-xl font-semibold mb-3">Total Budgeted</h4>
             <div className="w-fit p-2.5 flex items-center justify-center bg-base-100 text-primary rounded-full">
               <IoMdTrendingUp className="text-2xl" />
             </div>
@@ -231,7 +229,7 @@ const DashboardHome = () => {
           whileInView={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.33, ease: "easeInOut" }}
           viewport={{ once: true, amount: 0.1 }}
-          className="w-full lg:w-2/5 flex flex-col justify-between gap-6"
+          className="w-full lg:w-2/5 flex flex-col gap-6"
         >
           {/* Budget Overview */}
           <div className="bg-white rounded-xl p-6 md:p-8 border border-gray-200 shadow-md">
@@ -285,7 +283,7 @@ const DashboardHome = () => {
           </div>
 
           {/* Upcoming Reminders Banner */}
-          <div className="bg-emerald-600 rounded-xl p-6 md:p-8 text-white shadow-lg">
+          {/* <div className="bg-emerald-600 rounded-xl p-6 md:p-8 text-white shadow-lg">
             <div className="flex items-center space-x-3 mb-4">
               <FaCalendarAlt className="text-xl" />
               <h3 className="text-lg font-bold">Upcoming Reminders</h3>
@@ -313,7 +311,7 @@ const DashboardHome = () => {
                 Pay Now
               </Link>
             </div>
-          </div>
+          </div> */}
         </motion.div>
       </div>
     </div>
