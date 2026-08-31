@@ -146,7 +146,7 @@ const MyBooks = () => {
   };
 
   return (
-    <div className="">
+    <div className="pt-6 pb-12">
       <div className="space-y-6">
         {/* --- Top Header Section --- */}
         <motion.div
