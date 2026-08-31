@@ -107,7 +107,7 @@ export const CashIn = () => {
     >
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-1/2 rounded-2xl p-4 shadow-xl space-y-5"
+        className="w-full md:max-w-1/2 rounded-2xl p-4 shadow-xl space-y-5"
       >
         {/* Hidden Enum Type Field */}
         <input type="hidden" {...register("type")} />

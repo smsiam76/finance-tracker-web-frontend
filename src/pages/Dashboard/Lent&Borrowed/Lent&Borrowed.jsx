@@ -117,9 +117,9 @@ export const LentAndBorrowed = () => {
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.15, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-1"
+            className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-1"
           >
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold  uppercase tracking-wider">
               Total Lent
             </span>
             <div className="text-2xl font-black text-emerald-600">৳18,500</div>
@@ -135,13 +135,13 @@ export const LentAndBorrowed = () => {
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.18, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-1"
+            className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-1"
           >
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold  uppercase tracking-wider">
               Total Borrowed
             </span>
-            <div className="text-2xl font-black text-rose-800">৳9,200</div>
-            <div className="flex items-center gap-1 text-xs text-gray-400 font-semibold pt-1">
+            <div className="text-2xl font-black text-red-800">৳9,200</div>
+            <div className="flex items-center gap-1 text-xs  font-semibold pt-1">
               <Minus className="w-3.5 h-3.5" />
               <span>Stable position</span>
             </div>
@@ -153,9 +153,9 @@ export const LentAndBorrowed = () => {
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.21, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-1"
+            className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-1"
           >
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold  uppercase tracking-wider">
               To Receive
             </span>
             <div className="text-2xl font-black ">৳12,000</div>
@@ -171,13 +171,13 @@ export const LentAndBorrowed = () => {
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.24, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-1"
+            className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-1"
           >
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            <span className="text-[11px] font-bold  uppercase tracking-wider">
               To Pay
             </span>
-            <div className="text-2xl font-black text-rose-600">৳6,800</div>
-            <div className="flex items-center gap-1.5 text-xs text-rose-500 font-semibold pt-1">
+            <div className="text-2xl font-black text-red-600">৳6,800</div>
+            <div className="flex items-center gap-1.5 text-xs text-red-500 font-semibold pt-1">
               <AlertTriangle className="w-3.5 h-3.5" />
               <span>Due next week</span>
             </div>
@@ -195,9 +195,9 @@ export const LentAndBorrowed = () => {
             className="lg:col-span-2 space-y-4"
           >
             {/* Filter Bar & Search */}
-            <div className="bg-white p-2.5 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+            <div className="bg-white p-2.5 rounded-2xl border border-base-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
               {/* Toggle Buttons */}
-              <div className="bg-gray-100/80 p-1 rounded-xl flex items-center w-full sm:w-auto">
+              <div className="bg-base-100/80 p-1 rounded-xl flex items-center w-full sm:w-auto">
                 <button
                   onClick={() => setActiveTab("LENT")}
                   className={`flex-1 sm:flex-none px-6 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
@@ -223,7 +223,7 @@ export const LentAndBorrowed = () => {
               {/* Search & Filter Button */}
               <div className="flex items-center gap-2 w-full sm:w-auto">
                 <div className="relative flex-1 sm:w-64">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 " />
                   <input
                     type="text"
                     placeholder="Search person..."
@@ -260,7 +260,7 @@ export const LentAndBorrowed = () => {
                   return (
                     <div
                       key={record._id}
-                      className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-4"
+                      className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-4"
                     >
                       {/* Top Person Info */}
                       <div className="flex items-start justify-between">
@@ -268,7 +268,7 @@ export const LentAndBorrowed = () => {
                           <div
                             className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
                               record.status === "OVERDUE"
-                                ? "bg-rose-100 text-rose-600"
+                                ? "bg-red-100 text-red-600"
                                 : "bg-emerald-100 text-emerald-700"
                             }`}
                           >
@@ -284,11 +284,11 @@ export const LentAndBorrowed = () => {
                           </div>
                           <div>
                             <h4
-                              className={`font-bold text-sm ${record.status === "OVERDUE" ? "text-rose-600" : ""}`}
+                              className={`font-bold text-sm ${record.status === "OVERDUE" ? "text-red-600" : ""}`}
                             >
                               {record.personName}
                             </h4>
-                            <p className="text-xs text-gray-400 mt-0.5">
+                            <p className="text-xs  mt-0.5">
                               Purpose: {record.note} • {createdDateStr}
                             </p>
                           </div>
@@ -297,17 +297,17 @@ export const LentAndBorrowed = () => {
                         {/* Amount & Status Badge */}
                         <div className="text-right space-y-1">
                           <div
-                            className={`text-base font-black ${record.status === "PAID" ? "text-gray-400" : record.status === "OVERDUE" ? "text-rose-600" : "text-emerald-700"}`}
+                            className={`text-base font-black ${record.status === "PAID" ? "" : record.status === "OVERDUE" ? "text-red-600" : "text-emerald-700"}`}
                           >
                             ৳{record.remainingBalance.toLocaleString()}
                           </div>
                           <span
                             className={`inline-block px-2.5 py-0.5 text-[10px] font-bold rounded-md uppercase tracking-wider ${
                               record.status === "PENDING"
-                                ? "bg-rose-100 text-rose-600"
+                                ? "bg-red-100 text-red-600"
                                 : record.status === "PAID"
                                   ? "bg-emerald-100 text-emerald-700"
-                                  : "bg-rose-100 text-rose-600"
+                                  : "bg-red-100 text-red-600"
                             }`}
                           >
                             {record.status}
@@ -318,7 +318,7 @@ export const LentAndBorrowed = () => {
                       {/* Overdue Warning or Normal Due Date Footer */}
                       {record.status === "OVERDUE" ? (
                         <div className="pt-2 border-t border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                          <div className="flex items-center gap-1.5 text-xs font-bold text-rose-600">
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-red-600">
                             <AlertTriangle className="w-4 h-4" />
                             <span>
                               Was due: {dueDateStr} ({record.lateDays} Days
@@ -326,17 +326,17 @@ export const LentAndBorrowed = () => {
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <button className="px-4 py-2 border border-rose-200 text-rose-600 font-bold rounded-xl text-xs hover:bg-rose-50 transition">
+                            <button className="px-4 py-2 border border-red-200 text-red-600 font-bold rounded-xl text-xs hover:bg-red-50 transition">
                               Send Reminder
                             </button>
-                            <button className="px-4 py-2 bg-[#005A36] text-white font-bold rounded-xl text-xs hover:bg-[#00472B] transition">
+                            <button className="px-4 py-2 bg-primary text-white font-bold rounded-xl text-xs hover:bg-[#00472B] transition">
                               Mark as Paid
                             </button>
                           </div>
                         </div>
                       ) : record.status === "PENDING" ? (
                         <div className="pt-2 border-t border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                          <div className="flex items-center gap-1.5 text-xs font-bold text-rose-500">
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-red-500">
                             <Calendar className="w-4 h-4" />
                             <span>Due: {dueDateStr}</span>
                           </div>
@@ -350,7 +350,7 @@ export const LentAndBorrowed = () => {
                             <button className="px-4 py-2 border border-gray-200 text-gray-700 font-bold rounded-xl text-xs hover:bg-gray-50 transition">
                               Edit
                             </button>
-                            <button className="px-4 py-2 bg-[#005A36] text-white font-bold rounded-xl text-xs hover:bg-[#00472B] transition">
+                            <button className="px-4 py-2 bg-primary text-white font-bold rounded-xl text-xs hover:bg-[#00472B] transition">
                               Mark as Paid
                             </button>
                           </div>
@@ -366,7 +366,7 @@ export const LentAndBorrowed = () => {
                   );
                 })
               ) : (
-                <div className="bg-white p-8 rounded-2xl text-center text-gray-400 font-medium">
+                <div className="bg-white p-8 rounded-2xl text-center  font-medium">
                   No records found for {activeTab.toLowerCase()}.
                 </div>
               )}
@@ -378,7 +378,7 @@ export const LentAndBorrowed = () => {
                 onClick={() =>
                   document.getElementById("my_modal_5").showModal()
                 }
-                className="flex items-center gap-2 bg-[#005A36] text-white px-5 py-3 rounded-2xl font-bold text-xs hover:bg-[#00472B] transition shadow-md"
+                className="flex items-center gap-2 bg-primary text-white px-5 py-3 rounded-2xl font-bold text-xs hover:bg-[#00472B] transition shadow-md"
               >
                 <Plus className="w-4 h-4" />
                 Add Record
@@ -403,10 +403,10 @@ export const LentAndBorrowed = () => {
             className="space-y-6"
           >
             {/* Chart: Lent vs Borrowed Stacked Bar */}
-            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+            <div className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold  text-sm">Lent vs Borrowed</h3>
-                <button className="text-gray-400 hover:text-gray-600">
+                <button className=" hover:text-gray-600">
                   <MoreHorizontal className="w-4 h-4" />
                 </button>
               </div>
@@ -443,7 +443,7 @@ export const LentAndBorrowed = () => {
               {/* Legend */}
               <div className="flex items-center justify-center gap-6 text-xs font-semibold">
                 <div className="flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#005A36]" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-primary" />
                   <span className="text-gray-600">Lent</span>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -454,7 +454,7 @@ export const LentAndBorrowed = () => {
             </div>
 
             {/* Upcoming Reminders Card */}
-            <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm space-y-4">
+            <div className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm space-y-4">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold  text-sm">Upcoming Reminders</h3>
                 <button className="text-xs font-bold text-emerald-700 hover:underline">
@@ -464,16 +464,16 @@ export const LentAndBorrowed = () => {
 
               <div className="space-y-3">
                 {/* Reminder 1 */}
-                <div className="p-3 bg-gray-50 rounded-xl border-l-4 border-rose-500 flex items-center justify-between">
+                <div className="p-3 bg-gray-50 rounded-xl border-l-4 border-red-500 flex items-center justify-between">
                   <div>
                     <h5 className="font-bold text-xs ">Rahim Ahmed</h5>
-                    <p className="text-[10px] font-semibold text-rose-500 mt-0.5">
+                    <p className="text-[10px] font-semibold text-red-500 mt-0.5">
                       Due in 3 days
                     </p>
                   </div>
                   <div className="text-right">
                     <div className="font-black text-xs ">৳5,000</div>
-                    <span className="px-1.5 py-0.5 bg-rose-100 text-rose-600 text-[9px] font-bold rounded">
+                    <span className="px-1.5 py-0.5 bg-red-100 text-red-600 text-[9px] font-bold rounded">
                       URGENT
                     </span>
                   </div>
@@ -498,14 +498,14 @@ export const LentAndBorrowed = () => {
             </div>
 
             {/* Promotional Banner */}
-            {/* <div className="bg-[#005A36] p-5 rounded-2xl text-white space-y-4 relative overflow-hidden">
+            {/* <div className="bg-primary p-5 rounded-2xl text-white space-y-4 relative overflow-hidden">
               <div className="space-y-1 z-10 relative">
                 <h4 className="font-bold text-sm">Improve Recovery?</h4>
                 <p className="text-xs text-emerald-100 leading-relaxed">
                   Send automatic SMS reminders to your borrowers directly from the app.
                 </p>
               </div>
-              <button className="w-full py-2.5 bg-white text-[#005A36] font-bold rounded-xl text-xs hover:bg-emerald-50 transition z-10 relative">
+              <button className="w-full py-2.5 bg-white text-primary font-bold rounded-xl text-xs hover:bg-emerald-50 transition z-10 relative">
                 Enable Notifications
               </button>
             </div> */}

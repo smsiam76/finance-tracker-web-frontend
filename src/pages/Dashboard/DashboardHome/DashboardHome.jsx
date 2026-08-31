@@ -17,8 +17,8 @@ import { BanknoteArrowDown, BanknoteArrowUp } from "lucide-react";
 const DashboardHome = () => {
   const quickActions = [
     {
-      title: "Create Book",
-      route: "/dashboard/create-book",
+      title: "My Books",
+      route: "/dashboard/my-books",
       icon: <FaBook />,
     },
     {

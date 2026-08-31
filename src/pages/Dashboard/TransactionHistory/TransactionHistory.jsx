@@ -202,7 +202,7 @@ export const TransactionHistory = () => {
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.15, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm flex items-start justify-between"
+            className="bg-white p-5 rounded-2xl border border-base-100 shadow-lg flex items-start justify-between"
           >
             <div className="space-y-2">
               <div className="w-9 h-9 bg-emerald-50 rounded-xl flex items-center justify-center text-emerald-600">
@@ -226,7 +226,7 @@ export const TransactionHistory = () => {
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.18, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm flex items-start justify-between"
+            className="bg-white p-5 rounded-2xl border border-base-100 shadow-lg flex items-start justify-between"
           >
             <div className="space-y-2">
               <div className="w-9 h-9 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
@@ -250,7 +250,7 @@ export const TransactionHistory = () => {
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.21, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-5 rounded-2xl border border-base-100 shadow-sm flex items-start justify-between"
+            className="bg-white p-5 rounded-2xl border border-base-100 shadow-lg flex items-start justify-between"
           >
             <div className="space-y-2">
               <div className="w-9 h-9 bg-red-50 rounded-xl flex items-center justify-center text-red-500">
@@ -274,7 +274,7 @@ export const TransactionHistory = () => {
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.24, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-primary p-5 rounded-2xl shadow-sm text-white flex items-start justify-between relative overflow-hidden"
+            className="bg-primary p-5 rounded-2xl shadow-lg text-white flex items-start justify-between relative overflow-hidden"
           >
             <div className="space-y-2 z-10">
               <div className="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center text-white backdrop-blur-sm">
@@ -298,7 +298,7 @@ export const TransactionHistory = () => {
             whileInView={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.27, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            className="bg-white p-4 rounded-2xl border border-base-100 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4"
+            className="bg-white p-4 rounded-2xl border border-base-100 shadow-lg flex flex-col lg:flex-row lg:items-center justify-between gap-4"
           >
             {/* Search Input */}
             <div className="relative flex-1">
@@ -412,7 +412,7 @@ export const TransactionHistory = () => {
           whileInView={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.30, ease: "easeInOut" }}
           viewport={{ once: true, amount: 0.1 }}
-          className="bg-white rounded-2xl border border-base-100 shadow-sm overflow-hidden"
+          className="bg-white rounded-2xl border border-base-100 shadow-2xl overflow-hidden"
         >
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
