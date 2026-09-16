@@ -15,105 +15,60 @@ const BooksCard = ({ book, renderIcon, formatCurrency }) => {
       <div>
         {/* Book Header Icon */}
         <div
-          className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 ${book.icon === "shield" ? "bg-red-50" : "bg-primary/20"}`}
+          className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
+          style={{
+            backgroundColor: book?.themeColor
+              ? `${book.themeColor}20` // Dynamic Hex Color with Transparency
+              : "rgba(0, 104, 74, 0.1)",
+          }}
         >
-          {renderIcon(book.icon)}
+          {renderIcon(book?.icon)}
         </div>
 
-        {/* Book Title & Description */}
-        <h3 className="text-xl font-bold">{book.title}</h3>
-        <p className="text-sm mb-4">{book.description}</p>
+        {/* Book Name & Description */}
+        <h3 className="text-xl font-bold text-gray-900">{book.bookName}</h3>
+        <p className="text-sm text-gray-500 mb-4 line-clamp-2">
+          {book.description || "No description provided."}
+        </p>
 
         {/* Card Inner Content Box */}
-        <div className="bg-primary/5  p-6 lg:p-8 rounded-xl space-y-3">
-          {/* Standard Income/Expense Ledger */}
-          {book.type === "STANDARD" && (
-            <>
-              <div className="flex flex-wrap justify-between items-center font-medium">
-                <span className="font-bold">Balance</span>
-                <span className="lg:text-lg font-bold">
-                  {formatCurrency(book.currentBalance)}
-                </span>
-              </div>
-              <span className="divider"></span>
-              <div className="flex flex-wrap justify-between items-center pt-1">
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider font-bold">
-                    Income
-                  </p>
-                  <p className="text-sm font-bold text-primary">
-                    {formatCurrency(book.totalIncome)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-[10px] uppercase tracking-wider font-bold">
-                    Expense
-                  </p>
-                  <p className="text-sm font-bold text-red-500">
-                    {formatCurrency(book.totalExpense)}
-                  </p>
-                </div>
-              </div>
-            </>
-          )}
+        <div className="bg-primary/5 p-5 lg:p-6 rounded-xl space-y-3">
+          {/* Current Balance */}
+          <div className="flex flex-wrap justify-between items-center font-medium">
+            <span className="font-bold text-gray-700">Balance</span>
+            <span className="lg:text-lg font-bold text-gray-900">
+              {formatCurrency(book.currentBalance)}
+            </span>
+          </div>
 
-          {/* Savings Card Type */}
-          {book.type === "SAVINGS" && (
-            <div className="py-2">
-              <div className="flex flex-wrap justify-between items-center font-medium mb-2">
-                <span className="font-bold">Balance</span>
-                <span className="lg:text-lg font-bold text-primary">
-                  {formatCurrency(book.currentBalance)}
-                </span>
-              </div>
-              <p className="text-[11px] flex items-center gap-1">
-                <span className="inline-block w-3 h-3 rounded-full border  text-center text-[8px] leading-3">
-                  i
-                </span>
-                {book.note}
+          <div className="border-t border-gray-200/60 my-2"></div>
+
+          {/* Income & Expense Breakdown */}
+          <div className="flex flex-wrap justify-between items-center pt-1">
+            <div>
+              <p className="text-[10px] uppercase tracking-wider font-bold text-gray-500">
+                Income
+              </p>
+              <p className="text-sm font-bold text-emerald-600">
+                {formatCurrency(book.totalIncome)}
               </p>
             </div>
-          )}
-
-          {/* Target Progress Card Type */}
-          {book.type === "TARGET_PROGRESS" && (
-            <div className="py-1">
-              <div className="flex flex-wrap justify-between items-center font-medium mb-2">
-                <span className="font-bold">Balance</span>
-                <span className="lg:text-lg font-bold">
-                  {formatCurrency(book.currentBalance)}
-                </span>
-              </div>
-              <div className="w-full bg-gray-300 h-2 rounded-full overflow-hidden my-2">
-                <div className="bg-red-700 h-full rounded-full w-[40%]" />
-              </div>
-              <p className="text-right text-[11px] font-bold text-red-700">
-                {book.progressPercent}% of target
+            <div className="text-right">
+              <p className="text-[10px] uppercase tracking-wider font-bold text-gray-500">
+                Expense
+              </p>
+              <p className="text-sm font-bold text-red-500">
+                {formatCurrency(book.totalExpense)}
               </p>
             </div>
-          )}
-
-          {/* Target Remaining Card Type */}
-          {book.type === "TARGET_REMAINING" && (
-            <div className="py-1 space-y-1">
-              <div className="flex flex-wrap justify-between items-center font-medium">
-                <span className="font-bold">Saved</span>
-                <span className="lg:text-lg font-bold ">
-                  {formatCurrency(book.currentBalance)}
-                </span>
-              </div>
-              <p className="text-[11px] text-gray-400">
-                {formatCurrency(book.targetRemaining)} to go
-              </p>
-            </div>
-          )}
+          </div>
         </div>
       </div>
 
       {/* View Details Button */}
       <Link
         to={`/dashboard/my-books/book-details/${book._id}`}
-        state={{ bookTitle: book.title }}
+        state={{ bookTitle: book.bookName }}
         className="w-full py-2.5 px-4 rounded-xl bg-primary/10 border border-primary/10 hover:bg-primary hover:border-primary/50 text-primary hover:text-white text-sm font-semibold flex items-center justify-center gap-2 transition-all duration-300 ease-linear cursor-pointer"
       >
         View Details <FiArrowRight />

@@ -1,15 +1,27 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import Logo from "../../../component/Logo/Logo";
 import { motion } from "framer-motion";
 
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import DemoLogin from "../../../component/Shared/DemoLogin/DemoLogin";
 import SocialLogin from "../../../component/Shared/SocialLogin/SocialLogin";
+import useAuth from "../../../hooks/useAuth";
+import toast from "react-hot-toast";
+import { Helmet } from "react-helmet-async";
 
 const SignIn = () => {
+  
   const [showPassword, setShowPassword] = useState(false);
+
+  const { signUser, loading, setLoading } = useAuth();
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get destination path or fallback to dashboard
+  const from = location.state?.from?.pathname || "/dashboard";
 
   const {
     register,
@@ -17,15 +29,29 @@ const SignIn = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = async (data) => {
+    console.log(data);
+
+    const { email, password } = data;
+
+    try {
+      await signUser(email, password);
+      toast.success("Successfully logged in!");
+      navigate(from, { replace: true });
+    } catch (error) {
+      setLoading(false);
+      console.log(error.message);
+      toast.error(error.message || "Invalid email or password!");
+    }
+  };
 
   return (
-    <motion.div
-      // initial={{ opacity: 0.1 }}
-      // animate={{ opacity: 1 }}
-      // transition={{ duration: 1, ease: easeInOut }}
-      className="min-h-screen flex flex-col items-center justify-center p-4"
-    >
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      {/* dynamic page title */}
+      <Helmet>
+        <title>Sign In | FinanceTracker</title>
+      </Helmet>
+      
       {/* Brand Header */}
       <motion.div
         initial={{ y: -100, opacity: 0.1 }}
@@ -135,7 +161,7 @@ const SignIn = () => {
               htmlFor="remember"
               className="text-xs font-medium text-gray-600 cursor-pointer"
             >
-              Remember me for 30 days
+              Remember me
             </label>
           </div>
 
@@ -144,7 +170,11 @@ const SignIn = () => {
             type="submit"
             className="w-full bg-primary cursor-pointer border text-white py-3 rounded-xl font-semibold text-sm hover:bg-white hover:border-primary hover:text-primary transition shadow-md shadow-emerald-100 flex items-center justify-center gap-2 mt-2"
           >
-            Login
+            {loading ? (
+              <span className="animate-pulse">Logging in...</span>
+            ) : (
+              "Login"
+            )}
           </button>
 
           {/* Divider */}
@@ -158,7 +188,7 @@ const SignIn = () => {
           </div>
 
           {/* Google Sign In */}
-          <SocialLogin/>
+          <SocialLogin />
           <DemoLogin />
         </form>
 
@@ -175,7 +205,7 @@ const SignIn = () => {
           </p>
         </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 };
 

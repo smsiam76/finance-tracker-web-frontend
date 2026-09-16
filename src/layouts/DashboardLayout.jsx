@@ -10,24 +10,39 @@ import {
   BanknoteArrowDown,
   BanknoteArrowUp,
   ChartNoAxesCombined,
+  CircleUserRound,
   RotateCcwClock,
   Settings,
   Tags,
   Vault,
   Wallet,
 } from "lucide-react";
+import useAuth from "../hooks/useAuth";
+import useSingleUser from "../hooks/useSingleuser";
+import Loader from "../component/Shared/Loader/Loader";
 
 const DashboardLayout = () => {
   const location = useLocation();
+  const {user} = useAuth();
 
-  const user = {
-    _id: "user1",
-    name: "Tanvir Ahmed",
-    email: "tanvir@gmail.com",
-    photoURL:
-      "https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D", // Sample avatar
-    role: "Member", // Or status/authProvider from schema
-  };
+  console.log(user?.email);
+  const {user:singleUser, isPending} = useSingleUser(user?.email);
+
+  console.log(singleUser?.name);
+  
+  
+  // if(isPending) {
+  //   return <Loader />
+  // }
+
+  // const user = {
+  //   _id: "user1",
+  //   name: "Tanvir Ahmed",
+  //   email: "tanvir@gmail.com",
+  //   photoURL:
+  //     "https://plus.unsplash.com/premium_photo-1689568126014-06fea9d5d341?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8cHJvZmlsZXxlbnwwfHwwfHx8MA%3D%3D", // Sample avatar
+  //   role: "Member", // Or status/authProvider from schema
+  // };
 
   // Determine header title based on current URL path
   const getHeaderTitle = () => {
@@ -65,7 +80,7 @@ const DashboardLayout = () => {
       //   return "Books Details";
       case "/dashboard":
       default:
-        return `Welcome Back, ${user?.name}`;
+        return `Welcome Back, ${user?.displayName}`;
     }
   };
 
@@ -207,20 +222,23 @@ const DashboardLayout = () => {
             <div className="flex items-center gap-3 cursor-pointer select-none">
               {/* Avatar with Emerald Border */}
               <div className="relative p-.5 bg-emerald-500 rounded-full flex items-center justify-center">
-                <img
-                  src={user?.photoURL}
-                  alt={user?.name || "User Avatar"}
+                {
+                  singleUser?.photoURL ? <img
+                  src={singleUser?.photoURL || <CircleUserRound />}
+                  alt={singleUser?.name || "User Avatar"}
                   className="w-10 h-10 rounded-full object-cover border border-white"
-                />
+                /> : <CircleUserRound className="w-10 h-10 rounded-full object-cover border bg-base-100 border-white"/>
+                }
+                
               </div>
 
               {/* User Name & Role */}
               <div className="flex flex-col">
                 <h4 className="text-sm font-semibold text-gray-900 leading-tight">
-                  {user?.name}
+                  {singleUser?.name}
                 </h4>
                 <span className="text-xs text-gray-500 font-normal">
-                  {user?.role || "Member"}
+                  {singleUser?.role || "Member"}
                 </span>
               </div>
             </div>

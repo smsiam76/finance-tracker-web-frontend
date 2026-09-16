@@ -4,147 +4,166 @@ import {
   FiFilter,
   FiTrendingUp,
   FiTrendingDown,
-  FiShoppingCart,
-  FiUsers,
-  FiBriefcase,
-  FiShield,
-  FiNavigation,
   FiPieChart,
+  FiBook
 } from "react-icons/fi";
 import { CiWallet } from "react-icons/ci";
 import { FaMoneyBills } from "react-icons/fa6";
-import { BsPiggyBank } from "react-icons/bs";
 import BooksCard from "../../../component/BooksCard/BooksCard";
 import { motion } from "framer-motion";
 import CreateBookModal from "../../../component/CreateBookModal/CreateBookModal";
+import useBooks from "../../../hooks/useBooks";
+import Loader from "../../../component/Shared/Loader/Loader";
+import { FaPiggyBank } from "react-icons/fa";
+import { IoAirplaneOutline, IoBagHandleOutline, IoCardOutline, IoHomeOutline, IoWalletOutline } from "react-icons/io5";
+import useAuth from "../../../hooks/useAuth";
 
 // Demo JSON Data structured matching your provided JSON schema
-const initialBooksData = [
-  {
-    _id: "book1",
-    userId: "user1",
-    title: "Daily Expenses",
-    description: "Personal household & food",
-    currentBalance: 12500,
-    totalIncome: 45000,
-    totalExpense: 32500,
-    status: "ACTIVE",
-    type: "STANDARD",
-    icon: "shopping-cart",
-    budgets: [{ categoryId: "cat1", monthlyLimit: 300 }],
-    createdAt: "2026-01-01T00:00:00Z",
-    updatedAt: "2026-08-05T10:00:00Z",
-  },
-  {
-    _id: "book2",
-    userId: "user1",
-    title: "Family Expenses",
-    description: "Shared costs for dependents",
-    currentBalance: 8200,
-    totalIncome: 20000,
-    totalExpense: 11800,
-    status: "ACTIVE",
-    type: "STANDARD",
-    icon: "users",
-    budgets: [{ categoryId: "cat2", monthlyLimit: 500 }],
-    createdAt: "2026-01-10T00:00:00Z",
-    updatedAt: "2026-08-05T10:00:00Z",
-  },
-  {
-    _id: "book3",
-    userId: "user1",
-    title: "Business",
-    description: "Consulting & freelancing ops",
-    currentBalance: 145000,
-    totalIncome: 320000,
-    totalExpense: 175000,
-    status: "ACTIVE",
-    type: "STANDARD",
-    icon: "briefcase",
-    budgets: [{ categoryId: "cat3", monthlyLimit: 2000 }],
-    createdAt: "2026-02-01T00:00:00Z",
-    updatedAt: "2026-08-05T10:00:00Z",
-  },
-  {
-    _id: "book4",
-    userId: "user1",
-    title: "Savings",
-    description: "Long-term wealth building",
-    currentBalance: 50000,
-    totalIncome: 50000,
-    totalExpense: 0,
-    status: "ACTIVE",
-    type: "SAVINGS",
-    note: "Compound interest enabled",
-    icon: "wallet",
-    budgets: [],
-    createdAt: "2026-01-01T00:00:00Z",
-    updatedAt: "2026-08-05T10:00:00Z",
-  },
-  {
-    _id: "book5",
-    userId: "user1",
-    title: "Emergency Fund",
-    description: "6 months of safety net",
-    currentBalance: 25000,
-    targetAmount: 62500,
-    totalIncome: 25000,
-    totalExpense: 0,
-    status: "ACTIVE",
-    type: "TARGET_PROGRESS",
-    progressPercent: 40,
-    icon: "shield",
-    budgets: [],
-    createdAt: "2026-03-01T00:00:00Z",
-    updatedAt: "2026-08-05T10:00:00Z",
-  },
-  {
-    _id: "book6",
-    userId: "user1",
-    title: "December Tour",
-    description: "Sajek Valley Trip 2024",
-    currentBalance: 5000,
-    targetRemaining: 15000,
-    totalIncome: 5000,
-    totalExpense: 0,
-    status: "ACTIVE",
-    type: "TARGET_REMAINING",
-    icon: "navigation",
-    budgets: [],
-    createdAt: "2026-04-15T00:00:00Z",
-    updatedAt: "2026-08-05T10:00:00Z",
-  },
-];
+// const initialBooksData = [
+//   {
+//     _id: "book1",
+//     userId: "user1",
+//     title: "Daily Expenses",
+//     description: "Personal household & food",
+//     currentBalance: 12500,
+//     totalIncome: 45000,
+//     totalExpense: 32500,
+//     status: "ACTIVE",
+//     type: "STANDARD",
+//     icon: "shopping-cart",
+//     budgets: [{ categoryId: "cat1", monthlyLimit: 300 }],
+//     createdAt: "2026-01-01T00:00:00Z",
+//     updatedAt: "2026-08-05T10:00:00Z",
+//   },
+//   {
+//     _id: "book2",
+//     userId: "user1",
+//     title: "Family Expenses",
+//     description: "Shared costs for dependents",
+//     currentBalance: 8200,
+//     totalIncome: 20000,
+//     totalExpense: 11800,
+//     status: "ACTIVE",
+//     type: "STANDARD",
+//     icon: "users",
+//     budgets: [{ categoryId: "cat2", monthlyLimit: 500 }],
+//     createdAt: "2026-01-10T00:00:00Z",
+//     updatedAt: "2026-08-05T10:00:00Z",
+//   },
+//   {
+//     _id: "book3",
+//     userId: "user1",
+//     title: "Business",
+//     description: "Consulting & freelancing ops",
+//     currentBalance: 145000,
+//     totalIncome: 320000,
+//     totalExpense: 175000,
+//     status: "ACTIVE",
+//     type: "STANDARD",
+//     icon: "briefcase",
+//     budgets: [{ categoryId: "cat3", monthlyLimit: 2000 }],
+//     createdAt: "2026-02-01T00:00:00Z",
+//     updatedAt: "2026-08-05T10:00:00Z",
+//   },
+//   {
+//     _id: "book4",
+//     userId: "user1",
+//     title: "Savings",
+//     description: "Long-term wealth building",
+//     currentBalance: 50000,
+//     totalIncome: 50000,
+//     totalExpense: 0,
+//     status: "ACTIVE",
+//     type: "SAVINGS",
+//     note: "Compound interest enabled",
+//     icon: "wallet",
+//     budgets: [],
+//     createdAt: "2026-01-01T00:00:00Z",
+//     updatedAt: "2026-08-05T10:00:00Z",
+//   },
+//   {
+//     _id: "book5",
+//     userId: "user1",
+//     title: "Emergency Fund",
+//     description: "6 months of safety net",
+//     currentBalance: 25000,
+//     targetAmount: 62500,
+//     totalIncome: 25000,
+//     totalExpense: 0,
+//     status: "ACTIVE",
+//     type: "TARGET_PROGRESS",
+//     progressPercent: 40,
+//     icon: "shield",
+//     budgets: [],
+//     createdAt: "2026-03-01T00:00:00Z",
+//     updatedAt: "2026-08-05T10:00:00Z",
+//   },
+//   {
+//     _id: "book6",
+//     userId: "user1",
+//     title: "December Tour",
+//     description: "Sajek Valley Trip 2024",
+//     currentBalance: 5000,
+//     targetRemaining: 15000,
+//     totalIncome: 5000,
+//     totalExpense: 0,
+//     status: "ACTIVE",
+//     type: "TARGET_REMAINING",
+//     icon: "navigation",
+//     budgets: [],
+//     createdAt: "2026-04-15T00:00:00Z",
+//     updatedAt: "2026-08-05T10:00:00Z",
+//   },
+// ];
 
 const MyBooks = () => {
+  const {user} = useAuth();
   const navigate = useNavigate();
+
+  // get books data through useBooks
+  const { books = [], isLoading } = useBooks(user?.email);
+
+  // Dynamic calculations based on fetched books
+  const totalNetWorth = books.reduce(
+    (acc, curr) => acc + (curr.currentBalance || 0),
+    0,
+  );
+  const totalExpense = books.reduce(
+    (acc, curr) => acc + (curr.totalExpense || 0),
+    0,
+  );
+
+  console.log("books from usebooks ", books);
 
   // Utility formatter for BDT Currency
   const formatCurrency = (amount) => {
     return `৳${amount.toLocaleString("en-IN")}`;
   };
 
-  // Icon selector helper
-  const renderIcon = (iconName) => {
-    const className = "text-emerald-800 text-xl";
-    switch (iconName) {
-      case "shopping-cart":
-        return <FiShoppingCart className={className} />;
-      case "users":
-        return <FiUsers className={className} />;
-      case "briefcase":
-        return <FiBriefcase className={className} />;
-      case "wallet":
-        return <CiWallet className={className} />;
-      case "shield":
-        return <FiShield className="text-red-700 text-xl" />;
-      case "navigation":
-        return <FiNavigation className={className} />;
-      default:
-        return <FiPieChart className={className} />;
-    }
-  };
-
+  const renderIcon = (iconName, color = "#006A4E") => {
+  const iconStyle = { color: color };
+  
+  switch (iconName?.toLowerCase()) {
+    case "wallet":
+      return <IoWalletOutline className="w-6 h-6" style={iconStyle} />;
+    case "card":
+      return <IoCardOutline className="w-6 h-6" style={iconStyle} />;
+    case "piggy":
+      return <FaPiggyBank className="w-5 h-5" style={iconStyle} />;
+    case "plane":
+      return <IoAirplaneOutline className="w-6 h-6" style={iconStyle} />;
+    case "home":
+      return <IoHomeOutline className="w-6 h-6" style={iconStyle} />;
+    case "bag":
+      return <IoBagHandleOutline className="w-6 h-6" style={iconStyle} />;
+    default:
+      return <FiPieChart className="w-6 h-6" style={iconStyle} />;
+  }
+};
+  // loading states
+  if (isLoading) {
+    return <Loader />;
+  }
   return (
     <div className="pt-6 pb-12">
       <div className="space-y-6">
@@ -197,10 +216,10 @@ const MyBooks = () => {
               Worth
             </div>
             <div className="text-2xl md:text-xl lg:text-3xl font-bold text-gray-900 tracking-tight">
-              {formatCurrency(245700)}
+              {formatCurrency(totalNetWorth)}
             </div>
             <div className="flex items-center gap-1 text-xs font-semibold text-emerald-600 mt-2">
-              <FiTrendingUp /> +12.5% this month
+              <FiTrendingUp /> Active Total
             </div>
           </motion.div>
 
@@ -217,14 +236,14 @@ const MyBooks = () => {
               Expenses
             </div>
             <div className="text-2xl md:text-xl lg:text-3xl font-bold text-gray-900 tracking-tight">
-              {formatCurrency(219300)}
+              {formatCurrency(totalExpense)}
             </div>
             <div className="flex items-center gap-1 text-xs font-semibold text-red-500 mt-2">
-              <FiTrendingDown /> ~4.2% from budget
+              <FiTrendingDown /> Accross all books
             </div>
           </motion.div>
 
-          {/* Savings Goal Progress */}
+          {/* Total Books */}
           <motion.div
             initial={{ x: -20, opacity: 0 }}
             whileInView={{ x: 0, opacity: 1 }}
@@ -233,31 +252,42 @@ const MyBooks = () => {
             className="bg-white p-5 rounded-2xl shadow-lg border border-primary/20 flex flex-col justify-between"
           >
             <div>
-              <div className="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase mb-2">
-                <BsPiggyBank className="text-emerald-700 text-base" /> Savings
-                Goal Progress
+              <div className="flex items-center gap-2 text-xs font-semibold tracking-wider uppercase mb-2 text-gray-600">
+                <FiBook className="text-emerald-700 text-base" /> Total Books
               </div>
               <div className="text-2xl md:text-xl lg:text-3xl font-bold text-gray-900 tracking-tight">
-                82%
+                {books?.length || 0}
               </div>
             </div>
-            <div className="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden mt-3">
-              <div className="bg-[#00684a] h-full rounded-full w-[82%]" />
+            <div className="flex items-center justify-between text-xs font-semibold text-emerald-600 mt-3">
+              <span>Active Accounts</span>
+              <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md font-bold">
+                {books?.length || 0} Active
+              </span>
             </div>
           </motion.div>
         </div>
 
-        {/* --- Ledgers / Books Grid --- */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
-          {initialBooksData.map((book) => (
-            <BooksCard
-              book={book}
-              formatCurrency={formatCurrency}
-              renderIcon={renderIcon}
-              navigate={navigate}
-            />
-          ))}
-        </div>
+        {/* Ledgers Grid / Empty State */}
+        {books.length === 0 ? (
+          <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
+            <p className="text-gray-500 font-medium">
+              No books found. Create one to get started!
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-10">
+            {books.map((book) => (
+              <BooksCard
+                key={book._id}
+                book={book}
+                formatCurrency={formatCurrency}
+                renderIcon={renderIcon}
+                navigate={navigate}
+              />
+            ))}
+          </div>
+        )}
 
         {/* --- Bottom Call-to-Action Section --- */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-2">
