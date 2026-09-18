@@ -1,15 +1,18 @@
+
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
-// ১. ডেমো ডাটা (আপনার JSON structure অনুযায়ী)
-// বাস্তব অ্যাপে এটি API থেকে আসবে বা প্রপস হিসেবে আসবে।
-const expenseData = [
-  { _id: "cat1", name: "Education", amount: 15000, color: "#059669" }, // Emerald 600
-  { _id: "cat2", name: "Shopping", amount: 5000, color: "#047857" }, // Emerald 700
-  { _id: "cat3", name: "Food", amount: 10000, color: "#334155" }, // Slate 700 (ডার্ক কালার)
-  { _id: "cat4", name: "Others", amount: 4000, color: "#CBD5E1" }, // Slate 300 (হালকা কালার)
+// Default Color Palette (Fallback if API doesn't provide a color)
+const DEFAULT_COLORS = [
+  "#059669", // Emerald 600
+  "#047857", // Emerald 700
+  "#334155", // Slate 700
+  "#CBD5E1", // Slate 300
+  "#F59E0B", // Amber 500
+  "#EF4444", // Red 500
+  "#8B5CF6", // Purple 500
 ];
 
-// ২. কাস্টম টুলটিপ কম্পোনেন্ট (হোভার করলে যা দেখাবে)
+// 1. Custom Tooltip Component (Triggers on hover)
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const { name, amount, color } = payload[0].payload;
@@ -22,23 +25,24 @@ const CustomTooltip = ({ active, payload }) => {
           ></span>
           <span className="font-semibold">{name}</span>
         </div>
-        <p className="text-gray-200">৳{amount.toLocaleString("en-IN")}</p>
+        <p className="text-gray-200">৳{Number(amount).toLocaleString("en-BD")}</p>
       </div>
     );
   }
   return null;
 };
 
-// ৩. কাস্টম লেজেন্ড কম্পোনেন্ট (নিচের তালিকা)
+// 2. Custom Legend Component (List rendered below the chart)
 const CustomLegend = ({ data }) => {
+  console.log(data);
   return (
     <div className="mt-8 space-y-3 px-2">
       {data.map((entry) => (
         <div
-          key={entry._id}
+          key={entry._id || entry.name}
           className="flex items-center justify-between gap-4 text-sm"
         >
-          {/* নাম এবং কালার ডট */}
+          {/* Category name and color indicator */}
           <div className="flex items-center gap-3">
             <span
               className="w-2.5 h-2.5 rounded-full flex-shrink-0"
@@ -49,9 +53,12 @@ const CustomLegend = ({ data }) => {
             </span>
           </div>
 
-          {/* পরিমাণ (৳ এবং 'k' ফরম্যাট) */}
+          {/* Amount formatting (e.g., ৳1k or exact amount) */}
           <div className="text-gray-900 font-semibold tabular-nums text-right whitespace-nowrap">
-            ৳{(entry.amount / 1000).toFixed(0)}k
+            ৳
+            {entry.amount >= 1000
+              ? `${(entry.amount / 1000).toFixed(1).replace(/\.0$/, "")}k`
+              : entry.amount.toLocaleString("en-BD")}
           </div>
         </div>
       ))}
@@ -59,11 +66,27 @@ const CustomLegend = ({ data }) => {
   );
 };
 
-const ExpenseByCategoryChart = () => {
+// 3. Main Chart Component (Receives chartData as a prop)
+const ExpenseByCategoryChart = ({ chartData = [] }) => {
+  // Empty state handling if no expense data is available
+  if (!chartData || chartData.length === 0) {
+    return (
+      <div className="h-60 flex flex-col items-center justify-center text-gray-400 bg-gray-50 rounded-lg border border-dashed border-gray-200">
+        <p className="text-sm font-medium">No expense data available</p>
+      </div>
+    );
+  }
+
+  // Merge API data with default colors and format amount values
+  const formattedData = chartData.map((item, index) => ({
+    ...item,
+    amount: Number(item.amount || item.totalAmount || 0),
+    color: item.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length],
+  }));
+
   return (
-    // মূল কার্ড কন্টেইনার (Tailwind styling)
-    <div className="">
-      {/* চার্ট এরিয়া */}
+    <div>
+      {/* Chart Canvas Area */}
       <div className="h-60 w-full relative">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
@@ -72,25 +95,24 @@ const ExpenseByCategoryChart = () => {
               cursor={{ fill: "transparent" }}
             />
             <Pie
-              data={expenseData}
+              data={formattedData}
               dataKey="amount"
               nameKey="name"
-              cx="50%" // কেন্দ্র X
-              cy="50%" // কেন্দ্র Y
-              innerRadius="65%" // ডোনাট গর্তের সাইজ
-              outerRadius="95%" // বাইরের সাইজ
-              paddingAngle={0} // স্লাইসগুলোর মাঝে গ্যাপ (ডিজাইনে নেই)
-              startAngle={90} // চার্ট কোথা থেকে শুরু হবে
+              cx="50%"
+              cy="50%"
+              innerRadius="65%"
+              outerRadius="95%"
+              paddingAngle={0}
+              startAngle={90}
               endAngle={450}
-              cornerRadius={0} // কোণা রাউন্ডেড (ডিজাইনে নেই)
-              stroke="none" // স্লাইসের বর্ডার রিমুভ
+              cornerRadius={0}
+              stroke="none"
             >
-              {/* প্রতিটি স্লাইসের কালার সেট করা */}
-              {expenseData.map((entry, index) => (
+              {formattedData.map((entry, index) => (
                 <Cell
-                  key={`cell-${index}`}
+                  key={`cell-${entry._id || index}`}
                   fill={entry.color}
-                  className="focus:outline-none" // ক্লিক করলে বর্ডার রিমুভ
+                  className="focus:outline-none"
                 />
               ))}
             </Pie>
@@ -98,8 +120,8 @@ const ExpenseByCategoryChart = () => {
         </ResponsiveContainer>
       </div>
 
-      {/* কাস্টম লেজেন্ড (তালিকা) */}
-      <CustomLegend data={expenseData} />
+      {/* Render Custom Legend below */}
+      <CustomLegend data={formattedData} />
     </div>
   );
 };

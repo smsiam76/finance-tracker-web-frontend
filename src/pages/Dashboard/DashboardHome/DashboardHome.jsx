@@ -1,9 +1,6 @@
 import { BsPiggyBank } from "react-icons/bs";
 import { motion } from "framer-motion";
-import {
-  FaExchangeAlt,
-  FaPlus,
-} from "react-icons/fa";
+import { FaExchangeAlt, FaPlus } from "react-icons/fa";
 import { FaBook } from "react-icons/fa6";
 import { GiTakeMyMoney } from "react-icons/gi";
 import { IoMdTrendingDown, IoMdTrendingUp } from "react-icons/io";
@@ -11,8 +8,28 @@ import { Link } from "react-router";
 import ExpenseByCategoryChart from "../../../component/ExpenseByCategoryChart/ExpenseByCategoryChart";
 import RecentTransactions from "../../../component/RecentTransatcions/RecentTransactions";
 import { BanknoteArrowDown, BanknoteArrowUp } from "lucide-react";
+import useAuth from "../../../hooks/useAuth";
+import useDashboardSummary from "../../../hooks/useDashboardSummary";
+import useTransactions from "../../../hooks/useTransactions";
+import Loader from "../../../component/Shared/Loader/Loader";
 
 const DashboardHome = () => {
+  const { user } = useAuth();
+  const email = user?.email;
+
+  // fetch data using hooks
+  const {
+    summaryData,
+    budgetOverview,
+    // lendingSummary,
+    isLoading: isDashboardLoading,
+  } = useDashboardSummary(email);
+  
+  const { transactions, isLoading: isTransactionsLoading } =
+    useTransactions(email);
+
+    console.log(summaryData);
+
   const quickActions = [
     {
       title: "My Books",
@@ -41,20 +58,36 @@ const DashboardHome = () => {
     },
   ];
 
-  const budgetItems = [
-    {
-      id: 1,
-      name: "Groceries",
-      spent: 4500,
-      total: 6000,
-    },
-    {
-      id: 2,
-      name: "Electricity Bill",
-      spent: 3200,
-      total: 3000,
-    },
-  ];
+  // Global Loading State
+  if (isDashboardLoading || isTransactionsLoading) {
+    return <Loader />;
+  }
+
+  const metrics = summaryData?.metrics || {
+    totalNetBalance: 0,
+    totalBudgeted: 0,
+    totalExpense: 0,
+    netSavings: 0,
+  };
+
+  const categoryExpenses = summaryData?.categoryExpenses || [];
+
+  console.log(metrics, categoryExpenses);
+
+  // const budgetItems = [
+  //   {
+  //     id: 1,
+  //     name: "Groceries",
+  //     spent: 4500,
+  //     total: 6000,
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Electricity Bill",
+  //     spent: 3200,
+  //     total: 3000,
+  //   },
+  // ];
 
   const lendingData = {
     lent: 4500,
@@ -86,7 +119,9 @@ const DashboardHome = () => {
               <GiTakeMyMoney className="text-3xl" />
             </div>
           </div>
-          <h3 className="text-xl md:text-3xl font-bold ml-2 pb-4">৳ 65,200</h3>
+          <h3 className="text-xl md:text-3xl font-bold ml-2 pb-4">
+            ৳ {metrics?.totalNetBalance.toLocaleString()}
+          </h3>
         </motion.div>
 
         <motion.div
@@ -102,7 +137,9 @@ const DashboardHome = () => {
               <IoMdTrendingUp className="text-2xl" />
             </div>
           </div>
-          <h3 className="text-xl md:text-3xl pb-4 font-bold ml-2">৳ 50,200</h3>
+          <h3 className="text-xl md:text-3xl pb-4 font-bold ml-2">
+            ৳ {metrics.totalBudgeted.toLocaleString()}
+          </h3>
         </motion.div>
 
         <motion.div
@@ -118,7 +155,9 @@ const DashboardHome = () => {
               <IoMdTrendingDown className="text-2xl text-red-500" />
             </div>
           </div>
-          <h3 className="text-xl md:text-3xl pb-4 font-bold ml-2">৳ 32,400</h3>
+          <h3 className="text-xl md:text-3xl pb-4 font-bold ml-2">
+            ৳ {metrics.totalExpense.toLocaleString()}
+          </h3>
         </motion.div>
 
         <motion.div
@@ -134,7 +173,9 @@ const DashboardHome = () => {
               <BsPiggyBank className="text-2xl" />
             </div>
           </div>
-          <h3 className="text-xl md:text-3xl pb-4 font-bold ml-2">৳ 17,800</h3>
+          <h3 className="text-xl md:text-3xl pb-4 font-bold ml-2">
+            {metrics.netSavings.toLocaleString()}
+          </h3>
         </motion.div>
       </div>
 
@@ -143,7 +184,6 @@ const DashboardHome = () => {
       ------------------------------ */}
       <div className="mb-12">
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-
           {/* Quick Actions */}
           <motion.div
             initial={{ x: -20, opacity: 0 }}
@@ -191,7 +231,7 @@ const DashboardHome = () => {
             className="w-full lg:w-1/3 p-6 md:p-10 bg-white shadow-xl rounded-xl"
           >
             <h3 className="text-2xl font-bold mb-6">Expense by Category</h3>
-            <ExpenseByCategoryChart />
+            <ExpenseByCategoryChart chartData={categoryExpenses} />
           </motion.div>
         </div>
       </div>
@@ -219,7 +259,7 @@ const DashboardHome = () => {
           </div>
           <div className="divider my-4"></div>
           <div className="px-4 md:px-10">
-            <RecentTransactions />
+            <RecentTransactions transactions={transactions.slice(0, 5)} />
           </div>
         </motion.div>
 
@@ -232,7 +272,7 @@ const DashboardHome = () => {
           className="w-full lg:w-2/5 flex flex-col gap-6"
         >
           {/* Budget Overview */}
-          <div className="bg-white rounded-xl p-6 md:p-8 border border-gray-200 shadow-md">
+          {/* <div className="bg-white rounded-xl p-6 md:p-8 border border-gray-200 shadow-md">
             <h2 className="text-lg font-bold mb-4">Budget Overview</h2>
             <div className="space-y-5">
               {budgetItems.map((item) => {
@@ -258,6 +298,44 @@ const DashboardHome = () => {
                   </div>
                 );
               })}
+            </div>
+          </div> */}
+          <div className="bg-white rounded-xl p-6 md:p-8 border border-gray-200 shadow-md">
+            <h2 className="text-lg font-bold mb-4">Budget Overview</h2>
+            <div className="space-y-5">
+              {budgetOverview.length === 0 ? (
+                <p className="text-gray-500 text-sm">
+                  No budget set for this month.
+                </p>
+              ) : (
+                budgetOverview.map((item) => {
+                  const isOverBudget = item.spent > item.total;
+                  const percentage =
+                    item.total > 0
+                      ? Math.min((item.spent / item.total) * 100, 100)
+                      : 0;
+
+                  return (
+                    <div key={item._id || item.id} className="space-y-2">
+                      <div className="flex justify-between items-center text-sm font-semibold">
+                        <span className="text-gray-800">{item.name}</span>
+                        <span className="text-gray-500">
+                          ৳{item.spent.toLocaleString()} / ৳
+                          {item.total.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
+                        <div
+                          className={`h-2.5 rounded-full transition-all duration-500 ${
+                            isOverBudget ? "bg-red-500" : "bg-emerald-600"
+                          }`}
+                          style={{ width: `${percentage}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
 

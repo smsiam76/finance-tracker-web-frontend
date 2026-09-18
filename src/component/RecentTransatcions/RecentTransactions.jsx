@@ -1,13 +1,11 @@
 
+import { FaQuestionCircle, FaReceipt, FaWallet } from 'react-icons/fa';
+import * as FaIcons from 'react-icons/fa';
 
-import * as FontAwesomeIcons from 'react-icons/fa';
-import { transactionsData } from '../../../public/transactions';
-
-
-
-// Dynamic Icon Component: Resolves string name from JSON to actual React Icon
+// Dynamic Icon Component
 const DynamicIcon = ({ iconName, className }) => {
-  const IconComponent = FontAwesomeIcons[iconName] || FontAwesomeIcons.FaQuestionCircle;
+  if (!iconName) return <FaWallet className={className} />;
+  const IconComponent = FaIcons[iconName] || FaQuestionCircle;
   return <IconComponent className={className} />;
 };
 
@@ -15,85 +13,113 @@ const DynamicIcon = ({ iconName, className }) => {
 const TRANSACTION_CONFIG = {
   CASH_IN: {
     sign: '+',
-    amountClass: 'text-emerald-800',
+    amountClass: 'text-emerald-600 font-bold',
   },
   CASH_OUT: {
     sign: '-',
-    amountClass: 'text-rose-800',
+    amountClass: 'text-rose-600 font-bold',
   },
   TRANSFER: {
     sign: '-',
-    amountClass: 'text-rose-800',
+    amountClass: 'text-rose-600 font-bold',
   },
 };
 
 // Native Formatting Helpers
 const formatDate = (dateString) => {
-  if (!dateString) return '';
+  if (!dateString) return 'N/A';
+  const parsedDate = new Date(dateString);
+  if (isNaN(parsedDate.getTime())) return 'N/A';
+
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
-  }).format(new Date(dateString));
+  }).format(parsedDate);
 };
 
 const formatCurrency = (amount) => {
+  const numericAmount = Number(amount) || 0;
   return new Intl.NumberFormat('en-BD', {
     minimumFractionDigits: 0,
-  }).format(amount);
+    maximumFractionDigits: 2,
+  }).format(numericAmount);
 };
 
-const RecentTransactions = ({ transactions = transactionsData }) => {
+const RecentTransactions = ({ transactions = [] }) => {
+
+  console.log(transactions);
+  if (!transactions || transactions.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500 font-medium">
+        No recent transactions found.
+      </div>
+    );
+  }
+
   return (
     <section className="w-full overflow-hidden">
-
-      {/* Transaction List */}
-      <div className="divide-y divide-gray-300">
+      <div className="divide-y divide-gray-200">
         {transactions.map((item) => {
           const config = TRANSACTION_CONFIG[item.type] || TRANSACTION_CONFIG.CASH_OUT;
 
-          // Subtitle Label Logic (TRANSFER uses Service/Transfer tag)
+          // Book data prioritization logic
+          const bookIcon = item.bookDetails?.icon || item.bookIcon || item.icon;
+          const bookColor = item.bookDetails?.color || item.bookColor;
+          const bookName = item.bookDetails?.title || item.bookName;
+
           const displayCategory = item.type === 'TRANSFER' 
-            ? 'Service' 
-            : item.categoryName || 'General';
+            ? 'Transfer' 
+            : item.category || item.categoryName || 'General';
 
           return (
             <div 
-              key={item._id} 
-              className="flex items-center justify-between px-4 md:px-10 py-4 hover:bg-primary/5 transition-all duration-300 group cursor-pointer"
+              key={item._id || Math.random()} 
+              className="flex items-center justify-between px-4 md:px-8 py-3.5 hover:bg-gray-50/80 transition-all duration-200 group cursor-pointer"
             >
-              {/* Left Column: Dynamic Icon & Metadata */}
-              <div className="flex items-center space-x-4 min-w-0">
+              {/* Left Column: Dynamic Book Icon & Metadata */}
+              <div className="flex items-center space-x-3.5 min-w-0">
                 <div 
-                  className={`p-2 md:p-0 md:w-12 md:h-12 rounded-2xl ${item.iconBg || 'bg-gray-100'} flex items-center justify-center shrink-0 transition-transform group-hover:scale-105`}
+                  className="w-10 h-10 md:w-11 md:h-11 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-105"
+                  style={{
+                    backgroundColor: bookColor ? `${bookColor}20` : '#F3F4F6', // 20 opacity for light background
+                  }}
                 >
-                  {/* Icon name is pulled dynamically from JSON */}
                   <DynamicIcon 
-                    iconName={item.icon} 
-                    className={`md:text-xl ${item.iconColor || 'text-gray-600'}`} 
+                    iconName={item?.bookDetails?.icon} 
+                    className="text-lg md:text-xl" 
+                    style={{ color: bookColor || '#4B5563' }}
                   />
                 </div>
 
                 <div className="truncate">
-                  <div className="flex items-center space-x-2">
-                    <h3 className="text-xs font-semibold text-gray-900 md:text-base truncate">
-                      {item.title}
+                  <div className="flex items-center space-x-1.5">
+                    <h3 className="text-sm font-semibold text-gray-900 truncate">
+                      {item.title || item.note || 'Untitled Transaction'}
                     </h3>
                     {item.receiptUrl && (
-                      <span title="Receipt Attached">
-                        <FontAwesomeIcons.FaReceipt className="text-xs text-gray-300 hover:text-gray-500 transition-colors" />
+                      <span title="Receipt Attached" className="shrink-0">
+                        <FaReceipt className="text-xs text-gray-400 hover:text-gray-600 transition-colors" />
                       </span>
                     )}
                   </div>
-                  <p className="text-xs font-medium text-gray-400 mt-0.5">
-                    {displayCategory} &#9679; {formatDate(item.date)}
+                  <p className="text-xs font-medium text-gray-500 mt-0.5 flex items-center gap-1.5 truncate">
+                    {bookName && (
+                      <>
+                        <span className="font-semibold text-gray-700">{bookName}</span>
+                        <span>•</span>
+                      </>
+                    )}
+                    <span>{displayCategory}</span>
+                    <span>•</span>
+                    <span>{formatDate(item.date)}</span>
                   </p>
                 </div>
               </div>
 
               {/* Right Column: Amount */}
               <div className="text-right shrink-0 pl-3">
-                <span className={`text-base font-bold tracking-tight ${config.amountClass}`}>
+                <span className={`text-sm md:text-base tracking-tight ${config.amountClass}`}>
                   {config.sign}৳{formatCurrency(item.amount)}
                 </span>
               </div>

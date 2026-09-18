@@ -122,12 +122,12 @@ const TransferMoney = () => {
                 <label className="block text-xs font-semibold tracking-wide">
                   From Book
                 </label>
-                {/* UPDATE: Display live available balance of selected source book */}
-                {currentSourceBook && (
+                {/* Display live available balance of selected source book */}
+                {/* {currentSourceBook && (
                   <span className="text-[10px] text-gray-500 font-medium">
                     Balance: ৳{currentSourceBook.balance ?? 0}
                   </span>
-                )}
+                )} */}
               </div>
               <div className="relative">
                 <select
