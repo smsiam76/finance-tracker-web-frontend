@@ -4,105 +4,83 @@ import {
   PlusCircle,
   MoreVertical,
   AlertTriangle,
-  Utensils,
-  ShoppingBag,
-  Car,
-  Zap,
   BarChart3,
   Sparkles,
   Filter,
   Pencil,
   Trash2,
-  Plus,
   X,
 } from "lucide-react";
-
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
-// --- Sample Data ---
-const booksList = [
-  { id: "all", name: "Daily Expense" },
-  { id: "b1", name: "Savings" },
-  { id: "b2", name: "Family Expense" },
-  { id: "b3", name: "Business" },
-  { id: "b4", name: "Emergency Fund" },
-];
+import useAuth from "../../../hooks/useAuth";
+import useBooks from "../../../hooks/useBooks";
+import useCategories from "../../../hooks/useCategories";
+import useBudgets from "../../../hooks/useBudgets";
+import useTransactions from "../../../hooks/useTransactions";
 
-const categoriesList = [
-  "Food & Dining",
-  "Shopping",
-  "Transport",
-  "Utilities",
-  "Entertainment",
-  "Healthcare",
-];
-
-const initialBudgets = [
-  {
-    id: "1",
-    bookId: "b1",
-    category: "Food & Dining",
-    description: "Monthly grocery & dining allowance",
-    spent: 450.0,
-    budgetAmount: 800.0,
-    period: "Monthly",
-    icon: Utensils,
-  },
-  {
-    id: "2",
-    bookId: "b1",
-    category: "Shopping",
-    description: "Luxury & lifestyle expenses",
-    spent: 620.0,
-    budgetAmount: 500.0,
-    period: "Monthly",
-    icon: ShoppingBag,
-  },
-  {
-    id: "3",
-    bookId: "b2",
-    category: "Transport",
-    description: "Commute, fuel, and ride-sharing",
-    spent: 180.0,
-    budgetAmount: 300.0,
-    period: "Monthly",
-    icon: Car,
-  },
-  {
-    id: "4",
-    bookId: "b3",
-    category: "Utilities",
-    description: "Electricity, water, and internet",
-    spent: 210.0,
-    budgetAmount: 450.0,
-    period: "Monthly",
-    icon: Zap,
-  },
-];
+import Loader from "../../../component/Shared/Loader/Loader";
+import { renderCategoryIcon } from "../../../utility/renderCategoryIcon";
 
 export const Budget = () => {
-  const [budgets, setBudgets] = useState(initialBudgets);
+  const { user } = useAuth();
+
+  const { transactions = [], isLoading: isTransactionsLoading } =
+    useTransactions(user?.email);
+
+  // States
   const [selectedFilterBook, setSelectedFilterBook] = useState("all");
   const [activeMenuId, setActiveMenuId] = useState(null);
-
-  // Modals States
   const [editingBudget, setEditingBudget] = useState(null);
-  const [expenseBudget, setExpenseBudget] = useState(null);
+
+  // Pagination State (Max 4 per page)
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4;
 
   const menuRef = useRef(null);
 
-  // Close dropdown menu on outside click
+  // Books
+  const { books = [], isLoading: isBookLoading } = useBooks(user?.email);
+
+  // Categories
+  const { categories = [], isLoading: isCategoriesLoading } = useCategories(
+    user?.email,
+  );
+
+  // Budgets
+  const {
+    budgets = [],
+    isLoading: isBudgetsLoading,
+    createBudget,
+    isCreating,
+    updateBudget,
+    isUpdating,
+    deleteBudget,
+    isDeleting,
+  } = useBudgets(user?.email);
+
+  // Filter change hole auto page 1-e reset hawya
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedFilterBook]);
+
+  // Close Dropdown On Outside Click
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setActiveMenuId(null);
       }
     };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
-  // 1. Create Budget Form Handler
+  // CREATE BUDGET FORM
   const {
     register: registerCreate,
     handleSubmit: handleSubmitCreate,
@@ -110,29 +88,52 @@ export const Budget = () => {
     formState: { errors: errorsCreate },
   } = useForm({
     defaultValues: {
-      bookId: "b1",
-      category: "Food & Dining",
+      bookId: "",
+      category: "",
       budgetAmount: "",
       period: "Monthly",
     },
   });
 
-  const handleSaveBudget = (data) => {
-    const newBudget = {
-      id: Date.now().toString(),
-      bookId: data.bookId,
-      category: data.category,
-      description: `${data.period} allowance for ${data.category}`,
-      spent: 0.0,
-      budgetAmount: parseFloat(data.budgetAmount),
-      period: data.period,
-      icon: Utensils,
-    };
-    setBudgets([newBudget, ...budgets]);
-    resetCreate();
+  // Create Budget (React Hot Toast integrated)
+  const handleSaveBudget = async (data) => {
+    try {
+      const isDuplicate = budgets.some(
+        (b) =>
+          String(b?.bookId) === String(data?.bookId) &&
+          b?.category?.toLowerCase() === data?.category?.toLowerCase(),
+      );
+
+      if (isDuplicate) {
+        return toast.error(
+          `A budget for "${data.category}" already exists in the selected book!`,
+        );
+      }
+
+      const newBudget = {
+        userEmail: user?.email,
+        bookId: data.bookId,
+        category: data.category,
+        description: `${data.period} allowance for ${data.category}`,
+        spent: 0,
+        budgetAmount: Number(data.budgetAmount),
+        period: data.period,
+        createdAt: new Date(),
+      };
+
+      const res = await createBudget(newBudget);
+
+      if (res?.insertedId) {
+        toast.success("Your Budget Added Successfully!");
+        resetCreate();
+      }
+    } catch (error) {
+      console.error("Failed to create budget:", error);
+      toast.error(error?.message || "Failed to create budget");
+    }
   };
 
-  // 2. Edit Budget Form Handler
+  // EDIT BUDGET FORM
   const {
     register: registerEdit,
     handleSubmit: handleSubmitEdit,
@@ -140,6 +141,7 @@ export const Budget = () => {
     formState: { errors: errorsEdit },
   } = useForm();
 
+  // Set Edit Form Data
   useEffect(() => {
     if (editingBudget) {
       resetEdit({
@@ -151,115 +153,259 @@ export const Budget = () => {
     }
   }, [editingBudget, resetEdit]);
 
-  const handleUpdateBudget = (data) => {
-    setBudgets(
-      budgets.map((item) =>
-        item.id === editingBudget.id
-          ? {
-              ...item,
-              bookId: data.bookId,
-              category: data.category,
-              budgetAmount: parseFloat(data.budgetAmount),
-              period: data.period,
-              description: `${data.period} allowance for ${data.category}`,
-            }
-          : item,
-      ),
-    );
-    setEditingBudget(null);
+  // Update Budget
+  const handleUpdateBudget = async (data) => {
+    try {
+      const isDuplicate = budgets.some(
+        (b) =>
+          b?._id !== editingBudget._id &&
+          String(b?.bookId) === String(data?.bookId) &&
+          b?.category?.toLowerCase() === data?.category?.toLowerCase(),
+      );
+
+      if (isDuplicate) {
+        return toast.error(
+          `A budget for "${data.category}" already exists in the selected book!`,
+        );
+      }
+
+      const updateBudgetInfo = {
+        bookId: data.bookId,
+        category: data.category,
+        budgetAmount: Number(data.budgetAmount),
+        period: data.period,
+        description: `${data.period} allowance for ${data.category}`,
+      };
+
+      await updateBudget({
+        id: editingBudget._id,
+        updateBudgetInfo,
+      });
+
+      toast.success("Budget updated successfully!");
+      setEditingBudget(null);
+    } catch (error) {
+      console.error("Failed to update budget:", error);
+      toast.error(error?.message || "Failed to update budget");
+    }
   };
 
-  // 3. Add Expense Form Handler
-  const {
-    register: registerExpense,
-    handleSubmit: handleSubmitExpense,
-    reset: resetExpense,
-    formState: { errors: errorsExpense },
-  } = useForm();
+  // DELETE BUDGET
+  const handleDeleteBudget = async (id) => {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
 
-  const handleAddExpense = (data) => {
-    const expenseAmount = parseFloat(data.amount);
-    setBudgets(
-      budgets.map((item) =>
-        item.id === expenseBudget.id
-          ? {
-              ...item,
-              spent: item.spent + expenseAmount,
-            }
-          : item,
-      ),
-    );
-    setExpenseBudget(null);
-    resetExpense();
+      if (result.isConfirmed) {
+        await deleteBudget(id);
+        toast.success("Budget deleted successfully!");
+        setActiveMenuId(null);
+      }
+    } catch (error) {
+      console.error("Failed to delete budget:", error);
+      toast.error(error?.message || "Failed to delete budget");
+    }
   };
 
-  // Delete Budget
-  const handleDeleteBudget = (id) => {
-    setBudgets(budgets.filter((item) => item.id !== id));
-    setActiveMenuId(null);
-  };
+  // CALCULATED SPENT
+  const budgetsWithCalculatedSpent = useMemo(() => {
+    return budgets.map((budget) => {
+      const matchedCategory = categories.find((cat) => {
+        const name = cat?.name || cat;
+        return name?.toLowerCase() === budget?.category?.toLowerCase();
+      });
 
-  // Filtered Budgets
+      const categoryId = matchedCategory?._id;
+
+      const calculatedSpent = transactions
+        .filter((t) => {
+          const isCashOut = t?.type === "CASH_OUT";
+          const isBookMatched = String(t?.bookId) === String(budget?.bookId);
+          const isCategoryMatched =
+            (categoryId && String(t?.categoryId) === String(categoryId)) ||
+            t?.category?.toLowerCase() === budget?.category?.toLowerCase();
+
+          return isCashOut && isBookMatched && isCategoryMatched;
+        })
+        .reduce((total, t) => total + Number(t?.amount || 0), 0);
+
+      return {
+        ...budget,
+        spent: calculatedSpent,
+      };
+    });
+  }, [budgets, transactions, categories]);
+
+  // FILTERED BUDGETS
   const filteredBudgets = useMemo(() => {
-    if (selectedFilterBook === "all") return budgets;
-    return budgets.filter((b) => b.bookId === selectedFilterBook);
-  }, [budgets, selectedFilterBook]);
+    if (selectedFilterBook === "all") {
+      return budgetsWithCalculatedSpent;
+    }
 
-  // Calculations
-  const totalBudgeted = useMemo(
-    () => filteredBudgets.reduce((acc, curr) => acc + curr.budgetAmount, 0),
-    [filteredBudgets],
-  );
-  const totalSpent = useMemo(
-    () => filteredBudgets.reduce((acc, curr) => acc + curr.spent, 0),
-    [filteredBudgets],
-  );
-  const overallProgress = Math.min(
-    Math.round((totalSpent / (totalBudgeted || 1)) * 100),
-    100,
-  );
+    return budgetsWithCalculatedSpent.filter(
+      (budget) => budget.bookId === selectedFilterBook,
+    );
+  }, [budgetsWithCalculatedSpent, selectedFilterBook]);
+
+  // PAGINATED BUDGETS (Max 4 items)
+  const paginatedBudgets = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredBudgets.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredBudgets, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil(filteredBudgets.length / itemsPerPage);
+
+  // TOTAL BUDGET
+  const totalBudgeted = useMemo(() => {
+    return filteredBudgets.reduce(
+      (acc, curr) => acc + Number(curr.budgetAmount || 0),
+      0,
+    );
+  }, [filteredBudgets]);
+
+  // TOTAL SPENT
+  const totalSpent = useMemo(() => {
+    return filteredBudgets.reduce(
+      (acc, curr) => acc + Number(curr.spent || 0),
+      0,
+    );
+  }, [filteredBudgets]);
+
+  // OVERALL PROGRESS
+  const overallProgress =
+    totalBudgeted > 0
+      ? Math.min(Math.round((totalSpent / totalBudgeted) * 100), 100)
+      : 0;
+
+  // GET BOOK NAME
+  const getBookName = (bookId) => {
+    const book = books.find(
+      (b) =>
+        String(b?._id) === String(bookId) || String(b?.id) === String(bookId),
+    );
+    return book?.bookName || book?.name || "Unknown Book";
+  };
+
+  // CATEGORY ICON INFO
+  const getBudgetIconInfo = (categoryName) => {
+    const matchedCategory = categories.find((cat) => {
+      const name = cat?.name || cat;
+      return name?.toLowerCase() === categoryName?.toLowerCase();
+    });
+
+    const iconName =
+      matchedCategory?.icon ||
+      matchedCategory?.iconName ||
+      getFallbackIconKey(categoryName);
+
+    const iconColor = matchedCategory?.color || "#22c55e";
+
+    return { iconName, iconColor };
+  };
+
+  // FALLBACK ICON
+  const getFallbackIconKey = (name = "") => {
+    const lower = name.toLowerCase();
+
+    if (
+      lower.includes("food") ||
+      lower.includes("utensil") ||
+      lower.includes("dining")
+    ) {
+      return "utensils";
+    }
+    if (
+      lower.includes("bus") ||
+      lower.includes("travel") ||
+      lower.includes("transport")
+    ) {
+      return "bus";
+    }
+    if (lower.includes("shop") || lower.includes("buy")) {
+      return "shopping-bag";
+    }
+    if (lower.includes("med") || lower.includes("health")) {
+      return "pill";
+    }
+    if (lower.includes("movie") || lower.includes("film")) {
+      return "film";
+    }
+    if (lower.includes("edu") || lower.includes("study")) {
+      return "graduation-cap";
+    }
+    if (lower.includes("bill") || lower.includes("electric")) {
+      return "lightbulb";
+    }
+    if (lower.includes("home") || lower.includes("rent")) {
+      return "home";
+    }
+    if (lower.includes("salary") || lower.includes("cash")) {
+      return "banknote";
+    }
+
+    return "circle";
+  };
+
+  // LOADING
+  if (
+    isBudgetsLoading ||
+    isBookLoading ||
+    isCategoriesLoading ||
+    isTransactionsLoading
+  ) {
+    return <Loader />;
+  }
 
   return (
     <div className="pt-6 pb-12">
       <div className="space-y-6">
-        {/* Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* LEFT: Create Budget Form & Stat Card */}
-          <div className="space-y-6">
-            {/* Create Budget Card */}
+          {/* LEFT COLUMN */}
+          <div className="space-y-6 flex flex-col justify-between">
+            {/* CREATE BUDGET */}
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
               transition={{ duration: 0.4, delay: 0.15, ease: "easeInOut" }}
               viewport={{ once: true, amount: 0.1 }}
-              className="bg-white p-5 rounded-2xl border border-base-100 shadow-xl space-y-4"
+              className="bg-white py-6 px-5 rounded-2xl border border-base-100 shadow-xl space-y-4"
             >
               <div className="flex items-center gap-2 text-primary">
                 <PlusCircle className="w-5 h-5" />
-                <h3 className="font-bold text-base ">Create Budget</h3>
+                <h3 className="font-bold text-base">Create Budget</h3>
               </div>
-
+              <span className="divider"></span>
               <form
                 onSubmit={handleSubmitCreate(handleSaveBudget)}
-                className="space-y-3.5"
+                className="space-y-4"
               >
+                {/* BOOK */}
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold  uppercase tracking-wider">
+                  <label className="text-[11px] font-bold uppercase tracking-wider">
                     Book Name
                   </label>
                   <select
                     {...registerCreate("bookId", {
                       required: "Please select a book",
                     })}
-                    className="w-full px-3 py-2 bg-primary/5 border border-emerald-100/80 rounded-xl text-xs font-semibold  focus:outline-none focus:border-primary"
+                    className="w-full px-3 py-2 bg-primary/5 border border-emerald-100/80 rounded-xl text-xs font-semibold focus:outline-none focus:border-primary"
                   >
-                    {booksList
-                      .filter((b) => b.id !== "all")
-                      .map((book) => (
-                        <option key={book.id} value={book.id}>
-                          {book.name}
+                    <option value="">Select a Book</option>
+                    {books.map((book) => {
+                      const bookId = book?._id || book?.id;
+                      return (
+                        <option key={bookId} value={bookId}>
+                          {book?.bookName || book?.name}
                         </option>
-                      ))}
+                      );
+                    })}
                   </select>
                   {errorsCreate.bookId && (
                     <p className="text-[10px] text-red-500 font-semibold">
@@ -268,31 +414,40 @@ export const Budget = () => {
                   )}
                 </div>
 
+                {/* CATEGORY */}
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold  uppercase tracking-wider">
+                  <label className="text-[11px] font-bold uppercase tracking-wider">
                     Category
                   </label>
                   <select
                     {...registerCreate("category", {
                       required: "Please select a category",
                     })}
-                    className="w-full px-3 py-2 bg-primary/5 border border-emerald-100/80 rounded-xl text-xs font-semibold  focus:outline-none focus:border-primary"
+                    className="w-full px-3 py-2 bg-primary/5 border border-emerald-100/80 rounded-xl text-xs font-semibold focus:outline-none focus:border-primary"
                   >
-                    {categoriesList.map((cat, idx) => (
-                      <option key={idx} value={cat}>
-                        {cat}
+                    <option value="">Select Category</option>
+                    {categories.map((cat, idx) => (
+                      <option key={cat?._id || idx} value={cat?.name || cat}>
+                        {cat?.name || cat}
                       </option>
                     ))}
                   </select>
+                  {errorsCreate.category && (
+                    <p className="text-[10px] text-red-500 font-semibold">
+                      {errorsCreate.category.message}
+                    </p>
+                  )}
                 </div>
 
+                {/* AMOUNT */}
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold  uppercase tracking-wider">
+                  <label className="text-[11px] font-bold uppercase tracking-wider">
                     Budget Amount (BDT)
                   </label>
                   <input
                     type="number"
                     step="0.01"
+                    min="1"
                     placeholder="0.00"
                     {...registerCreate("budgetAmount", {
                       required: "Amount is required",
@@ -301,7 +456,7 @@ export const Budget = () => {
                         message: "Amount must be greater than 0",
                       },
                     })}
-                    className="w-full px-3 py-2 bg-primary/5 border border-emerald-100/80 rounded-xl text-xs font-bold  focus:outline-none focus:border-primary"
+                    className="w-full px-3 py-2 bg-primary/5 border border-emerald-100/80 rounded-xl text-xs font-bold focus:outline-none focus:border-primary"
                   />
                   {errorsCreate.budgetAmount && (
                     <p className="text-[10px] text-red-500 font-semibold">
@@ -310,13 +465,16 @@ export const Budget = () => {
                   )}
                 </div>
 
+                {/* PERIOD */}
                 <div className="space-y-1">
-                  <label className="text-[11px] font-bold  uppercase tracking-wider">
+                  <label className="text-[11px] font-bold uppercase tracking-wider">
                     Period
                   </label>
                   <select
-                    {...registerCreate("period", { required: true })}
-                    className="w-full px-3 py-2 bg-primary/5 border border-emerald-100/80 rounded-xl text-xs font-semibold  focus:outline-none focus:border-primary"
+                    {...registerCreate("period", {
+                      required: "Please select a period",
+                    })}
+                    className="w-full px-3 py-2 bg-primary/5 border border-emerald-100/80 rounded-xl text-xs font-semibold focus:outline-none focus:border-primary"
                   >
                     <option value="Weekly">Weekly</option>
                     <option value="Monthly">Monthly</option>
@@ -324,16 +482,18 @@ export const Budget = () => {
                   </select>
                 </div>
 
+                {/* SAVE */}
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-primary hover:bg-[#00472B] text-white font-bold rounded-xl text-xs transition shadow-sm"
+                  disabled={isCreating}
+                  className="mt-6 w-full py-3.5 bg-primary hover:bg-[#00472B] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-bold rounded-xl text-xs transition shadow-sm"
                 >
-                  Save Budget
+                  {isCreating ? "Saving..." : "Save Budget"}
                 </button>
               </form>
             </motion.div>
 
-            {/* Total Budgeted Stat Card */}
+            {/* SUMMARY CARD */}
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
@@ -350,6 +510,7 @@ export const Budget = () => {
                     ৳
                     {totalBudgeted.toLocaleString("en-US", {
                       minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
                     })}
                   </div>
                 </div>
@@ -359,7 +520,7 @@ export const Budget = () => {
               </div>
 
               <div className="space-y-1 pt-1">
-                <div className="flex items-center justify-between text-[11px] font-bold ">
+                <div className="flex items-center justify-between text-[11px] font-bold">
                   <span>Overall Progress</span>
                   <span>{overallProgress}%</span>
                 </div>
@@ -370,12 +531,20 @@ export const Budget = () => {
                   />
                 </div>
               </div>
+
+              <div className="flex items-center justify-between text-[10px] text-gray-400 font-semibold">
+                <span>Spent: ৳{totalSpent.toFixed(2)}</span>
+                <span>
+                  {filteredBudgets.length} budget
+                  {filteredBudgets.length !== 1 ? "s" : ""}
+                </span>
+              </div>
             </motion.div>
           </div>
 
-          {/* RIGHT: Cards Grid */}
+          {/* RIGHT COLUMN */}
           <div className="lg:col-span-2">
-            {/* Top Filter Bar */}
+            {/* FILTER */}
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
@@ -383,9 +552,9 @@ export const Budget = () => {
               viewport={{ once: true, amount: 0.1 }}
               className="bg-white p-3.5 rounded-2xl border border-base-100 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-3 mb-8"
             >
-              <div className="flex items-center gap-2 ">
+              <div className="flex items-center gap-2">
                 <Filter className="w-4 h-4 text-primary" />
-                <span className="text-xs font-bold uppercase tracking-wider ">
+                <span className="text-xs font-bold uppercase tracking-wider">
                   Filter by Book:
                 </span>
               </div>
@@ -394,16 +563,22 @@ export const Budget = () => {
                 <select
                   value={selectedFilterBook}
                   onChange={(e) => setSelectedFilterBook(e.target.value)}
-                  className="w-full sm:w-64 px-3 py-2 bg-primary/5 border border-primary/10 rounded-xl text-xs font-bold  focus:outline-none focus:border-primary transition"
+                  className="w-full sm:w-64 px-3 py-2 bg-primary/5 border border-primary/10 rounded-xl text-xs font-bold focus:outline-none focus:border-primary transition"
                 >
-                  {booksList.map((book) => (
-                    <option key={book?.id} value={book.id}>
-                      {book.name}
-                    </option>
-                  ))}
+                  <option value="all">All Books</option>
+                  {books.map((book) => {
+                    const bookId = book?._id || book?.id;
+                    return (
+                      <option key={bookId} value={bookId}>
+                        {book?.bookName || book?.name}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
             </motion.div>
+
+            {/* BUDGET CARDS */}
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
@@ -411,44 +586,68 @@ export const Budget = () => {
               viewport={{ once: true, amount: 0.1 }}
               className="grid grid-cols-1 sm:grid-cols-2 gap-8 auto-rows-max"
             >
-              {filteredBudgets.length > 0 ? (
-                filteredBudgets.map((item) => {
-                  const IconComponent = item.icon || Utensils;
-                  const isExceeded = item.spent > item.budgetAmount;
-                  const diff = item.spent - item.budgetAmount;
-                  const remaining = item.budgetAmount - item.spent;
-                  const percentage = Math.min(
-                    Math.round((item.spent / item.budgetAmount) * 100),
-                    100,
+              {paginatedBudgets.length > 0 ? (
+                paginatedBudgets.map((item) => {
+                  const budgetAmount = Number(item?.budgetAmount || 0);
+                  const spent = Number(item?.spent || 0);
+                  const isExceeded = spent > budgetAmount;
+                  const diff = spent - budgetAmount;
+                  const remaining = budgetAmount - spent;
+                  const percentage =
+                    budgetAmount > 0
+                      ? Math.min(Math.round((spent / budgetAmount) * 100), 100)
+                      : 0;
+
+                  const isMenuOpen = activeMenuId === item?._id;
+                  const { iconName, iconColor } = getBudgetIconInfo(
+                    item?.category,
                   );
-                  const isMenuOpen = activeMenuId === item.id;
+                  const bookName = getBookName(item?.bookId);
 
                   return (
                     <div
-                      key={item.id}
+                      key={item?._id}
                       className={`bg-white p-5 rounded-2xl border shadow-lg space-y-4 flex flex-col justify-between transition relative ${
                         isExceeded ? "border-red-200" : "border-base-100"
                       }`}
                     >
                       <div className="space-y-3">
                         <div className="flex items-start justify-between">
-                          <div
-                            className={`p-2.5 rounded-full ${isExceeded ? "bg-red-100 text-red-600" : "bg-emerald-100/70 text-primary"}`}
-                          >
-                            <IconComponent className="w-5 h-5" />
+                          <div className="flex gap-2 items-center">
+                            <span
+                              className={`p-2.5 rounded-full block w-fit ${
+                                isExceeded ? "bg-red-100" : "bg-emerald-100/70"
+                              }`}
+                            >
+                              {renderCategoryIcon(
+                                iconName,
+                                isExceeded ? "#dc2626" : iconColor,
+                                "w-5 h-5",
+                              )}
+                            </span>
+
+                            <div>
+                              <h4 className="font-bold text-sm">
+                                {item?.category}
+                              </h4>
+                              <p className="text-[10px] text-gray-400 font-semibold">
+                                {bookName}
+                              </p>
+                            </div>
                           </div>
 
                           <div className="flex items-center gap-2 relative">
                             {isExceeded && (
                               <span className="flex items-center gap-1 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
-                                <AlertTriangle className="w-3 h-3" /> Exceeded
+                                <AlertTriangle className="w-3 h-3" />
+                                Exceeded
                               </span>
                             )}
 
                             <button
                               onClick={() =>
                                 setActiveMenuId(
-                                  activeMenuId === item.id ? null : item.id,
+                                  activeMenuId === item?._id ? null : item?._id,
                                 )
                               }
                               className="text-gray-400 hover:text-gray-600 p-1.5 rounded-lg hover:bg-primary/5 transition"
@@ -456,29 +655,17 @@ export const Budget = () => {
                               <MoreVertical className="w-4 h-4" />
                             </button>
 
-                            {/* Action Dropdown Menu */}
                             {isMenuOpen && (
                               <div
                                 ref={menuRef}
-                                className="absolute right-0 top-8 w-40 bg-white rounded-xl shadow-lg border border-base-100 py-1.5 z-20 transition-all"
+                                className="absolute right-0 top-8 w-40 bg-white rounded-xl shadow-lg border border-base-100 py-1.5 z-20"
                               >
-                                <button
-                                  onClick={() => {
-                                    setExpenseBudget(item);
-                                    setActiveMenuId(null);
-                                  }}
-                                  className="w-full text-left px-3.5 py-2 text-xs font-semibold  hover:bg-emerald-50 hover:text-primary flex items-center gap-2 transition"
-                                >
-                                  <Plus className="w-3.5 h-3.5" />
-                                  Add Expense
-                                </button>
-
                                 <button
                                   onClick={() => {
                                     setEditingBudget(item);
                                     setActiveMenuId(null);
                                   }}
-                                  className="w-full text-left px-3.5 py-2 text-xs font-semibold  hover:bg-emerald-50 hover:text-primary flex items-center gap-2 transition"
+                                  className="w-full text-left px-3.5 py-2 text-xs font-semibold hover:bg-emerald-50 hover:text-primary flex items-center gap-2 transition"
                                 >
                                   <Pencil className="w-3.5 h-3.5" />
                                   Edit Budget
@@ -487,11 +674,12 @@ export const Budget = () => {
                                 <div className="h-px bg-base-100 my-1" />
 
                                 <button
-                                  onClick={() => handleDeleteBudget(item.id)}
-                                  className="w-full text-left px-3.5 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 flex items-center gap-2 transition"
+                                  onClick={() => handleDeleteBudget(item?._id)}
+                                  disabled={isDeleting}
+                                  className="w-full text-left px-3.5 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 flex items-center gap-2 transition disabled:opacity-50"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
-                                  Delete
+                                  {isDeleting ? "Deleting..." : "Delete"}
                                 </button>
                               </div>
                             )}
@@ -499,12 +687,15 @@ export const Budget = () => {
                         </div>
 
                         <div>
-                          <h4 className="font-bold text-base ">
-                            {item.category}
-                          </h4>
                           <p className="text-xs text-gray-400 font-medium mt-0.5">
-                            {item.description}
+                            {item?.description}
                           </p>
+
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] text-primary font-bold">
+                              {item?.period}
+                            </span>
+                          </div>
                         </div>
 
                         <div className="flex items-center justify-between pt-1">
@@ -512,10 +703,13 @@ export const Budget = () => {
                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                               Spent
                             </span>
+
                             <p
-                              className={`text-base font-black ${isExceeded ? "text-red-600" : ""}`}
+                              className={`text-base font-black ${
+                                isExceeded ? "text-red-600" : ""
+                              }`}
                             >
-                              ৳{item.spent.toFixed(2)}
+                              ৳{spent.toFixed(2)}
                             </p>
                           </div>
 
@@ -523,8 +717,11 @@ export const Budget = () => {
                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                               {isExceeded ? "Over Budget" : "Remaining"}
                             </span>
+
                             <p
-                              className={`text-base font-black ${isExceeded ? "text-red-600" : "text-emerald-600"}`}
+                              className={`text-base font-black ${
+                                isExceeded ? "text-red-600" : "text-emerald-600"
+                              }`}
                             >
                               {isExceeded
                                 ? `-৳${diff.toFixed(2)}`
@@ -537,12 +734,16 @@ export const Budget = () => {
                       <div className="space-y-1.5 pt-2 border-t border-primary/5">
                         <div className="w-full bg-base-100 h-1.5 rounded-full overflow-hidden">
                           <div
-                            className={`h-full rounded-full transition-all duration-300 ${isExceeded ? "bg-red-600" : "bg-primary"}`}
+                            className={`h-full rounded-full transition-all duration-300 ${
+                              isExceeded ? "bg-red-600" : "bg-primary"
+                            }`}
                             style={{ width: `${percentage}%` }}
                           />
                         </div>
-                        <div className="text-right text-[11px] font-semibold text-gray-400">
-                          Budget: ৳{item.budgetAmount.toFixed(2)}
+
+                        <div className="flex items-center justify-between text-[11px] font-semibold text-gray-400">
+                          <span>{percentage}% used</span>
+                          <span>Budget: ৳{budgetAmount.toFixed(2)}</span>
                         </div>
                       </div>
                     </div>
@@ -550,14 +751,71 @@ export const Budget = () => {
                 })
               ) : (
                 <div className="col-span-2 bg-white p-8 rounded-2xl text-center text-gray-400 font-medium border border-base-100">
-                  No budgets found for the selected book.
+                  No budgets found.
                 </div>
               )}
             </motion.div>
+
+            {/* PAGINATION CONTROLS */}
+            {totalPages > 1 && (
+              <motion.div
+                initial={{ y: -20, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.24, ease: "easeInOut" }}
+                viewport={{ once: true, amount: 0.1 }}
+                className="flex items-center justify-between bg-white px-5 py-3 rounded-2xl border border-base-100 shadow-md mt-6"
+              >
+                <p className="text-xs font-semibold text-gray-400">
+                  Page{" "}
+                  <span className="text-primary font-bold">{currentPage}</span>{" "}
+                  of <span className="font-bold">{totalPages}</span>
+                </p>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.max(prev - 1, 1))
+                    }
+                    disabled={currentPage === 1}
+                    className="px-3 py-1.5 bg-primary/5 hover:bg-primary/10 disabled:opacity-40 disabled:cursor-not-allowed text-primary font-bold rounded-xl text-xs transition"
+                  >
+                    Previous
+                  </button>
+
+                  <div className="flex gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (pageNum) => (
+                        <button
+                          key={pageNum}
+                          onClick={() => setCurrentPage(pageNum)}
+                          className={`w-7 h-7 rounded-lg text-xs font-bold transition ${
+                            currentPage === pageNum
+                              ? "bg-primary text-white shadow-sm"
+                              : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                          }`}
+                        >
+                          {pageNum}
+                        </button>
+                      ),
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() =>
+                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                    }
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-1.5 bg-primary/5 hover:bg-primary/10 disabled:opacity-40 disabled:cursor-not-allowed text-primary font-bold rounded-xl text-xs transition"
+                  >
+                    Next
+                  </button>
+                </div>
+              </motion.div>
+            )}
           </div>
         </div>
 
-        {/* BOTTOM SECTION */}
+        {/* SMART SAVING */}
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
@@ -566,12 +824,18 @@ export const Budget = () => {
           className="bg-primary text-white p-6 rounded-2xl flex flex-col md:flex-row items-center shadow-2xl justify-between gap-6 relative overflow-hidden"
         >
           <div className="space-y-1 z-10 max-w-xl">
-            <h4 className="font-bold text-base ">
+            <h4 className="font-bold text-base">
               Smart Saving Recommendations
             </h4>
-            <p className="text-xs font-medium  leading-relaxed">
-              You spent a bit extra on Shopping this month. Lowering small
-              expenses will keep you right on track.
+
+            <p className="text-xs font-medium leading-relaxed">
+              {filteredBudgets.some(
+                (budget) =>
+                  Number(budget?.spent || 0) >
+                  Number(budget?.budgetAmount || 0),
+              )
+                ? "Some of your budgets have been exceeded. Consider reviewing those expenses."
+                : "You are currently within your budget limits. Keep tracking your expenses to stay on track."}
             </p>
           </div>
 
@@ -583,12 +847,13 @@ export const Budget = () => {
         </motion.div>
       </div>
 
-      {/* ==================== 1. EDIT BUDGET MODAL ==================== */}
+      {/* EDIT BUDGET MODAL */}
       {editingBudget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-base-100 pb-3">
-              <h3 className="font-bold text-base ">Edit Budget</h3>
+              <h3 className="font-bold text-base">Edit Budget</h3>
+
               <button
                 onClick={() => setEditingBudget(null)}
                 className="text-gray-400 hover:text-gray-600"
@@ -602,52 +867,79 @@ export const Budget = () => {
               className="space-y-3.5"
             >
               <div className="space-y-1">
-                <label className="text-[11px] font-bold  uppercase tracking-wider">
+                <label className="text-[11px] font-bold uppercase tracking-wider">
                   Book Name
                 </label>
+
                 <select
-                  {...registerEdit("bookId", { required: true })}
-                  className="w-full px-3 py-2 bg-primary/5 border border-primary/10 rounded-xl text-xs font-semibold  focus:outline-none focus:border-primary"
+                  {...registerEdit("bookId", {
+                    required: "Please select a book",
+                  })}
+                  className="w-full px-3 py-2 bg-primary/5 border border-primary/10 rounded-xl text-xs font-semibold focus:outline-none focus:border-primary"
                 >
-                  {booksList
-                    .filter((b) => b.id !== "all")
-                    .map((book) => (
-                      <option key={book.id} value={book.id}>
-                        {book.name}
+                  <option value="">Select a Book</option>
+                  {books.map((book) => {
+                    const bookId = book?._id || book?.id;
+                    return (
+                      <option key={bookId} value={bookId}>
+                        {book?.bookName || book?.name}
                       </option>
-                    ))}
+                    );
+                  })}
                 </select>
+
+                {errorsEdit.bookId && (
+                  <p className="text-[10px] text-red-500 font-semibold">
+                    {errorsEdit.bookId.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold  uppercase tracking-wider">
+                <label className="text-[11px] font-bold uppercase tracking-wider">
                   Category
                 </label>
+
                 <select
-                  {...registerEdit("category", { required: true })}
-                  className="w-full px-3 py-2 bg-primary/5 border border-primary/10 rounded-xl text-xs font-semibold  focus:outline-none focus:border-primary"
+                  {...registerEdit("category", {
+                    required: "Please select a category",
+                  })}
+                  className="w-full px-3 py-2 bg-primary/5 border border-primary/10 rounded-xl text-xs font-semibold focus:outline-none focus:border-primary"
                 >
-                  {categoriesList.map((cat, idx) => (
-                    <option key={idx} value={cat}>
-                      {cat}
+                  <option value="">Select Category</option>
+                  {categories.map((cat, idx) => (
+                    <option key={cat?._id || idx} value={cat?.name || cat}>
+                      {cat?.name || cat}
                     </option>
                   ))}
                 </select>
+
+                {errorsEdit.category && (
+                  <p className="text-[10px] text-red-500 font-semibold">
+                    {errorsEdit.category.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold  uppercase tracking-wider">
+                <label className="text-[11px] font-bold uppercase tracking-wider">
                   Budget Amount (BDT)
                 </label>
+
                 <input
                   type="number"
                   step="0.01"
+                  min="1"
                   {...registerEdit("budgetAmount", {
                     required: "Amount is required",
-                    min: 1,
+                    min: {
+                      value: 1,
+                      message: "Amount must be greater than 0",
+                    },
                   })}
-                  className="w-full px-3 py-2 bg-primary/5 border border-primary/10 rounded-xl text-xs font-bold  focus:outline-none focus:border-primary"
+                  className="w-full px-3 py-2 bg-primary/5 border border-primary/10 rounded-xl text-xs font-bold focus:outline-none focus:border-primary"
                 />
+
                 {errorsEdit.budgetAmount && (
                   <p className="text-[10px] text-red-500 font-semibold">
                     {errorsEdit.budgetAmount.message}
@@ -656,12 +948,15 @@ export const Budget = () => {
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-bold  uppercase tracking-wider">
+                <label className="text-[11px] font-bold uppercase tracking-wider">
                   Period
                 </label>
+
                 <select
-                  {...registerEdit("period", { required: true })}
-                  className="w-full px-3 py-2 bg-primary/5 border border-primary/10 rounded-xl text-xs font-semibold  focus:outline-none focus:border-primary"
+                  {...registerEdit("period", {
+                    required: "Please select a period",
+                  })}
+                  className="w-full px-3 py-2 bg-primary/5 border border-primary/10 rounded-xl text-xs font-semibold focus:outline-none focus:border-primary"
                 >
                   <option value="Weekly">Weekly</option>
                   <option value="Monthly">Monthly</option>
@@ -673,94 +968,17 @@ export const Budget = () => {
                 <button
                   type="button"
                   onClick={() => setEditingBudget(null)}
-                  className="w-1/2 py-2.5 bg-base-100 hover:bg-primary/10  font-bold rounded-xl text-xs transition"
+                  className="w-1/2 py-2.5 bg-base-100 hover:bg-primary/10 font-bold rounded-xl text-xs transition"
                 >
                   Cancel
                 </button>
+
                 <button
                   type="submit"
-                  className="w-1/2 py-2.5 bg-primary hover:bg-[#00472B] text-white font-bold rounded-xl text-xs transition"
+                  disabled={isUpdating}
+                  className="w-1/2 py-2.5 bg-primary hover:bg-[#00472B] disabled:bg-gray-400 text-white font-bold rounded-xl text-xs transition"
                 >
-                  Update Budget
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ==================== 2. ADD EXPENSE MODAL ==================== */}
-      {expenseBudget && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-base-100 pb-3">
-              <div>
-                <h3 className="font-bold text-base ">Add Expense</h3>
-                <p className="text-xs text-gray-400 font-medium">
-                  Category: {expenseBudget.category}
-                </p>
-              </div>
-              <button
-                onClick={() => setExpenseBudget(null)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form
-              onSubmit={handleSubmitExpense(handleAddExpense)}
-              className="space-y-3.5"
-            >
-              <div className="space-y-1">
-                <label className="text-[11px] font-bold  uppercase tracking-wider">
-                  Expense Amount (BDT)
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  placeholder="0.00"
-                  {...registerExpense("amount", {
-                    required: "Please enter amount",
-                    min: {
-                      value: 0.01,
-                      message: "Amount must be greater than 0",
-                    },
-                  })}
-                  className="w-full px-3 py-2 bg-primary/5 border border-primary/10 rounded-xl text-xs font-bold  focus:outline-none focus:border-primary"
-                />
-                {errorsExpense.amount && (
-                  <p className="text-[10px] text-red-500 font-semibold">
-                    {errorsExpense.amount.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-[11px] font-bold  uppercase tracking-wider">
-                  Note (Optional)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Dinner with friends"
-                  {...registerExpense("note")}
-                  className="w-full px-3 py-2 bg-primary/5 border border-primary/10 rounded-xl text-xs font-medium  focus:outline-none focus:border-primary"
-                />
-              </div>
-
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setExpenseBudget(null)}
-                  className="w-1/2 py-2.5 bg-base-100 hover:bg-primary/10  font-bold rounded-xl text-xs transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="w-1/2 py-2.5 bg-primary hover:bg-[#00472B] text-white font-bold rounded-xl text-xs transition-all duration-300 cursor-pointer"
-                >
-                  Add Expense
+                  {isUpdating ? "Updating..." : "Update Budget"}
                 </button>
               </div>
             </form>

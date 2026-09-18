@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Calculator, Camera, Plus } from "lucide-react";
+import { Calculator, Camera, Loader2, Plus, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
-import toast, { Toaster } from "react-hot-toast"; //
+import toast, { Toaster } from "react-hot-toast";
 
 // Custom Hooks & Components
 import useBooks from "../../../../hooks/useBooks";
@@ -15,15 +15,22 @@ import CreateBookModal from "../../../../component/CreateBookModal/CreateBookMod
 import useCategories from "../../../../hooks/useCategories";
 import { renderCategoryIcon } from "../../../../utility/renderCategoryIcon";
 import { renderIcon } from "../../../../utility/renderIcon";
+import { uploadToImageBB } from "../../../../utility/uploadToImageBB";
+import { useNavigate } from "react-router";
 
 export const CashIn = () => {
   const { user } = useAuth();
   const [isCalcOpen, setIsCalcOpen] = useState(false);
 
+  // Loading and Preview States for Image Upload
+  const [uploading, setUploading] = useState(false);
+  const [receiptPreview, setReceiptPreview] = useState(null);
+  const navigate = useNavigate();
+
   // Get books and categories filtered by logged-in user email
   const { books = [], isLoading: isBooksLoading } = useBooks(user?.email);
   const { categories = [], isLoading: isCategoriesLoading } = useCategories(
-    user?.email,
+    user?.email
   );
 
   // Transaction mutation hook
@@ -63,6 +70,38 @@ export const CashIn = () => {
     }
   }, [categories, setValue]);
 
+  // Handle Image Upload to ImageBB
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      return toast.error("Please select a valid image file!");
+    }
+
+    try {
+      setUploading(true);
+
+      // Utility Call
+      const imageUrl = await uploadToImageBB(file);
+
+      setValue("receiptUrl", imageUrl);
+      setReceiptPreview(imageUrl);
+      // toast.success("Receipt uploaded successfully!");
+    } catch (error) {
+      console.error("Image Upload Error:", error);
+      toast.error(error.message || "Failed to upload image.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  // Remove Uploaded Image
+  const handleRemoveImage = () => {
+    setValue("receiptUrl", "");
+    setReceiptPreview(null);
+  };
+
   // Form Submission Handler
   const onSubmit = async (data) => {
     try {
@@ -80,15 +119,13 @@ export const CashIn = () => {
         updatedAt: new Date().toISOString(),
       };
 
-      console.log(data);
-      console.log(payload);
       // API Request via useTransactions Hook
       const res = await createTransaction(payload);
 
       if (res?.insertedId) {
         toast.success("Cash In added successfully!");
 
-        // Reset Form state after success
+        // Reset Form state & image preview after success
         reset({
           type: "CASH_IN",
           amount: "0.00",
@@ -98,6 +135,8 @@ export const CashIn = () => {
           note: "",
           receiptUrl: "",
         });
+        setReceiptPreview(null);
+        navigate(`/dashboard/my-books/book-details/${data?.bookId}`);
       }
     } catch (error) {
       console.error("Submission failed:", error);
@@ -270,7 +309,7 @@ export const CashIn = () => {
                         {renderCategoryIcon(
                           cat.icon,
                           activeIconColor,
-                          "w-5 h-5",
+                          "w-5 h-5"
                         )}
                       </div>
                       <span className="text-[10px] truncate max-w-full">
@@ -325,23 +364,57 @@ export const CashIn = () => {
           )}
         </div>
 
-        {/* Attach Receipt */}
+        {/* Attach Receipt Section */}
         <div>
           <label className="text-primary block mb-1 font-bold text-sm">
             Receipt Photo (Optional)
           </label>
           <input type="hidden" {...register("receiptUrl")} />
-          <label className="flex items-center gap-2 border border-dashed border-gray-300 bg-gray-50 p-2.5 rounded-xl text-xs text-gray-600 hover:border-primary hover:text-primary transition cursor-pointer w-max">
-            <Camera size={16} />
-            <span>Upload Receipt</span>
-            <input type="file" className="hidden" />
-          </label>
+
+          {receiptPreview ? (
+            <div className="relative w-24 h-24 rounded-xl border border-gray-200 overflow-hidden group">
+              <img
+                src={receiptPreview}
+                alt="Receipt Preview"
+                className="w-full h-full object-cover"
+              />
+              <button
+                type="button"
+                onClick={handleRemoveImage}
+                className="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full text-xs shadow hover:bg-red-600 transition cursor-pointer"
+                title="Remove image"
+              >
+                <Trash2 size={12} />
+              </button>
+            </div>
+          ) : (
+            <label className="flex items-center gap-2 border border-dashed border-gray-300 bg-gray-50 p-2.5 rounded-xl text-xs text-gray-600 hover:border-primary hover:text-primary transition cursor-pointer w-max">
+              {uploading ? (
+                <>
+                  <Loader2 size={16} className="animate-spin text-primary" />
+                  <span>Uploading...</span>
+                </>
+              ) : (
+                <>
+                  <Camera size={16} />
+                  <span>Upload Receipt</span>
+                </>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={uploading}
+                className="hidden"
+              />
+            </label>
+          )}
         </div>
 
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={isCreating}
+          disabled={isCreating || uploading} 
           className="w-full bg-primary hover:bg-emerald-800 disabled:opacity-50 font-semibold py-3 rounded-xl transition shadow-md text-white cursor-pointer"
         >
           {isCreating ? "Processing..." : "Cash In"}

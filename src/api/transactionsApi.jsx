@@ -7,13 +7,22 @@ export const getAllTransactions = async () => {
 };
 
 // Get transactions by user email (along with optional type or bookId filtering)
-export const getEmailTransactions = async (email, type = "", bookId = "") => {
-    let url = `/transactions?email=${email}`;
-    if (type) url += `&type=${type}`;
-    if (bookId) url += `&bookId=${bookId}`;
+// export const getEmailTransactions = async (email, type = "", bookId = "") => {
+//     let url = `/transactions?email=${email}`;
+//     if (type) url += `&type=${type}`;
+//     if (bookId) url += `&bookId=${bookId}`;
     
-    const res = await useAxios.get(url);
-    return res.data;
+//     const res = await useAxios.get(url);
+//     return res.data;
+// };
+export const getEmailTransactions = async (email, type = "", bookId = "") => {
+  const params = new URLSearchParams();
+  if (email) params.append("email", email);
+  if (type) params.append("type", type);
+  if (bookId) params.append("bookId", bookId);
+
+  const res = await useAxios.get(`/transactions?${params.toString()}`);
+  return res.data;
 };
 
 // Get single transaction by ID

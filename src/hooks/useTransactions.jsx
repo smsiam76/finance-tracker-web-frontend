@@ -7,6 +7,9 @@ const useTransactions = ({ email = null, type = "", bookId = "", id = null } = {
 
   const invalidateDataCache = () => {
     queryClient.invalidateQueries({ queryKey: ["transactions"] });
+    
+    //For  Balance recalculation
+    queryClient.invalidateQueries({ queryKey: ["books"] });
   };
 
   // Get all transactions / Get email transactions with filters
@@ -38,10 +41,23 @@ const useTransactions = ({ email = null, type = "", bookId = "", id = null } = {
   });
 
   // Create transaction mutation
+
+  // const createTransactionMutation = useMutation({
+  //   mutationFn: createTransaction,
+  //   onSuccess: () => {
+  //     invalidateDataCache();
+  //   },
+  //   onError: (error) => {
+  //     console.error("Creation Error:", error);
+  //   },
+  // });
+
   const createTransactionMutation = useMutation({
     mutationFn: createTransaction,
     onSuccess: () => {
       invalidateDataCache();
+
+      // queryClient.invalidateQueries({queryKey: ["books"]});
     },
     onError: (error) => {
       console.error("Creation Error:", error);

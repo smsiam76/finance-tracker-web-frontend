@@ -1,143 +1,148 @@
 import { Link, useParams } from "react-router";
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   TrendingUp,
   Search,
   ChevronDown,
   Wallet,
   ArrowLeftRight,
+  Trash2,
 } from "lucide-react";
 import Loader from "../../../component/Shared/Loader/Loader";
 import { motion } from "framer-motion";
+import useAuth from "../../../hooks/useAuth";
+import useBooks from "../../../hooks/useBooks";
+import useTransactions from "../../../hooks/useTransactions";
+import useCategories from "../../../hooks/useCategories";
 
 const BookDetails = () => {
   const { id } = useParams();
-  const [bookData, setBookData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
 
   // Filter & Sort States
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [sortBy, setSortBy] = useState("date-desc"); // default: Newest First
 
-  useEffect(() => {
-    setLoading(true);
-    // Fetch data from public JSON
-    fetch("/public/booksdata.json")
-      .then((res) => res.json())
-      .then((data) => {
-        const currentBook =
-          data.find((book) => String(book._id) === String(id)) || data[0];
-        setBookData(currentBook);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error loading JSON data:", err);
-        setLoading(false);
-      });
-  }, [id]);
+  // Fetching real book and transaction data from hooks
+  const { singleBook, isSingleBookLoading, singleBookError } = useBooks(
+    null,
+    id,
+  );
 
-  // Mock Transactions Data
-  const rawTransactions = [
-    {
-      id: 1,
-      date: "Oct 14, 2023",
-      rawDate: "2023-10-14",
-      title: "Rice & Lentils",
-      subtitle: "Daily Bazaar",
-      category: "Grocery",
-      categoryBg: "bg-emerald-100 text-emerald-800",
-      type: "Expense",
-      amount: -850,
-      isIncome: false,
-    },
-    {
-      id: 2,
-      date: "Oct 12, 2023",
-      rawDate: "2023-10-12",
-      title: "Salary Credit",
-      subtitle: "TechFirm Corp Ltd.",
-      category: "Income",
-      categoryBg: "bg-emerald-100 text-emerald-800",
-      type: "Income",
-      amount: 45000,
-      isIncome: true,
-    },
-    {
-      id: 3,
-      date: "Oct 11, 2023",
-      rawDate: "2023-10-11",
-      title: "Electricity Bill",
-      subtitle: "DPDC Monthly Bill",
-      category: "Utility",
-      categoryBg: "bg-rose-100 text-rose-800",
-      type: "Expense",
-      amount: -2400,
-      isIncome: false,
-    },
-    {
-      id: 4,
-      date: "Oct 10, 2023",
-      rawDate: "2023-10-10",
-      title: "Bus Fare",
-      subtitle: "Mirpur to Dhanmondi",
-      category: "Transport",
-      categoryBg: "bg-emerald-100 text-emerald-800",
-      type: "Expense",
-      amount: -50,
-      isIncome: false,
-    },
-  ];
+  console.log(singleBook);
 
-  // Dynamically extract unique categories
+  const {
+    transactions = [],
+    isLoading: isTransactionsLoading,
+    deleteTransaction,
+  } = useTransactions({ email: user?.email, bookId: id });
+
+  const { categories: categoriesList = [], isLoading: isCategoriesLoading } =
+    useCategories(user?.email);
+
+  // Dynamically extract unique categories from backend transactions
+  // const categories = useMemo(() => {
+  //   const list = transactions
+  //     .map((item) => item.category)
+  //     .filter((cat) => Boolean(cat));
+  //   return ["All", ...Array.from(new Set(list))];
+  // }, [transactions]);
+
+  // fast lookup match
+  const categoryMap = useMemo(() => {
+    return categoriesList.reduce((acc, cat) => {
+      acc[cat._id] = cat.name;
+      return acc;
+    }, {});
+  }, [categoriesList]);
+
+  // extract category name for dropdown
   const categories = useMemo(() => {
-    const list = rawTransactions.map((item) => item.category);
+    const list = transactions
+      .map((item) => categoryMap[item.categoryId])
+      .filter((name) => Boolean(name));
     return ["All", ...Array.from(new Set(list))];
-  }, [rawTransactions]);
+  }, [transactions, categoryMap]);
 
-  // Filter & Sort Logic using useMemo for optimal performance
+  // Filter & Sort Logic
   const filteredTransactions = useMemo(() => {
-    return rawTransactions
+    return transactions
       .filter((item) => {
-        // Search Filter (Title or Subtitle)
+        const categoryName = categoryMap[item.categoryId] || "";
+
+        // Search Filter (Title, Category Name, or Note)
         const matchesSearch =
-          item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.subtitle.toLowerCase().includes(searchTerm.toLowerCase());
+          (item.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (item.note || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+          categoryName.toLowerCase().includes(searchTerm.toLowerCase());
 
         // Category Filter
         const matchesCategory =
-          selectedCategory === "All" || item.category === selectedCategory;
+          selectedCategory === "All" || categoryName === selectedCategory;
 
         return matchesSearch && matchesCategory;
       })
       .sort((a, b) => {
+        const dateA = new Date(a.date || a.createdAt || 0);
+        const dateB = new Date(b.date || b.createdAt || 0);
+        const amountA = Math.abs(parseFloat(a.amount) || 0);
+        const amountB = Math.abs(parseFloat(b.amount) || 0);
+
         if (sortBy === "date-desc") {
-          return new Date(b.rawDate) - new Date(a.rawDate);
+          return dateB - dateA;
         }
         if (sortBy === "date-asc") {
-          return new Date(a.rawDate) - new Date(b.rawDate);
+          return dateA - dateB;
         }
         if (sortBy === "amount-high") {
-          return Math.abs(b.amount) - Math.abs(a.amount);
+          return amountB - amountA;
         }
         if (sortBy === "amount-low") {
-          return Math.abs(a.amount) - Math.abs(b.amount);
+          return amountA - amountB;
         }
         return 0;
       });
-  }, [searchTerm, selectedCategory, sortBy]);
+  }, [transactions, searchTerm, selectedCategory, sortBy, categoryMap]);
 
   // Budget Percentage Calculation
+  const totalIncome = parseFloat(singleBook?.totalIncome) || 0;
+  const totalExpense = parseFloat(singleBook?.totalExpense) || 0;
+
   const budgetUsagePercent =
-    bookData?.totalExpense && bookData?.totalIncome
+    totalIncome > 0
       ? Math.min(
-          Math.round((bookData.totalExpense / bookData.totalIncome) * 100),
+          Math.round(
+            (totalExpense / totalIncome) * 100,
+          ),
           100,
         )
-      : 75;
+      : 0;
 
-  if (loading) {
+  const handleDeleteTransaction = async (txId) => {
+    try {
+      await deleteTransaction(txId);
+    } catch (err) {
+      console.error("Failed to delete transaction:", err);
+    }
+  };
+
+  if (isSingleBookLoading || isTransactionsLoading || isCategoriesLoading) {
     return <Loader />;
+  }
+
+  if (singleBookError || !singleBook) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-red-500 font-bold">Book details not found.</p>
+        <Link
+          to="/dashboard"
+          className="text-xs text-primary underline mt-2 inline-block"
+        >
+          Back to Dashboard
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -150,19 +155,22 @@ const BookDetails = () => {
           whileInView={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.15, ease: "easeInOut" }}
           viewport={{ once: true, amount: 0.1 }}
-          className="md:col-span-4 bg-white p-5 rounded-2xl shadow-xl border border-primary/10 flex flex-col"
+          className="md:col-span-4 bg-white p-5 rounded-2xl shadow-xl border border-primary/10 flex flex-col justify-between"
         >
           <div>
             <p className="text-xs font-semibold tracking-wider uppercase">
               Current Balance
             </p>
             <h2 className="text-xl lg:text-3xl font-extrabold text-primary mt-2">
-              ৳{bookData?.currentBalance?.toLocaleString() || "0"}
+              ৳
+              {singleBook?.currentBalance.toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+              })}
             </h2>
           </div>
           <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium mt-4">
             <TrendingUp size={14} />
-            <span>4.2% from last month</span>
+            <span>Book: {singleBook?.bookName || "Ledger"}</span>
           </div>
         </motion.div>
 
@@ -176,27 +184,41 @@ const BookDetails = () => {
         >
           <div className="grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2 divide-x divide-gray-100">
             <div>
-              <p className="text-xs font-semibold">Monthly Income</p>
+              <p className="text-xs font-semibold">Total Income</p>
               <p className="text-lg font-bold text-primary mt-1">
-                ৳{bookData?.totalIncome?.toLocaleString() || "0"}
+                ৳
+                {singleBook?.totalIncome.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                })}
               </p>
             </div>
             <div className="pl-4 md:pl-0 lg:pl-4">
-              <p className="text-xs font-semibold">Monthly Expense</p>
+              <p className="text-xs font-semibold">Total Expense</p>
               <p className="text-lg font-bold text-[#D9383A] mt-1">
-                ৳{bookData?.totalExpense?.toLocaleString() || "0"}
+                ৳
+                {singleBook?.totalExpense.toLocaleString("en-US", {
+                  minimumFractionDigits: 2,
+                })}
               </p>
             </div>
           </div>
 
           <div className="mt-4">
             <div className="flex justify-between items-center text-xs font-semibold mb-1.5">
-              <span>Budget Usage</span>
-              <span className="font-bold">{budgetUsagePercent}%</span>
+              <span className="text-gray-600">Expense Ratio</span>
+              <span className="font-bold text-gray-800">
+                {budgetUsagePercent}%
+              </span>
             </div>
-            <div className="w-full bg-base-100 h-2 rounded-full overflow-hidden">
+            <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
               <div
-                className="bg-primary h-full rounded-full transition-all duration-300"
+                className={`h-full rounded-full transition-all duration-500 ease-in-out ${
+                  budgetUsagePercent >= 90
+                    ? "bg-red-500"
+                    : budgetUsagePercent >= 75
+                      ? "bg-amber-500"
+                      : "bg-primary"
+                }`}
                 style={{ width: `${budgetUsagePercent}%` }}
               ></div>
             </div>
@@ -276,7 +298,7 @@ const BookDetails = () => {
               </select>
               <ChevronDown
                 size={14}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2  pointer-events-none"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
               />
             </div>
 
@@ -322,55 +344,89 @@ const BookDetails = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-100 text-[11px] font-bolduppercase tracking-wider">
+              <tr className="border-b border-gray-100 text-[11px] font-bold uppercase tracking-wider">
                 <th className="py-3 px-2">Date</th>
                 <th className="py-3 px-2">Description</th>
                 <th className="py-3 px-2">Category</th>
                 <th className="py-3 px-2">Type</th>
                 <th className="py-3 px-2 text-right">Amount</th>
+                <th className="py-3 px-2 text-center">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 text-sm">
               {filteredTransactions.length > 0 ? (
-                filteredTransactions.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="hover:bg-gray-50/50 transition-colors"
-                  >
-                    <td className="py-3.5 px-2 text-xs ">{item.date}</td>
-                    <td className="py-3.5 px-2">
-                      <p className="font-bold  text-sm">{item.title}</p>
-                      <p className="text-xs italic">{item.subtitle}</p>
-                    </td>
-                    <td className="py-3.5 px-2">
-                      <span
-                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${item.categoryBg}`}
+                filteredTransactions.map((item) => {
+                  const isIncome = item.type === "CASH_IN";
+                  const categoryName =
+                    categoryMap[item.categoryId] || "General";
+
+                  const formattedDate = item.date
+                    ? new Date(item.date).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })
+                    : "N/A";
+
+                  return (
+                    <tr
+                      key={item._id || item.id}
+                      className="hover:bg-gray-50/50 transition-colors"
+                    >
+                      <td className="py-3.5 px-2 text-xs">{formattedDate}</td>
+                      <td className="py-3.5 px-2">
+                        {/* <p className="font-bold text-sm">
+                          {item.title || categoryName}
+                        </p> */}
+                        {item.note && (
+                          <p className="text-xs italic text-gray-500">
+                            {item.note}
+                          </p>
+                        )}
+                      </td>
+                      <td className="py-3.5 px-2">
+                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-100 text-emerald-800">
+                          {categoryName}
+                        </span>
+                      </td>
+                      <td
+                        className={`py-3.5 px-2 font-semibold text-xs ${
+                          isIncome ? "text-primary" : "text-[#D9383A]"
+                        }`}
                       >
-                        {item.category}
-                      </span>
-                    </td>
-                    <td
-                      className={`py-3.5 px-2 font-semibold text-xs ${
-                        item.isIncome ? "text-primary" : "text-[#D9383A]"
-                      }`}
-                    >
-                      {item.type}
-                    </td>
-                    <td
-                      className={`py-3.5 px-2 text-right font-bold text-sm ${
-                        item.isIncome ? "text-primary" : "text-[#D9383A]"
-                      }`}
-                    >
-                      {item.isIncome
-                        ? `+৳${item.amount.toLocaleString()}`
-                        : `-৳${Math.abs(item.amount).toLocaleString()}`}
-                    </td>
-                  </tr>
-                ))
+                        {item.type}
+                      </td>
+                      <td
+                        className={`py-3.5 px-2 text-right font-bold text-sm ${
+                          isIncome ? "text-primary" : "text-[#D9383A]"
+                        }`}
+                      >
+                        {isIncome
+                          ? `+৳${(parseFloat(item.amount) || 0).toLocaleString()}`
+                          : `-৳${Math.abs(parseFloat(item.amount) || 0).toLocaleString()}`}
+                      </td>
+                      <td className="py-3.5 px-2 text-center">
+                        <button
+                          disabled
+                          onClick={() =>
+                            handleDeleteTransaction(item._id || item.id)
+                          }
+                          className="text-gray-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-colors"
+                          title="Delete Transaction"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
-                  <td colSpan="5" className="text-center py-6 text-xs">
-                    No transactions found.
+                  <td
+                    colSpan="6"
+                    className="text-center py-6 text-xs text-gray-400"
+                  >
+                    No transactions found for this book.
                   </td>
                 </tr>
               )}
