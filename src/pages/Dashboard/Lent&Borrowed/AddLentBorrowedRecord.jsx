@@ -1,12 +1,17 @@
 import { useForm } from "react-hook-form";
-import { X, ArrowUpRight, ArrowDownLeft, Save, PlusCircle } from "lucide-react";
+import { X, ArrowUpRight, ArrowDownLeft, Save, PlusCircle, Loader2 } from "lucide-react";
+import useAuth from "../../../hooks/useAuth";
+import useDebts from "../../../hooks/useDebts";
+import toast from "react-hot-toast";
 
 
 export const AddLentBorrowedRecord = () => {
+  const {user} = useAuth();
+  const {createDebt,isCreating} = useDebts(user?.email)
+
   const {
     register,
     handleSubmit,
-    // control,
     setValue,
     watch,
     formState: { errors },
@@ -14,6 +19,7 @@ export const AddLentBorrowedRecord = () => {
   } = useForm({
     defaultValues: {
       type: "LENT", // Matches Schema: "LENT" | "BORROWED"
+      userEmail: user?.email,
       personName: "",
       phoneNumber: "",
       principalAmount: "",
@@ -28,21 +34,38 @@ export const AddLentBorrowedRecord = () => {
 
   //   if (!isOpen) return null;
 
-  const handleFormSubmit = (data) => {
+  const handleFormSubmit = async (data) => {
     // Formats payload according to schema
     const formattedData = {
-      ...data,
+      userId: user?.uid || user?._id || "",
+      userEmail: user?.email,
+      personName: data.personName,
+      personPhoto: null,
+      personEmail: data.personEmail || "",
+      phoneNumber: data.phoneNumber || "",
+      type: data.type,
       principalAmount: parseFloat(data.principalAmount),
-      remainingBalance: parseFloat(data.principalAmount),
       settledAmount: 0,
+      remainingBalance: parseFloat( data.principalAmount),
       status: "PENDING",
-      createdDate: new Date(data.createdDate).toISOString(),
       dueDate: data.dueDate ? new Date(data.dueDate).toISOString() : null,
+      settlements: [],
+      note: data.note || "",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
-    onSubmitRecord(formattedData);
-    reset();
-    // onClose();
+    try{
+      const res = await createDebt(formattedData);
+      if(res.insertedId) {
+        toast.success(`Your ${data.type.toLowerCase()} created successfully`);
+        document.getElementById("my_modal_5").close();
+        reset();
+      }
+    } catch (error){
+      console.log(error.message);
+      toast.error(error.message || "Something went wrong!");
+    }
   };
 
   return (
@@ -225,8 +248,12 @@ export const AddLentBorrowedRecord = () => {
               type="submit"
               className="flex items-center gap-1.5 px-5 py-2 bg-primary text-white rounded-xl text-xs font-bold hover:bg-[#00472B] transition shadow-sm"
             >
-              <Save className="w-4 h-4" />
-              Save Record
+              {isCreating ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+              {isCreating ? "Saving..." : "Save Record"}
             </button>
           </div>
         </form>

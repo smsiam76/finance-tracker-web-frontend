@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Calculator, Camera, Loader2, Plus, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -33,6 +33,13 @@ export const CashIn = () => {
     user?.email
   );
 
+  // Filter Categories specifically for CASH_IN (INCOME)
+  const incomeCategories = useMemo(() => {
+    return categories.filter(
+      (cat) => cat?.type?.toUpperCase() === "INCOME"
+    );
+  }, [categories]);
+
   // Transaction mutation hook
   const { createTransaction, isCreating } = useTransactions();
 
@@ -63,12 +70,12 @@ export const CashIn = () => {
     }
   }, [books, setValue]);
 
-  // Set default category when categories load
+  // Set default category to the first INCOME category
   useEffect(() => {
-    if (categories.length > 0) {
-      setValue("categoryId", categories[0]._id);
+    if (incomeCategories.length > 0) {
+      setValue("categoryId", incomeCategories[0]._id);
     }
-  }, [categories, setValue]);
+  }, [incomeCategories, setValue]);
 
   // Handle Image Upload to ImageBB
   const handleImageUpload = async (e) => {
@@ -87,7 +94,6 @@ export const CashIn = () => {
 
       setValue("receiptUrl", imageUrl);
       setReceiptPreview(imageUrl);
-      // toast.success("Receipt uploaded successfully!");
     } catch (error) {
       console.error("Image Upload Error:", error);
       toast.error(error.message || "Failed to upload image.");
@@ -130,7 +136,7 @@ export const CashIn = () => {
           type: "CASH_IN",
           amount: "0.00",
           bookId: books[0]?._id || "",
-          categoryId: categories[0]?._id || "",
+          categoryId: incomeCategories[0]?._id || "",
           date: new Date().toISOString().split("T")[0],
           note: "",
           receiptUrl: "",
@@ -277,50 +283,56 @@ export const CashIn = () => {
           )}
         </div>
 
-        {/* Category Grid Section */}
+        {/* Category Grid Section (Only INCOME Categories) */}
         <div>
           <label className="text-primary block mb-2 font-bold text-sm">
             Category
           </label>
-          <Controller
-            name="categoryId"
-            control={control}
-            rules={{ required: "Please select a category" }}
-            render={({ field }) => (
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                {categories.map((cat) => {
-                  const isSelected = field.value === cat._id;
-                  const activeIconColor = isSelected
-                    ? "#ffffff"
-                    : cat.color || "#22c55e";
+          {incomeCategories.length === 0 ? (
+            <div className="text-center py-3 bg-gray-50 rounded-xl border border-dashed border-gray-200 text-xs text-gray-500">
+              No income categories found.
+            </div>
+          ) : (
+            <Controller
+              name="categoryId"
+              control={control}
+              rules={{ required: "Please select a category" }}
+              render={({ field }) => (
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                  {incomeCategories.map((cat) => {
+                    const isSelected = field.value === cat._id;
+                    const activeIconColor = isSelected
+                      ? "#ffffff"
+                      : cat.color || "#22c55e";
 
-                  return (
-                    <button
-                      key={cat._id}
-                      type="button"
-                      onClick={() => field.onChange(cat._id)}
-                      className={`p-2.5 font-semibold rounded-xl flex flex-col items-center justify-center transition border cursor-pointer ${
-                        isSelected
-                          ? "bg-primary text-white border-primary"
-                          : "bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700"
-                      }`}
-                    >
-                      <div className="mb-1">
-                        {renderCategoryIcon(
-                          cat.icon,
-                          activeIconColor,
-                          "w-5 h-5"
-                        )}
-                      </div>
-                      <span className="text-[10px] truncate max-w-full">
-                        {cat.name}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-          />
+                    return (
+                      <button
+                        key={cat._id}
+                        type="button"
+                        onClick={() => field.onChange(cat._id)}
+                        className={`p-2.5 font-semibold rounded-xl flex flex-col items-center justify-center transition border cursor-pointer ${
+                          isSelected
+                            ? "bg-primary text-white border-primary"
+                            : "bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700"
+                        }`}
+                      >
+                        <div className="mb-1">
+                          {renderCategoryIcon(
+                            cat.icon,
+                            activeIconColor,
+                            "w-5 h-5"
+                          )}
+                        </div>
+                        <span className="text-[10px] truncate max-w-full capitalize">
+                          {cat.name}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            />
+          )}
           {errors.categoryId && (
             <p className="text-red-500 text-xs mt-1">
               {errors.categoryId.message}
@@ -414,7 +426,7 @@ export const CashIn = () => {
         {/* Submit Button */}
         <button
           type="submit"
-          disabled={isCreating || uploading} 
+          disabled={isCreating || uploading}
           className="w-full bg-primary hover:bg-emerald-800 disabled:opacity-50 font-semibold py-3 rounded-xl transition shadow-md text-white cursor-pointer"
         >
           {isCreating ? "Processing..." : "Cash In"}

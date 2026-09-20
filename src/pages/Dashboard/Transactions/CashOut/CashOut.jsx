@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Calculator, Camera, Loader2, Minus, Plus, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -32,6 +32,13 @@ export const CashOut = () => {
   const { categories = [], isLoading: isCategoriesLoading } = useCategories(
     user?.email
   );
+
+  // Filter Categories specifically for CASH_IN (EXPENSE)
+  const expenseCategories = useMemo(() => {
+    return categories.filter(
+      (cat) => cat?.type?.toUpperCase() === "EXPENSE"
+    );
+  }, [categories]);
 
   // Transaction mutation hook
   const { createTransaction, isCreating } = useTransactions();
@@ -285,7 +292,7 @@ export const CashOut = () => {
             rules={{ required: "Please select a category" }}
             render={({ field }) => (
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                {categories.map((cat) => {
+                {expenseCategories.map((cat) => {
                   const isSelected = field.value === cat._id;
                   const activeIconColor = isSelected
                     ? "#ffffff"

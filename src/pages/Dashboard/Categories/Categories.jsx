@@ -9,11 +9,11 @@ import useCategories from "../../../hooks/useCategories";
 import Loader from "../../../component/Shared/Loader/Loader";
 import { AVAILABLE_COLORS, AVAILABLE_ICONS, renderCategoryIcon } from "../../../utility/renderCategoryIcon";
 
-
-
 export const Categories = () => {
   const { user } = useAuth();
-  const { categories, isLoading, createCategory, isCreating } = useCategories(
+  
+  // ১. Hook একবার কল করুন এবং সঠিকভাবে categories রিসিভ করুন
+  const { categories = [], isLoading, createCategory, isCreating } = useCategories(
     user?.email
   );
 
@@ -25,7 +25,6 @@ export const Categories = () => {
     register,
     handleSubmit,
     reset,
-    setValue,
     control,
     formState: { errors },
   } = useForm({
@@ -37,9 +36,10 @@ export const Categories = () => {
     },
   });
 
-  // Tab Filtering
-  const filteredCategories = categories.filter(
-    (item) => item.type === activeTab
+  // ২. Safe Array Check & Case Insensitive Filtering
+  const safeCategories = Array.isArray(categories) ? categories : [];
+  const filteredCategories = safeCategories.filter(
+    (item) => item?.type?.toUpperCase() === activeTab.toUpperCase()
   );
 
   const onAddCategory = async (data) => {
@@ -51,13 +51,19 @@ export const Categories = () => {
         type: data.type,
         color: data.color,
         icon: data.icon,
+        isDefault: false,
       };
 
       const res = await createCategory(categoryData);
       if (res?.insertedId || res?.data?.insertedId) {
         toast.success("Category created successfully!");
         setActiveTab(data.type);
-        reset();
+        reset({
+          type: data.type,
+          name: "",
+          icon: "banknote",
+          color: "#22c55e",
+        });
         document.getElementById("new_category_modal").close();
       }
     } catch (error) {
@@ -69,7 +75,12 @@ export const Categories = () => {
   };
 
   const handleOpenModal = () => {
-    setValue("type", activeTab);
+    reset({
+      type: activeTab,
+      name: "",
+      icon: "banknote",
+      color: "#22c55e",
+    });
     document.getElementById("new_category_modal").showModal();
   };
 
@@ -122,43 +133,56 @@ export const Categories = () => {
       >
         {/* Categories Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-8">
-          {filteredCategories.map((item) => {
-            const isSelected = selectedCategory === item._id;
+          {filteredCategories.length > 0 ? (
+            filteredCategories.map((item) => {
+              const isSelected = selectedCategory === item._id;
 
-            return (
-              <div
-                key={item._id}
-                onClick={() => setSelectedCategory(item._id)}
-                className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
-                  isSelected
-                    ? "bg-primary text-white border-emerald-500 ring-1 ring-emerald-500"
-                    : "bg-base-100 border-base-100 hover:border-primary/10 hover:bg-primary hover:text-white"
-                }`}
-              >
+              return (
                 <div
-                  className="p-2.5 rounded-xl shrink-0"
-                  style={{
-                    backgroundColor: `${item.color}20`,
-                  }}
+                  key={item._id}
+                  onClick={() => setSelectedCategory(item._id)}
+                  className={`flex items-center gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
+                    isSelected
+                      ? "bg-primary text-white border-emerald-500 ring-1 ring-emerald-500"
+                      : "bg-base-100 border-base-100 hover:border-primary/10 hover:bg-primary hover:text-white"
+                  }`}
                 >
-                  {renderCategoryIcon(item.icon, item.color, "w-5 h-5")}
+                  <div
+                    className="p-2.5 rounded-xl shrink-0"
+                    style={{
+                      backgroundColor: item.color ? `${item.color}20` : "#22c55e20",
+                    }}
+                  >
+                    {renderCategoryIcon(item.icon, item.color || "#22c55e", "w-5 h-5")}
+                  </div>
+                  <div className="flex flex-col min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-1">
+                      <span className="font-semibold text-sm truncate">
+                        {item.name}
+                      </span>
+                      {item.isDefault && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-medium shrink-0">
+                          Default
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-xs text-slate-400 flex items-center gap-0.5 mt-0.5">
+                      {item.type}
+                      {item.type?.toUpperCase() === "EXPENSE" ? (
+                        <ArrowUpRight className="w-3 h-3 text-red-400" />
+                      ) : (
+                        <ArrowDownLeft className="w-3 h-3 text-emerald-400" />
+                      )}
+                    </span>
+                  </div>
                 </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="font-semibold text-sm truncate">
-                    {item.name}
-                  </span>
-                  <span className="text-xs text-slate-400 flex items-center gap-0.5">
-                    {item.type}
-                    {item.type === "EXPENSE" ? (
-                      <ArrowUpRight className="w-3 h-3 text-red-400" />
-                    ) : (
-                      <ArrowDownLeft className="w-3 h-3 text-emerald-400" />
-                    )}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div className="col-span-full text-center py-6 text-slate-400 text-sm">
+              No categories found for {activeTab.toLowerCase()}.
+            </div>
+          )}
 
           {/* Create Button */}
           <button
@@ -179,7 +203,7 @@ export const Categories = () => {
           className="modal modal-bottom sm:modal-middle"
         >
           <div className="modal-box bg-white border border-primary/20 rounded-2xl p-6 max-w-md w-full shadow-2xl">
-            <div className="flex items-center justify-between pb-4 mb-5">
+            <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-100">
               <h3 className="text-lg font-bold">New Category</h3>
               <button
                 type="button"
@@ -194,7 +218,6 @@ export const Categories = () => {
             </div>
 
             <form onSubmit={handleSubmit(onAddCategory)} className="space-y-5">
-              {/* Type Switcher via Controller */}
               <Controller
                 name="type"
                 control={control}
@@ -226,7 +249,6 @@ export const Categories = () => {
                 )}
               />
 
-              {/* Name Input */}
               <div>
                 <input
                   type="text"
@@ -245,7 +267,6 @@ export const Categories = () => {
                 )}
               </div>
 
-              {/* Icon Selection via Controller */}
               <div>
                 <label className="block text-xs font-medium mb-3">Icon</label>
                 <Controller
@@ -279,7 +300,6 @@ export const Categories = () => {
                 />
               </div>
 
-              {/* Color Selection via Controller */}
               <div>
                 <label className="block text-xs font-medium mb-3">Color</label>
                 <Controller
@@ -308,7 +328,6 @@ export const Categories = () => {
                 />
               </div>
 
-              {/* Modal Actions */}
               <div className="flex items-center justify-end gap-3 pt-4">
                 <button
                   type="button"

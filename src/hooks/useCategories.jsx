@@ -11,6 +11,7 @@ import {
 const useCategories = (email = null, id = null) => {
   const queryClient = useQueryClient();
 
+  // Helper to invalidate all category queries (exact: false ensures all ['categories', ...] reset)
   const invalidateCategoryCache = () => {
     queryClient.invalidateQueries({ queryKey: ["categories"] });
   };
@@ -23,7 +24,7 @@ const useCategories = (email = null, id = null) => {
     error,
     refetch,
   } = useQuery({
-    queryKey: email ? ["categories", email] : ["categories"],
+    queryKey: ["categories", email],
     queryFn: () => (email ? getEmailCategories(email) : getAllCategories()),
   });
 
@@ -33,7 +34,7 @@ const useCategories = (email = null, id = null) => {
     isLoading: isSingleCategoryLoading,
     error: singleCategoryError,
   } = useQuery({
-    queryKey: ["category", id], // "category"
+    queryKey: ["category", id],
     queryFn: () => getSingleCategory(id),
     enabled: !!id,
   });
