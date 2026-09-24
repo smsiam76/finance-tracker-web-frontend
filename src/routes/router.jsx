@@ -18,6 +18,7 @@ import { LentAndBorrowed } from "../pages/Dashboard/Lent&Borrowed/Lent&Borrowed"
 import { SettingsPage } from "../pages/Dashboard/Settings/SettingsPage";
 import { Budget } from "../pages/Dashboard/Budget/Budget";
 import { Categories } from "../pages/Dashboard/Categories/Categories";
+import RemindersPage from "../pages/Dashboard/RemindersPage/RemindersPage";
 
 const router = createBrowserRouter([
   {
@@ -64,6 +65,10 @@ const router = createBrowserRouter([
       {
         path: "reports",
         element: <ReportAnalysis />,
+      },
+      {
+        path: "reminders",
+        element: <RemindersPage />,
       },
       {
         path: "categories",

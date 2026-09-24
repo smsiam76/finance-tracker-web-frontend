@@ -1,8 +1,6 @@
 import { IoClose } from "react-icons/io5";
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-// import { useNavigate } from "react-router";
 import {
   IoCheckmarkCircleOutline,
   IoWalletOutline,
@@ -17,15 +15,14 @@ import useAuth from "../../hooks/useAuth";
 import toast from "react-hot-toast";
 
 const CreateBookModal = () => {
-  //   const navigate = useNavigate();
   const { user } = useAuth();
-
   const { createBook, isCreating } = useBooks();
 
-  // Icon Color and Type Selection State
+  // Icon, Color and Type Selection State
   const [selectedIcon, setSelectedIcon] = useState("wallet");
   const [selectedColor, setSelectedColor] = useState("#006A4E");
-  const [bookType, setBookType] = useState("STANDARD"); // <--- Book Type State
+  const [bookType, setBookType] = useState("STANDARD");
+
   // React Hook Form Configuration
   const {
     register,
@@ -36,7 +33,9 @@ const CreateBookModal = () => {
     defaultValues: {
       bookName: "",
       openingBalance: "",
+      targetAmount: "",
       description: "",
+      type: "STANDARD",
     },
   });
 
@@ -61,27 +60,72 @@ const CreateBookModal = () => {
 
   const bookTypes = [
     { id: "STANDARD", label: "Standard Ledger" },
-    { id: "SAVINGS", label: "Savings / Emergency" },
-    { id: "TARGET_PROGRESS", label: "Target (Progress Bar)" },
-    { id: "TARGET_REMAINING", label: "Target (Remaining)" },
+    // { id: "SAVINGS", label: "Savings / Emergency" },
+    // { id: "TARGET_PROGRESS", label: "Target (Progress Bar)" },
+    // { id: "TARGET_REMAINING", label: "Target (Remaining)" },
   ];
 
-  // Helper to safely close the modal
-  // const closeModal = () => {
-  //   const modal = document.getElementById("my_modal_5");
-  //   if (modal && typeof modal.close === "function") {
-  //     modal.close();
+  // Form Submission Handler
+  // const onSubmit = async (data) => {
+  //   const bookInfo = {
+  //     ...data,
+  //     icon: selectedIcon,
+  //     themeColor: selectedColor,
+  //     openingBalance: parseFloat(data.openingBalance || 0),
+  //     currentBalance: parseFloat(data.openingBalance || 0),
+  //     targetAmount: bookType.startsWith("TARGET")
+  //       ? parseFloat(data.targetAmount || 0)
+  //       : null,
+  //     createdAt: new Date().toISOString(),
+  //     type: bookType,
+  //     createdBy: {
+  //       email: user?.email,
+  //       displayName: user?.displayName || "",
+  //       photoURL: user?.photoURL || "",
+  //     },
+  //     status: "active",
+  //     totalIncome: 0,
+  //     totalExpense: 0,
+  //     budgets: [],
+  //   };
+
+  //   try {
+  //     const res = await createBook(bookInfo);
+
+  //     if (res?.insertedId || res?.acknowledged) {
+  //       toast.success(`"${data.bookName}" created successfully!`);
+
+  //       // Reset input and default values
+  //       reset();
+  //       setSelectedIcon("wallet");
+  //       setSelectedColor("#006A4E");
+  //       setBookType("STANDARD");
+
+  //       // Close modal
+  //       document.getElementById("create_book_modal_cashin")?.close();
+  //     }
+  //   } catch (error) {
+  //     console.error(error.message);
+  //     toast.error(error?.message || `Failed to create "${data.bookName}"`);
   //   }
   // };
 
-  // Form Submission Handler
+  // CreateBookModal.jsx
+
   const onSubmit = async (data) => {
+    const parsedOpeningBalance = parseFloat(data.openingBalance || 0);
+
     const bookInfo = {
       ...data,
       icon: selectedIcon,
       themeColor: selectedColor,
-      openingBalance: parseFloat(data.openingBalance || 0),
-      currentBalance: parseFloat(data.openingBalance || 0),
+      openingBalance: parsedOpeningBalance,
+      currentBalance: parsedOpeningBalance,
+      totalIncome: parsedOpeningBalance, // Sync initial income with opening balance
+      totalExpense: 0,
+      targetAmount: bookType.startsWith("TARGET")
+        ? parseFloat(data.targetAmount || 0)
+        : null,
       createdAt: new Date().toISOString(),
       type: bookType,
       createdBy: {
@@ -90,8 +134,6 @@ const CreateBookModal = () => {
         photoURL: user?.photoURL || "",
       },
       status: "active",
-      totalIncome: 0,
-      totalExpense: 0,
       budgets: [],
     };
 
@@ -100,20 +142,18 @@ const CreateBookModal = () => {
 
       if (res?.insertedId || res?.acknowledged) {
         toast.success(`"${data.bookName}" created successfully!`);
-        console.log("Submitted Data:", bookInfo);
 
-        // reset input and default values
+        // Reset form and state
         reset();
         setSelectedIcon("wallet");
         setSelectedColor("#006A4E");
         setBookType("STANDARD");
 
-        // close modal
-        // closeModal();
+        // Close modal
         document.getElementById("create_book_modal_cashin")?.close();
       }
     } catch (error) {
-      console.log(error.message);
+      console.error(error.message);
       toast.error(error?.message || `Failed to create "${data.bookName}"`);
     }
   };
@@ -128,8 +168,9 @@ const CreateBookModal = () => {
           </p>
         </div>
         <button
-          // onClick={closeModal}
-          onClick={() => document.getElementById("create_book_modal_cashin")?.close()}
+          onClick={() =>
+            document.getElementById("create_book_modal_cashin")?.close()
+          }
           type="button"
           className="hover:text-gray-600 cursor-pointer hover:bg-primary/10 transition-colors p-1 rounded-lg"
         >
@@ -172,7 +213,10 @@ const CreateBookModal = () => {
             Book Type
           </label>
           <select
-            {...register("type", { required: "Please select a book type" })}
+            {...register("type", {
+              required: "Please select a book type",
+              onChange: (e) => setBookType(e.target.value), // Sync state with React Hook Form
+            })}
             className="w-full bg-base-100 px-4 py-3 text-sm rounded-xl border border-primary/20 focus:border-emerald-500 focus:ring-emerald-100 outline-none transition-all"
           >
             {bookTypes.map((t) => (
@@ -225,11 +269,18 @@ const CreateBookModal = () => {
                   step="0.01"
                   placeholder="50000.00"
                   {...register("targetAmount", {
-                    required: "Target amount is required for goal books",
+                    required: bookType.startsWith("TARGET")
+                      ? "Target amount is required for goal books"
+                      : false,
                   })}
                   className="w-full pl-8 pr-4 py-3 text-sm rounded-xl border border-primary/20 focus:border-emerald-500 focus:ring-emerald-100 outline-none transition-all text-gray-800"
                 />
               </div>
+              {errors.targetAmount && (
+                <span className="text-xs text-red-500 mt-1 block font-medium">
+                  {errors.targetAmount.message}
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -295,8 +346,9 @@ const CreateBookModal = () => {
         {/* Action Buttons */}
         <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-100 mt-6">
           <button
-            // onClick={closeModal}
-            onClick={() => document.getElementById("create_book_modal_cashin")?.close()}
+            onClick={() =>
+              document.getElementById("create_book_modal_cashin")?.close()
+            }
             type="button"
             className="px-5 py-2.5 text-sm font-semibold hover:bg-primary/10 rounded-xl transition-colors"
           >

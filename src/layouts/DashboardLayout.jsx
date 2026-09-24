@@ -18,7 +18,8 @@ import {
   Wallet,
 } from "lucide-react";
 import useAuth from "../hooks/useAuth";
-import useSingleUser from "../hooks/useSingleuser";
+import useSingleUser from "../hooks/useSingleUser";
+
 
 const DashboardLayout = () => {
   const location = useLocation();
@@ -119,6 +120,13 @@ const DashboardLayout = () => {
       >
         <Tags className="font-medium text-xl" />
         <span>Categories</span>
+      </NavLink>
+      <NavLink
+        to="/dashboard/reminders"
+        className="flex gap-2.5 items-center py-3 px-4 rounded-md font-medium hover:bg-primary hover:text-base-100 transition-all duration-300 ease-linear"
+      >
+        <Tags className="font-medium text-xl" />
+        <span>Reminders</span>
       </NavLink>
       <NavLink
         to="/dashboard/reports"

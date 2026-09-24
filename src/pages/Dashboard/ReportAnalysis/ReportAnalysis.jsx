@@ -18,11 +18,13 @@ import { motion } from "framer-motion";
 export const ReportAnalysis = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("Monthly");
+  const [selectedBook, setSelectedBook] = useState("combined");
 
-  // Custom hook call
+  // Custom hook call - selectedBook পাঠানো হচ্ছে
   const { reportAnalytics, isReportLoading } = useReports(
     user?.email,
     activeTab,
+    selectedBook
   );
 
   if (isReportLoading) {
@@ -37,16 +39,30 @@ export const ReportAnalysis = () => {
     expenseGrowth = "0%",
     balanceTrend = [],
     categories = [],
+    userBooks = [], // Backend থেকে আসা ইউজার এর বইগুলোর তালিকা (যদি থাকে)
   } = reportAnalytics || {};
 
   const handleExportPDF = () => {
-    // PDF Export Logic (e.g. window.print() or jsPDF)
-    console.log("Exporting PDF...");
+    window.print(); // দ্রুত PDF ডাউনলোডের জন্য স্ট্যান্ডার্ড অপশন
   };
 
   const handleExportCSV = () => {
-    // CSV Export Logic
-    console.log("Exporting CSV...");
+    if (!categories || categories.length === 0) return;
+
+    const headers = ["Category", "Amount"];
+    const rows = categories.map((cat) => [cat.name, cat.value]);
+
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `Report_${activeTab}_${selectedBook}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -64,7 +80,21 @@ export const ReportAnalysis = () => {
             Track and analyze income, spending trends, and balances.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Per Book / Combined Selector */}
+          <select
+            value={selectedBook}
+            onChange={(e) => setSelectedBook(e.target.value)}
+            className="border border-gray-200 px-3 py-2 rounded-lg text-sm bg-white font-semibold text-gray-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          >
+            <option value="combined">All Books (Combined)</option>
+            {userBooks.map((book) => (
+              <option key={book._id} value={book._id}>
+                {book.title}
+              </option>
+            ))}
+          </select>
+
           <button
             onClick={handleExportPDF}
             className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 transition cursor-pointer"
@@ -75,7 +105,7 @@ export const ReportAnalysis = () => {
             onClick={handleExportCSV}
             className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition cursor-pointer"
           >
-            <FileSpreadsheet className="w-4 h-4" /> Export CSV
+            <FileSpreadsheet className="w-4 h-4" /> Export Excel/CSV
           </button>
         </div>
       </motion.div>
@@ -142,7 +172,7 @@ export const ReportAnalysis = () => {
           viewport={{ once: true, amount: 0.1 }}
           className="p-5 bg-white rounded-xl border border-gray-100 shadow-sm"
         >
-          <p className="text-sm text-gray-500 font-medium">Net Savings</p>
+          <p className="text-sm text-gray-500 font-medium font-medium">Net Savings</p>
           <h2 className="text-2xl font-bold text-emerald-700 mt-1">
             ৳{Number(currentBalance).toLocaleString()}
           </h2>
@@ -198,7 +228,6 @@ export const ReportAnalysis = () => {
               Expense by Category
             </h3>
 
-            {/* Pie Chart Component Container */}
             <div className="h-52 w-full">
               {categories.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
@@ -230,7 +259,6 @@ export const ReportAnalysis = () => {
             </div>
           </div>
 
-          {/* Custom Category Legends Outside ResponsiveContainer */}
           {categories.length > 0 && (
             <div className="mt-4 pt-3 border-t border-gray-100 space-y-2 max-h-32 overflow-y-auto pr-1">
               {categories.map((cat, idx) => (

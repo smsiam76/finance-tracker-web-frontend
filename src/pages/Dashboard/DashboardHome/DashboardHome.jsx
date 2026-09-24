@@ -24,11 +24,13 @@ const DashboardHome = () => {
     // lendingSummary,
     isLoading: isDashboardLoading,
   } = useDashboardSummary(email);
-  
-  const { transactions, isLoading: isTransactionsLoading } =
-    useTransactions(email);
 
-    console.log(summaryData);
+  console.log(budgetOverview);
+
+  const { transactions= [], isLoading: isTransactionsLoading } =
+    useTransactions({email});
+
+  console.log(transactions);
 
   const quickActions = [
     {
@@ -69,36 +71,7 @@ const DashboardHome = () => {
     totalExpense: 0,
     netSavings: 0,
   };
-
   const categoryExpenses = summaryData?.categoryExpenses || [];
-
-  console.log(metrics, categoryExpenses);
-
-  // const budgetItems = [
-  //   {
-  //     id: 1,
-  //     name: "Groceries",
-  //     spent: 4500,
-  //     total: 6000,
-  //   },
-  //   {
-  //     id: 2,
-  //     name: "Electricity Bill",
-  //     spent: 3200,
-  //     total: 3000,
-  //   },
-  // ];
-
-  const lendingData = {
-    lent: 4500,
-    borrowed: 12000,
-  };
-
-  // const reminderData = {
-  //   id: 1,
-  //   title: "Electricity Bill",
-  //   dueDate: "15/10/2024",
-  // };
 
   return (
     <div className="pt-6 pb-12">
@@ -250,12 +223,12 @@ const DashboardHome = () => {
         >
           <div className="flex justify-between items-center px-6 md:px-10">
             <h3 className="text-xl font-bold">Recent Transactions</h3>
-            <Link
+            {/* <Link
               to="/dashboard/transactions"
               className="font-medium text-primary hover:underline transition-all duration-300 ease-in-out"
             >
               View All
-            </Link>
+            </Link> */}
           </div>
           <div className="divider my-4"></div>
           <div className="px-4 md:px-10">
@@ -318,7 +291,10 @@ const DashboardHome = () => {
                   return (
                     <div key={item._id || item.id} className="space-y-2">
                       <div className="flex justify-between items-center text-sm font-semibold">
-                        <span className="text-gray-800">{item.name}</span>
+                        <div className="flex gap-2">
+                          <span className="text-gray-800">{item.name}</span>
+                          <span>({item.bookName})</span>
+                        </div>
                         <span className="text-gray-500">
                           ৳{item.spent.toLocaleString()} / ৳
                           {item.total.toLocaleString()}
@@ -346,7 +322,7 @@ const DashboardHome = () => {
                 LENT
               </span>
               <span className="md:text-2xl font-bold text-primary">
-                ৳{lendingData.lent.toLocaleString()}
+                ৳{summaryData?.metrics?.totalLent}
               </span>
             </div>
 
@@ -355,7 +331,7 @@ const DashboardHome = () => {
                 BORROWED
               </span>
               <span className="md:text-2xl font-bold text-red-600">
-                ৳{lendingData.borrowed.toLocaleString()}
+                ৳{summaryData?.metrics?.totalBorrowed}
               </span>
             </div>
           </div>

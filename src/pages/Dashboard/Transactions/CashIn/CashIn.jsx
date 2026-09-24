@@ -54,7 +54,7 @@ export const CashIn = () => {
   } = useForm({
     defaultValues: {
       type: "CASH_IN",
-      amount: "0.00",
+      amount: "",
       bookId: "",
       categoryId: "",
       date: new Date().toISOString().split("T")[0],
@@ -183,6 +183,7 @@ export const CashIn = () => {
                 <Plus className="text-primary" size={20} />
                 <input
                   type="text"
+                  placeholder="0.00"
                   {...register("amount", {
                     required: "Amount is required",
                     pattern: {

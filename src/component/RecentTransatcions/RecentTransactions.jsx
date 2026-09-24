@@ -1,13 +1,5 @@
-
-import { FaQuestionCircle, FaReceipt, FaWallet } from 'react-icons/fa';
-import * as FaIcons from 'react-icons/fa';
-
-// Dynamic Icon Component
-const DynamicIcon = ({ iconName, className }) => {
-  if (!iconName) return <FaWallet className={className} />;
-  const IconComponent = FaIcons[iconName] || FaQuestionCircle;
-  return <IconComponent className={className} />;
-};
+import { FaReceipt } from 'react-icons/fa';
+import { renderIcon } from '../../utility/renderIcon';
 
 // UI Styling Configs based on Transaction Types
 const TRANSACTION_CONFIG = {
@@ -25,7 +17,6 @@ const TRANSACTION_CONFIG = {
   },
 };
 
-// Native Formatting Helpers
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
   const parsedDate = new Date(dateString);
@@ -48,7 +39,6 @@ const formatCurrency = (amount) => {
 
 const RecentTransactions = ({ transactions = [] }) => {
 
-  console.log(transactions);
   if (!transactions || transactions.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500 font-medium">
@@ -64,9 +54,9 @@ const RecentTransactions = ({ transactions = [] }) => {
           const config = TRANSACTION_CONFIG[item.type] || TRANSACTION_CONFIG.CASH_OUT;
 
           // Book data prioritization logic
-          const bookIcon = item.bookDetails?.icon || item.bookIcon || item.icon;
-          const bookColor = item.bookDetails?.color || item.bookColor;
-          const bookName = item.bookDetails?.title || item.bookName;
+          const bookIcon = item.bookIcon || item.bookDetails?.icon || item.icon;
+          const bookColor = item.bookColor || item.bookDetails?.themeColor || item.bookDetails?.color || '#006A4E';
+          const bookName = item.bookName || item.bookDetails?.bookName || item.bookDetails?.title;
 
           const displayCategory = item.type === 'TRANSFER' 
             ? 'Transfer' 
@@ -85,11 +75,8 @@ const RecentTransactions = ({ transactions = [] }) => {
                     backgroundColor: bookColor ? `${bookColor}20` : '#F3F4F6', // 20 opacity for light background
                   }}
                 >
-                  <DynamicIcon 
-                    iconName={item?.bookDetails?.icon} 
-                    className="text-lg md:text-xl" 
-                    style={{ color: bookColor || '#4B5563' }}
-                  />
+                  {/* renderIcon utility call */}
+                  {renderIcon(bookIcon, bookColor, "text-lg md:text-xl")}
                 </div>
 
                 <div className="truncate">

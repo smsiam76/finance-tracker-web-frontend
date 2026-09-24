@@ -16,6 +16,7 @@ import { AddLentBorrowedRecord } from "./AddLentBorrowedRecord";
 import { motion } from "framer-motion";
 import useDebts from "../../../hooks/useDebts";
 import Loader from "../../../component/Shared/Loader/Loader";
+import useAuth from "../../../hooks/useAuth";
 
 // Helper function moved to top level
 const debtStatusCalc = (record) => {
@@ -30,9 +31,10 @@ const debtStatusCalc = (record) => {
 };
 
 export const LentAndBorrowed = () => {
+  const {user} = useAuth();
   const [loadingDebtId, setLoadingDebtId] = useState(null);
 
-  const { debts = [], isLoading, isError, settleDebt, isSettling } = useDebts();
+  const { debts = [], isLoading, isError, settleDebt, isSettling } = useDebts(user?.email);
 
   const [activeTab, setActiveTab] = useState("LENT"); // LENT or BORROWED
   const [searchTerm, setSearchTerm] = useState("");

@@ -30,14 +30,12 @@ export const CashOut = () => {
   // Get books and categories filtered by logged-in user email
   const { books = [], isLoading: isBooksLoading } = useBooks(user?.email);
   const { categories = [], isLoading: isCategoriesLoading } = useCategories(
-    user?.email
+    user?.email,
   );
 
   // Filter Categories specifically for CASH_IN (EXPENSE)
   const expenseCategories = useMemo(() => {
-    return categories.filter(
-      (cat) => cat?.type?.toUpperCase() === "EXPENSE"
-    );
+    return categories.filter((cat) => cat?.type?.toUpperCase() === "EXPENSE");
   }, [categories]);
 
   // Transaction mutation hook
@@ -54,7 +52,7 @@ export const CashOut = () => {
   } = useForm({
     defaultValues: {
       type: "CASH_OUT",
-      amount: "0.00",
+      amount: "",
       bookId: "",
       categoryId: "",
       date: new Date().toISOString().split("T")[0],
@@ -109,13 +107,26 @@ export const CashOut = () => {
   // Form Submission Handler
   const onSubmit = async (data) => {
     try {
+      const inputAmount = parseFloat(data.amount);
+      const selectedBook = books.find((b) => b._id === data.bookId);
+
+      // check balance
+      const currentBalance = Number(
+        selectedBook?.balance || selectedBook?.currentBalance || 0,
+      );
+      if (inputAmount > currentBalance) {
+        return toast.error(
+          `Insufficient balance! Your current balance is ৳${currentBalance.toFixed(2)}`,
+        );
+      }
+
       const payload = {
         userId: user?._id || user?.uid || "",
         userEmail: user?.email,
         bookId: data.bookId,
         categoryId: data.categoryId,
         type: "CASH_OUT",
-        amount: parseFloat(data.amount),
+        amount: inputAmount,
         date: new Date(data.date).toISOString(),
         note: data.note || "",
         receiptUrl: data.receiptUrl || "",
@@ -181,6 +192,7 @@ export const CashOut = () => {
                 <Minus className="text-red-500" size={20} />
                 <input
                   type="text"
+                  placeholder="0.00"
                   {...register("amount", {
                     required: "Amount is required",
                     pattern: {
@@ -313,7 +325,7 @@ export const CashOut = () => {
                         {renderCategoryIcon(
                           cat.icon,
                           activeIconColor,
-                          "w-5 h-5"
+                          "w-5 h-5",
                         )}
                       </div>
                       <span className="text-[10px] truncate max-w-full">

@@ -6,50 +6,145 @@ import {
   ChevronDown,
   Wallet,
   ArrowLeftRight,
-  Trash2,
+  // Trash2,
 } from "lucide-react";
-import Loader from "../../../component/Shared/Loader/Loader";
 import { motion } from "framer-motion";
+import Loader from "../../../component/Shared/Loader/Loader";
 import useAuth from "../../../hooks/useAuth";
 import useBooks from "../../../hooks/useBooks";
 import useTransactions from "../../../hooks/useTransactions";
 import useCategories from "../../../hooks/useCategories";
 
+const BalanceCard = ({ balance = 0, bookName = "Ledger" }) => (
+  <motion.div
+    initial={{ x: -20, opacity: 0 }}
+    animate={{ x: 0, opacity: 1 }}
+    transition={{ duration: 0.3 }}
+    className="md:col-span-4 bg-white p-5 rounded-2xl shadow-xl border border-primary/10 flex flex-col justify-between"
+  >
+    <div>
+      <p className="text-xs font-semibold tracking-wider uppercase text-gray-500">
+        Current Balance
+      </p>
+      <h2 className="text-xl lg:text-3xl font-extrabold text-primary mt-2">
+        ৳{Number(balance).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+      </h2>
+    </div>
+    <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium mt-4">
+      <TrendingUp size={14} />
+      <span>Book: {bookName}</span>
+    </div>
+  </motion.div>
+);
+
+const ExpenseRatioCard = ({ totalIncome = 0, totalExpense = 0 }) => {
+  const usagePercent =
+    totalIncome > 0
+      ? Math.min(Math.round((totalExpense / totalIncome) * 100), 100)
+      : 0;
+
+  const getProgressColor = (percent) => {
+    if (percent >= 90) return "bg-red-500";
+    if (percent >= 75) return "bg-amber-500";
+    return "bg-primary";
+  };
+
+  return (
+    <motion.div
+      initial={{ x: -20, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.3, delay: 0.1 }}
+      className="md:col-span-5 bg-white p-5 rounded-2xl shadow-xl border border-primary/10 flex flex-col"
+    >
+      <div className="grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2 divide-x divide-gray-100">
+        <div>
+          <p className="text-xs font-semibold text-gray-500">Total Income</p>
+          <p className="text-lg font-bold text-primary mt-1">
+            ৳{totalIncome.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          </p>
+        </div>
+        <div className="pl-4 md:pl-0 lg:pl-4">
+          <p className="text-xs font-semibold text-gray-500">Total Expense</p>
+          <p className="text-lg font-bold text-[#D9383A] mt-1">
+            ৳
+            {totalExpense.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4">
+        <div className="flex justify-between items-center text-xs font-semibold mb-1.5">
+          <span className="text-gray-600">Expense Ratio</span>
+          <span className="font-bold text-gray-800">{usagePercent}%</span>
+        </div>
+        <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${getProgressColor(
+              usagePercent,
+            )}`}
+            style={{ width: `${usagePercent}%` }}
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+const QuickActionsCard = () => (
+  <motion.div
+    initial={{ x: -20, opacity: 0 }}
+    animate={{ x: 0, opacity: 1 }}
+    transition={{ duration: 0.3, delay: 0.2 }}
+    className="col-span-3 bg-white p-5 rounded-2xl shadow-xl border border-primary/10 flex flex-col justify-between"
+  >
+    <p className="text-xs font-semibold tracking-wider uppercase text-gray-500 mb-2">
+      Quick Actions
+    </p>
+    <div className="flex flex-col gap-2">
+      <Link
+        to="/dashboard/budget-management"
+        className="w-full bg-primary hover:bg-[#008f5b] text-white font-medium py-2 px-4 rounded-xl text-sm flex items-center justify-center gap-2 transition-colors"
+      >
+        <Wallet className="text-lg" />
+        Create Budget
+      </Link>
+      <Link
+        to="/dashboard/transfer-money"
+        className="w-full bg-white hover:bg-emerald-50 text-primary border border-emerald-200 font-medium py-2 px-4 rounded-xl text-sm flex items-center justify-center gap-2 transition-colors"
+      >
+        <ArrowLeftRight
+          size={18}
+          className="rounded-full border border-primary"
+        />
+        Transfer Money
+      </Link>
+    </div>
+  </motion.div>
+);
+
 const BookDetails = () => {
   const { id } = useParams();
   const { user } = useAuth();
 
-  // Filter & Sort States
+  // Filter & Sort State
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [sortBy, setSortBy] = useState("date-desc"); // default: Newest First
+  const [sortBy, setSortBy] = useState("date-desc");
 
-  // Fetching real book and transaction data from hooks
+  // API Hooks
   const { singleBook, isSingleBookLoading, singleBookError } = useBooks(
     null,
     id,
   );
-
-  console.log(singleBook);
-
   const {
     transactions = [],
     isLoading: isTransactionsLoading,
-    deleteTransaction,
+    // deleteTransaction,
   } = useTransactions({ email: user?.email, bookId: id });
-
   const { categories: categoriesList = [], isLoading: isCategoriesLoading } =
     useCategories(user?.email);
 
-  // Dynamically extract unique categories from backend transactions
-  // const categories = useMemo(() => {
-  //   const list = transactions
-  //     .map((item) => item.category)
-  //     .filter((cat) => Boolean(cat));
-  //   return ["All", ...Array.from(new Set(list))];
-  // }, [transactions]);
-
-  // fast lookup match
+  // Category ID-to-Name Lookup Map
   const categoryMap = useMemo(() => {
     return categoriesList.reduce((acc, cat) => {
       acc[cat._id] = cat.name;
@@ -57,29 +152,36 @@ const BookDetails = () => {
     }, {});
   }, [categoriesList]);
 
-  // extract category name for dropdown
-  const categories = useMemo(() => {
-    const list = transactions
-      .map((item) => categoryMap[item.categoryId])
-      .filter((name) => Boolean(name));
+  // Book Specific Transactions
+  const bookTransactions = useMemo(() => {
+    if (!singleBook?._id) return [];
+    return transactions.filter(
+      (tx) => String(tx.bookId) === String(singleBook._id),
+    );
+  }, [transactions, singleBook]);
+
+  // Dynamic Category Options for Dropdown
+  const categoryOptions = useMemo(() => {
+    const list = bookTransactions
+      .map((tx) => categoryMap[tx.categoryId])
+      .filter(Boolean);
     return ["All", ...Array.from(new Set(list))];
-  }, [transactions, categoryMap]);
+  }, [bookTransactions, categoryMap]);
 
-  // Filter & Sort Logic
+  // Processed Transactions Data
   const filteredTransactions = useMemo(() => {
-    return transactions
-      .filter((item) => {
-        const categoryName = categoryMap[item.categoryId] || "";
+    return bookTransactions
+      .filter((tx) => {
+        const catName = categoryMap[tx.categoryId] || "";
+        const search = searchTerm.toLowerCase();
 
-        // Search Filter (Title, Category Name, or Note)
         const matchesSearch =
-          (item.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-          (item.note || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-          categoryName.toLowerCase().includes(searchTerm.toLowerCase());
+          (tx.title || "").toLowerCase().includes(search) ||
+          (tx.note || "").toLowerCase().includes(search) ||
+          catName.toLowerCase().includes(search);
 
-        // Category Filter
         const matchesCategory =
-          selectedCategory === "All" || categoryName === selectedCategory;
+          selectedCategory === "All" || catName === selectedCategory;
 
         return matchesSearch && matchesCategory;
       })
@@ -89,43 +191,27 @@ const BookDetails = () => {
         const amountA = Math.abs(parseFloat(a.amount) || 0);
         const amountB = Math.abs(parseFloat(b.amount) || 0);
 
-        if (sortBy === "date-desc") {
-          return dateB - dateA;
+        switch (sortBy) {
+          case "date-asc":
+            return dateA - dateB;
+          case "amount-high":
+            return amountB - amountA;
+          case "amount-low":
+            return amountA - amountB;
+          case "date-desc":
+          default:
+            return dateB - dateA;
         }
-        if (sortBy === "date-asc") {
-          return dateA - dateB;
-        }
-        if (sortBy === "amount-high") {
-          return amountB - amountA;
-        }
-        if (sortBy === "amount-low") {
-          return amountA - amountB;
-        }
-        return 0;
       });
-  }, [transactions, searchTerm, selectedCategory, sortBy, categoryMap]);
+  }, [bookTransactions, searchTerm, selectedCategory, sortBy, categoryMap]);
 
-  // Budget Percentage Calculation
-  const totalIncome = parseFloat(singleBook?.totalIncome) || 0;
-  const totalExpense = parseFloat(singleBook?.totalExpense) || 0;
-
-  const budgetUsagePercent =
-    totalIncome > 0
-      ? Math.min(
-          Math.round(
-            (totalExpense / totalIncome) * 100,
-          ),
-          100,
-        )
-      : 0;
-
-  const handleDeleteTransaction = async (txId) => {
-    try {
-      await deleteTransaction(txId);
-    } catch (err) {
-      console.error("Failed to delete transaction:", err);
-    }
-  };
+  // const handleDelete = async (txId) => {
+  //   try {
+  //     await deleteTransaction(txId);
+  //   } catch (err) {
+  //     console.error("Delete failed:", err);
+  //   }
+  // };
 
   if (isSingleBookLoading || isTransactionsLoading || isCategoriesLoading) {
     return <Loader />;
@@ -145,133 +231,36 @@ const BookDetails = () => {
     );
   }
 
+  const isFiltered =
+    searchTerm !== "" || selectedCategory !== "All" || sortBy !== "date-desc";
+
   return (
-    <div className="">
-      {/* SECTION 1: TOP CARDS */}
+    <div>
+      {/* SECTION 1: TOP SUMMARY CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-10">
-        {/* Current Balance Card */}
-        <motion.div
-          initial={{ x: -20, opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.15, ease: "easeInOut" }}
-          viewport={{ once: true, amount: 0.1 }}
-          className="md:col-span-4 bg-white p-5 rounded-2xl shadow-xl border border-primary/10 flex flex-col justify-between"
-        >
-          <div>
-            <p className="text-xs font-semibold tracking-wider uppercase">
-              Current Balance
-            </p>
-            <h2 className="text-xl lg:text-3xl font-extrabold text-primary mt-2">
-              ৳
-              {singleBook?.currentBalance.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-              })}
-            </h2>
-          </div>
-          <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium mt-4">
-            <TrendingUp size={14} />
-            <span>Book: {singleBook?.bookName || "Ledger"}</span>
-          </div>
-        </motion.div>
-
-        {/* Monthly Income / Expense / Progress */}
-        <motion.div
-          initial={{ x: -20, opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.25, ease: "easeInOut" }}
-          viewport={{ once: true, amount: 0.1 }}
-          className="md:col-span-5 bg-white p-5 rounded-2xl shadow-xl border border-primary/10 flex flex-col"
-        >
-          <div className="grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2 divide-x divide-gray-100">
-            <div>
-              <p className="text-xs font-semibold">Total Income</p>
-              <p className="text-lg font-bold text-primary mt-1">
-                ৳
-                {singleBook?.totalIncome.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                })}
-              </p>
-            </div>
-            <div className="pl-4 md:pl-0 lg:pl-4">
-              <p className="text-xs font-semibold">Total Expense</p>
-              <p className="text-lg font-bold text-[#D9383A] mt-1">
-                ৳
-                {singleBook?.totalExpense.toLocaleString("en-US", {
-                  minimumFractionDigits: 2,
-                })}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-4">
-            <div className="flex justify-between items-center text-xs font-semibold mb-1.5">
-              <span className="text-gray-600">Expense Ratio</span>
-              <span className="font-bold text-gray-800">
-                {budgetUsagePercent}%
-              </span>
-            </div>
-            <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ease-in-out ${
-                  budgetUsagePercent >= 90
-                    ? "bg-red-500"
-                    : budgetUsagePercent >= 75
-                      ? "bg-amber-500"
-                      : "bg-primary"
-                }`}
-                style={{ width: `${budgetUsagePercent}%` }}
-              ></div>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Quick Actions Card */}
-        <motion.div
-          initial={{ x: -20, opacity: 0 }}
-          whileInView={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.35, ease: "easeInOut" }}
-          viewport={{ once: true, amount: 0.1 }}
-          className="col-span-3 bg-white p-5 rounded-2xl shadow-xl border border-primary/10 flex flex-col justify-between"
-        >
-          <p className="text-xs font-semibold tracking-wider uppercase mb-2">
-            Quick Actions
-          </p>
-          <div className="flex flex-col gap-2">
-            <Link
-              to="/dashboard/budget-management"
-              className="w-full bg-primary hover:bg-[#008f5b] text-white font-medium md:py-1 md:px-2 lg:py-2 lg:px-4 rounded-xl text-sm flex items-center justify-center gap-2 transition-colors"
-            >
-              <Wallet className="text-lg md:text-base lg:text-lg" />
-              Create Budget
-            </Link>
-            <Link
-              to="/dashboard/transfer-money"
-              className="w-full bg-white hover:bg-emerald-50 text-primary border border-emerald-200 font-medium py-2 px-4 rounded-xl text-sm flex items-center justify-center gap-2 transition-colors"
-            >
-              <ArrowLeftRight
-                size={18}
-                className="rounded-full border border-primary"
-              />
-              Transfer Money
-            </Link>
-          </div>
-        </motion.div>
+        <BalanceCard
+          balance={singleBook?.currentBalance}
+          bookName={singleBook?.bookName}
+        />
+        <ExpenseRatioCard
+          totalIncome={parseFloat(singleBook?.totalIncome) || 0}
+          totalExpense={parseFloat(singleBook?.totalExpense) || 0}
+        />
+        <QuickActionsCard />
       </div>
 
-      {/* SECTION 2: TRANSACTIONS WITH FILTER & SORT */}
+      {/* SECTION 2: TRANSACTIONS TABLE */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.4, delay: 0.43, ease: "easeInOut" }}
-        viewport={{ once: true, amount: 0.1 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.3 }}
         className="bg-white p-6 rounded-2xl shadow-xl border border-primary/10"
       >
-        {/* Search & Filters Controls */}
+        {/* Filter Controls */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-3 mb-6">
-          {/* Search Box */}
           <div className="relative w-full md:w-80">
             <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2"
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               size={16}
             />
             <input
@@ -284,7 +273,7 @@ const BookDetails = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-            {/* Date / Amount Sort Dropdown */}
+            {/* Sort Dropdown */}
             <div className="relative">
               <select
                 value={sortBy}
@@ -298,18 +287,18 @@ const BookDetails = () => {
               </select>
               <ChevronDown
                 size={14}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500"
               />
             </div>
 
-            {/* Category Filter Dropdown */}
+            {/* Category Dropdown */}
             <div className="relative">
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="appearance-none bg-base-100 border border-primary/25 rounded-xl px-3 py-2 pr-8 text-xs font-medium text-gray-600 focus:outline-none cursor-pointer"
               >
-                {categories.map((cat) => (
+                {categoryOptions.map((cat) => (
                   <option key={cat} value={cat}>
                     {cat === "All" ? "All Categories" : cat}
                   </option>
@@ -317,14 +306,12 @@ const BookDetails = () => {
               </select>
               <ChevronDown
                 size={14}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500"
               />
             </div>
 
-            {/* Clear Filter Button */}
-            {(searchTerm ||
-              selectedCategory !== "All" ||
-              sortBy !== "date-desc") && (
+            {/* Reset Filters */}
+            {isFiltered && (
               <button
                 onClick={() => {
                   setSearchTerm("");
@@ -340,13 +327,13 @@ const BookDetails = () => {
           </div>
         </div>
 
-        {/* Transactions Table */}
+        {/* Table Render */}
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-gray-100 text-[11px] font-bold uppercase tracking-wider">
+              <tr className="border-b border-gray-100 text-[11px] font-bold uppercase tracking-wider text-gray-500">
                 <th className="py-3 px-2">Date</th>
-                <th className="py-3 px-2">Description</th>
+                <th className="py-3 px-2">Note</th>
                 <th className="py-3 px-2">Category</th>
                 <th className="py-3 px-2">Type</th>
                 <th className="py-3 px-2 text-right">Amount</th>
@@ -354,93 +341,74 @@ const BookDetails = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50 text-sm">
-              {filteredTransactions.length > 0 ? (
-                filteredTransactions.map((item) => {
-                  const isIncome = item.type === "CASH_IN";
-                  const categoryName =
-                    categoryMap[item.categoryId] || "General";
+              {filteredTransactions.map((tx) => {
+                // Check if transaction is Income / Money-In
+                const isIncome =
+                  tx.type === "CASH_IN" ||
+                  (tx.type === "TRANSFER" && tx.transferType === "IN");
 
-                  const formattedDate = item.date
-                    ? new Date(item.date).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })
-                    : "N/A";
+                const categoryName =
+                  categoryMap[tx.categoryId] || tx.category || "General";
 
-                  return (
-                    <tr
-                      key={item._id || item.id}
-                      className="hover:bg-gray-50/50 transition-colors"
-                    >
-                      <td className="py-3.5 px-2 text-xs">{formattedDate}</td>
-                      <td className="py-3.5 px-2">
-                        {/* <p className="font-bold text-sm">
-                          {item.title || categoryName}
-                        </p> */}
-                        {item.note && (
-                          <p className="text-xs italic text-gray-500">
-                            {item.note}
-                          </p>
-                        )}
-                      </td>
-                      <td className="py-3.5 px-2">
-                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-100 text-emerald-800">
-                          {categoryName}
-                        </span>
-                      </td>
-                      <td
-                        className={`py-3.5 px-2 font-semibold text-xs ${
-                          isIncome ? "text-primary" : "text-[#D9383A]"
-                        }`}
-                      >
-                        {item.type}
-                      </td>
-                      <td
-                        className={`py-3.5 px-2 text-right font-bold text-sm ${
-                          isIncome ? "text-primary" : "text-[#D9383A]"
-                        }`}
-                      >
-                        {isIncome
-                          ? `+৳${(parseFloat(item.amount) || 0).toLocaleString()}`
-                          : `-৳${Math.abs(parseFloat(item.amount) || 0).toLocaleString()}`}
-                      </td>
-                      <td className="py-3.5 px-2 text-center">
-                        <button
-                          disabled
-                          onClick={() =>
-                            handleDeleteTransaction(item._id || item.id)
-                          }
-                          className="text-gray-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-colors"
-                          title="Delete Transaction"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td
-                    colSpan="6"
-                    className="text-center py-6 text-xs text-gray-400"
+                const formattedDate = tx.date
+                  ? new Date(tx.date).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                  : "N/A";
+
+                // Display Custom Label for Transfer Types
+                const getTypeDisplay = (transaction) => {
+                  if (transaction.type === "TRANSFER") {
+                    return transaction.transferType === "IN"
+                      ? "Transfer (Inflow)"
+                      : "Transfer (Outflow)";
+                  }
+                  return transaction.type;
+                };
+
+                return (
+                  <tr
+                    key={tx._id || tx.id}
+                    className="hover:bg-gray-50/50 transition-colors"
                   >
-                    No transactions found for this book.
-                  </td>
-                </tr>
-              )}
+                    <td className="py-3.5 px-2 text-xs">{formattedDate}</td>
+                    <td className="py-3.5 px-2">
+                      <p className="text-xs font-medium text-gray-700">
+                        {tx.note || tx.title || "—"}
+                      </p>
+                    </td>
+                    <td className="py-3.5 px-2">
+                      <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-100 text-emerald-800">
+                        {categoryName}
+                      </span>
+                    </td>
+                    {/* Dynamic Type & Color Highlight */}
+                    <td
+                      className={`py-3.5 px-2 font-semibold text-xs ${
+                        isIncome ? "text-primary" : "text-[#D9383A]"
+                      }`}
+                    >
+                      {getTypeDisplay(tx)}
+                    </td>
+                    {/* Dynamic Amount Sign & Color */}
+                    <td
+                      className={`py-3.5 px-2 text-right font-bold text-sm ${
+                        isIncome ? "text-primary" : "text-[#D9383A]"
+                      }`}
+                    >
+                      {isIncome ? "+" : "-"}৳
+                      {Math.abs(parseFloat(tx.amount) || 0).toLocaleString()}
+                    </td>
+                    <td className="py-3.5 px-2 text-center">
+                      {/* Action Buttons */}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
-        </div>
-
-        <div className="text-center mt-4">
-          <Link
-            to="/dashboard/transcation-all"
-            className="text-xs font-semibold text-primary hover:underline"
-          >
-            View More Transactions
-          </Link>
         </div>
       </motion.div>
     </div>

@@ -27,7 +27,7 @@ const TransferMoney = () => {
     defaultValues: {
       type: "TRANSFER",
       userEmail: user?.email,
-      amount: "0.00",
+      amount: "",
       sourceBookId: "",
       destinationBookId: "",
       date: new Date().toISOString().split("T")[0],
@@ -43,6 +43,8 @@ const TransferMoney = () => {
   // UPDATE: Calculate current selected source book details to show balance
   const currentSourceBook = books.find((b) => b._id === selectedSource);
 
+  console.log(currentSourceBook);
+
   useEffect(() => {
     if (books.length >= 2) {
       setValue("sourceBookId", books[0]._id);
@@ -52,18 +54,75 @@ const TransferMoney = () => {
     }
   }, [books, setValue]);
 
-  const onSubmit = async (data) => {
-    console.log("Form Submitted Data:", data);
+  // const onSubmit = async (data) => {
+  //   console.log("Form Submitted Data:", data);
 
+  //   if (data.sourceBookId === data.destinationBookId) {
+  //     return toast.error("Source and Destination books cannot be the same!");
+  //   }
+
+  //   try {
+  //     const payload = {
+  //       userId: user?._id || user?.uid || "",
+  //       userEmail: user?.email,
+  //       bookId: data.sourceBookId,
+  //       type: "TRANSFER",
+  //       categoryId: null,
+  //       amount: parseFloat(data.amount),
+  //       date: new Date(data.date).toISOString(),
+  //       note: data.note || "",
+  //       receiptUrl: null,
+  //       transferDetails: {
+  //         transferPairId: `TP-${Date.now()}`,
+  //         sourceBookId: data.sourceBookId,
+  //         destinationBookId: data.destinationBookId,
+  //       },
+  //       createdAt: new Date().toISOString(),
+  //       updatedAt: new Date().toISOString(),
+  //     };
+
+  //     const res = await createTransaction(payload);
+  //     if (res?.insertedId) {
+  //       toast.success("Money transferred successfully!");
+  //       reset({
+  //         type: "TRANSFER",
+  //         amount: "0.00",
+  //         sourceBookId: books[0]?._id || "",
+  //         destinationBookId: books[1]?._id || "",
+  //         date: new Date().toISOString().split("T")[0],
+  //         note: "",
+  //         receiptUrl: null,
+  //       });
+  //       navigate(`/dashboard/my-books/book-details/${data?.sourceBookId}`);
+  //     }
+  //   } catch (error) {
+  //     console.error("Transfer submission failed:", error);
+  //     toast.error(error?.message || "Transfer failed!");
+  //   }
+  // };
+  const onSubmit = async (data) => {
+
+    // Prevent transfer to the same account
     if (data.sourceBookId === data.destinationBookId) {
       return toast.error("Source and Destination books cannot be the same!");
+    }
+
+    const transferAmount = parseFloat(data.amount);
+    const sourceBook = books.find((b) => b._id === data.sourceBookId);
+    const currentBalance = Number(
+      sourceBook?.balance || sourceBook?.currentBalance || 0,
+    );
+
+    if (transferAmount > currentBalance) {
+      return toast.error(
+        `Insufficient balance! Available balance is ৳${currentBalance.toFixed(2)} at ${sourceBook?.bookName}`,
+      );
     }
 
     try {
       const payload = {
         userId: user?._id || user?.uid || "",
         userEmail: user?.email,
-        bookId: data.sourceBookId,
         type: "TRANSFER",
         categoryId: null,
         amount: parseFloat(data.amount),
@@ -237,7 +296,7 @@ const TransferMoney = () => {
               </span>
               <input
                 type="number"
-                step="0.01"
+                step="1"
                 placeholder="0.00"
                 {...register("amount", {
                   required: "Amount is required",

@@ -16,6 +16,8 @@
     "date-fns": "^4.4.0",
     "firebase": "^12.18.0",
     "framer-motion": "^13.1.0",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
     "lucide-react": "^1.31.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
@@ -27,7 +29,8 @@
     "recharts": "^3.10.1",
     "simple-parallax-js": "^7.0.0",
     "sweetalert2": "^11.26.25",
-    "tailwindcss": "^4.3.3"
+    "tailwindcss": "^4.3.3",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

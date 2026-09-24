@@ -12,7 +12,7 @@ import { AVAILABLE_COLORS, AVAILABLE_ICONS, renderCategoryIcon } from "../../../
 export const Categories = () => {
   const { user } = useAuth();
   
-  // ১. Hook একবার কল করুন এবং সঠিকভাবে categories রিসিভ করুন
+
   const { categories = [], isLoading, createCategory, isCreating } = useCategories(
     user?.email
   );
@@ -36,7 +36,7 @@ export const Categories = () => {
     },
   });
 
-  // ২. Safe Array Check & Case Insensitive Filtering
+  // Safe Array Check & Case Insensitive Filtering
   const safeCategories = Array.isArray(categories) ? categories : [];
   const filteredCategories = safeCategories.filter(
     (item) => item?.type?.toUpperCase() === activeTab.toUpperCase()

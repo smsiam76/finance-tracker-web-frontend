@@ -14,10 +14,11 @@ import {
 } from "lucide-react";
 import useAuth from "../../../hooks/useAuth";
 import useTransactions from "../../../hooks/useTransactions";
+import Loader from "../../../component/Shared/Loader/Loader";
 
 export const TransactionHistory = () => {
   const { user } = useAuth(); // Logged-in user information
-  const { transactions, isLoading, deleteTransaction, isDeleting } = useTransactions({
+  const { transactions = [], isLoading, deleteTransaction, isDeleting } = useTransactions({
     email: user?.email,
   });
 
@@ -30,11 +31,11 @@ export const TransactionHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
-  // Dynamically Extract Categories / Books from incoming transactions
+  // Dynamically Extract Book Names from incoming transactions
   const categories = useMemo(() => {
     const list = new Set(["ALL"]);
     transactions.forEach((tx) => {
-      if (tx.bookDetails?.name) list.add(tx.bookDetails.name);
+      if (tx.bookName) list.add(tx.bookName);
     });
     return Array.from(list);
   }, [transactions]);
@@ -68,7 +69,7 @@ export const TransactionHistory = () => {
       })
       .filter((item) => {
         if (categoryFilter !== "ALL") {
-          return item.bookDetails?.name?.toLowerCase() === categoryFilter.toLowerCase();
+          return item.bookName?.toLowerCase() === categoryFilter.toLowerCase();
         }
         return true;
       })
@@ -96,7 +97,7 @@ export const TransactionHistory = () => {
       .filter((item) => {
         const search = searchTerm.toLowerCase();
         const noteMatch = item.note?.toLowerCase().includes(search);
-        const bookMatch = item.bookDetails?.name?.toLowerCase().includes(search);
+        const bookMatch = item.bookName?.toLowerCase().includes(search);
         return noteMatch || bookMatch;
       })
       .sort((a, b) => {
@@ -129,11 +130,7 @@ export const TransactionHistory = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[400px]">
-        <span className="loading loading-spinner loading-lg text-emerald-600"></span>
-      </div>
-    );
+    return <Loader />
   }
 
   return (
@@ -379,15 +376,15 @@ export const TransactionHistory = () => {
                             </div>
                           </td>
 
-                          {/* Book Details */}
+                          {/* Book Name */}
                           <td className="py-4 px-6 font-medium">
                             <span
-                              className="px-2.5 py-1 rounded-md text-[11px] font-semibold text-white"
+                              className="px-2.5 py-1 rounded-md text-[11px] font-semibold text-white inline-block"
                               style={{
-                                backgroundColor: tx.bookDetails?.color || "#10B981",
+                                backgroundColor: tx.bookColor || "#10B981",
                               }}
                             >
-                              {tx.bookDetails?.name || "N/A"}
+                              {tx.bookName || "N/A"}
                             </span>
                           </td>
 

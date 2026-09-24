@@ -18,104 +18,6 @@ import { FaPiggyBank } from "react-icons/fa";
 import { IoAirplaneOutline, IoBagHandleOutline, IoCardOutline, IoHomeOutline, IoWalletOutline } from "react-icons/io5";
 import useAuth from "../../../hooks/useAuth";
 
-// Demo JSON Data structured matching your provided JSON schema
-// const initialBooksData = [
-//   {
-//     _id: "book1",
-//     userId: "user1",
-//     title: "Daily Expenses",
-//     description: "Personal household & food",
-//     currentBalance: 12500,
-//     totalIncome: 45000,
-//     totalExpense: 32500,
-//     status: "ACTIVE",
-//     type: "STANDARD",
-//     icon: "shopping-cart",
-//     budgets: [{ categoryId: "cat1", monthlyLimit: 300 }],
-//     createdAt: "2026-01-01T00:00:00Z",
-//     updatedAt: "2026-08-05T10:00:00Z",
-//   },
-//   {
-//     _id: "book2",
-//     userId: "user1",
-//     title: "Family Expenses",
-//     description: "Shared costs for dependents",
-//     currentBalance: 8200,
-//     totalIncome: 20000,
-//     totalExpense: 11800,
-//     status: "ACTIVE",
-//     type: "STANDARD",
-//     icon: "users",
-//     budgets: [{ categoryId: "cat2", monthlyLimit: 500 }],
-//     createdAt: "2026-01-10T00:00:00Z",
-//     updatedAt: "2026-08-05T10:00:00Z",
-//   },
-//   {
-//     _id: "book3",
-//     userId: "user1",
-//     title: "Business",
-//     description: "Consulting & freelancing ops",
-//     currentBalance: 145000,
-//     totalIncome: 320000,
-//     totalExpense: 175000,
-//     status: "ACTIVE",
-//     type: "STANDARD",
-//     icon: "briefcase",
-//     budgets: [{ categoryId: "cat3", monthlyLimit: 2000 }],
-//     createdAt: "2026-02-01T00:00:00Z",
-//     updatedAt: "2026-08-05T10:00:00Z",
-//   },
-//   {
-//     _id: "book4",
-//     userId: "user1",
-//     title: "Savings",
-//     description: "Long-term wealth building",
-//     currentBalance: 50000,
-//     totalIncome: 50000,
-//     totalExpense: 0,
-//     status: "ACTIVE",
-//     type: "SAVINGS",
-//     note: "Compound interest enabled",
-//     icon: "wallet",
-//     budgets: [],
-//     createdAt: "2026-01-01T00:00:00Z",
-//     updatedAt: "2026-08-05T10:00:00Z",
-//   },
-//   {
-//     _id: "book5",
-//     userId: "user1",
-//     title: "Emergency Fund",
-//     description: "6 months of safety net",
-//     currentBalance: 25000,
-//     targetAmount: 62500,
-//     totalIncome: 25000,
-//     totalExpense: 0,
-//     status: "ACTIVE",
-//     type: "TARGET_PROGRESS",
-//     progressPercent: 40,
-//     icon: "shield",
-//     budgets: [],
-//     createdAt: "2026-03-01T00:00:00Z",
-//     updatedAt: "2026-08-05T10:00:00Z",
-//   },
-//   {
-//     _id: "book6",
-//     userId: "user1",
-//     title: "December Tour",
-//     description: "Sajek Valley Trip 2024",
-//     currentBalance: 5000,
-//     targetRemaining: 15000,
-//     totalIncome: 5000,
-//     totalExpense: 0,
-//     status: "ACTIVE",
-//     type: "TARGET_REMAINING",
-//     icon: "navigation",
-//     budgets: [],
-//     createdAt: "2026-04-15T00:00:00Z",
-//     updatedAt: "2026-08-05T10:00:00Z",
-//   },
-// ];
-
 const MyBooks = () => {
   const {user} = useAuth();
   const navigate = useNavigate();
@@ -184,14 +86,14 @@ const MyBooks = () => {
               <FiFilter /> Filter
             </button>
             <button
-              onClick={() => document.getElementById("my_modal_5").showModal()}
+              onClick={() => document.getElementById("create_book_modal_cashin").showModal()}
               className="flex items-center gap-2 px-4 py-2 bg-primary/80 hover:bg-primary text-white font-medium rounded-xl text-sm shadow-sm cursor-pointer transition-all duration-300 ease-linear"
             >
               <FiPlus className="md:text-sm lg:text-lg" /> Create Book
             </button>
             {/* modal will open here  */}
             <dialog
-              id="my_modal_5"
+              id="create_book_modal_cashin"
               className="modal modal-bottom sm:modal-middle px-4 md:px-0"
             >
               <CreateBookModal />
@@ -260,7 +162,7 @@ const MyBooks = () => {
               </div>
             </div>
             <div className="flex items-center justify-between text-xs font-semibold text-emerald-600 mt-3">
-              <span>Active Accounts</span>
+              <span>Active Books</span>
               <span className="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-md font-bold">
                 {books?.length || 0} Active
               </span>
@@ -327,7 +229,7 @@ const MyBooks = () => {
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.15, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            onClick={() => document.getElementById("my_modal_5").showModal()}
+            onClick={() => document.getElementById("create_book_modal_cashin").showModal()}
             className="border-2 border-dashed border-gray-300 hover:border-primary bg-gray-100/70 hover:bg-emerald-50/30 rounded-3xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all group min-h-[180px]"
           >
             <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shadow-sm mb-3 group-hover:scale-110 transition-transform">

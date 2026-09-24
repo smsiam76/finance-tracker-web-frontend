@@ -127,6 +127,7 @@ export const Budget = () => {
         toast.success("Your Budget Added Successfully!");
         resetCreate();
       }
+      console.log(newBudget);
     } catch (error) {
       console.error("Failed to create budget:", error);
       toast.error(error?.message || "Failed to create budget");
@@ -399,7 +400,7 @@ export const Budget = () => {
                   >
                     <option value="">Select a Book</option>
                     {books.map((book) => {
-                      const bookId = book?._id || book?.id;
+                      const bookId = book?._id;
                       return (
                         <option key={bookId} value={bookId}>
                           {book?.bookName || book?.name}
@@ -415,7 +416,7 @@ export const Budget = () => {
                 </div>
 
                 {/* CATEGORY */}
-                <div className="space-y-1">
+                {/* <div className="space-y-1">
                   <label className="text-[11px] font-bold uppercase tracking-wider">
                     Category
                   </label>
@@ -431,6 +432,35 @@ export const Budget = () => {
                         {cat?.name || cat}
                       </option>
                     ))}
+                  </select>
+                  {errorsCreate.category && (
+                    <p className="text-[10px] text-red-500 font-semibold">
+                      {errorsCreate.category.message}
+                    </p>
+                  )}
+                </div> */}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-bold uppercase tracking-wider">
+                    Category
+                  </label>
+                  <select
+                    {...registerCreate("category", {
+                      required: "Please select a category",
+                    })}
+                    className="w-full px-3 py-2 bg-primary/5 border border-emerald-100/80 rounded-xl text-xs font-semibold focus:outline-none focus:border-primary"
+                  >
+                    <option value="">Select Category</option>
+                    {categories
+                      // Expense/CASH_OUT 
+                      .filter(
+                        (cat) =>
+                          cat?.type === "EXPENSE" || cat?.type === "CASH_OUT",
+                      )
+                      .map((cat, idx) => (
+                        <option key={cat?._id || idx} value={cat?.name || cat}>
+                          {cat?.name || cat}
+                        </option>
+                      ))}
                   </select>
                   {errorsCreate.category && (
                     <p className="text-[10px] text-red-500 font-semibold">
