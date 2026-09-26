@@ -10,7 +10,7 @@ import MyBooks from "../pages/Dashboard/DashboardBooks/DashboardBooks";
 import BookDetails from "../pages/Dashboard/DashboardBooks/BookDetails";
 import ErrorPage from "../component/Shared/ErrorPage/ErrorPage";
 import { CashIn } from "../pages/Dashboard/Transactions/CashIn/CashIn";
-import { CashOut } from "../pages/Dashboard/Transactions/CashOut/Cashout";
+import { CashOut } from "../pages/Dashboard/Transactions/CashOut/CashOut";
 import TransferMoney from "../pages/Dashboard/Transactions/TransferMoney/TransferMoney";
 import { ReportAnalysis } from "../pages/Dashboard/ReportAnalysis/ReportAnalysis";
 import { TransactionHistory } from "../pages/Dashboard/TransactionHistory/TransactionHistory";
