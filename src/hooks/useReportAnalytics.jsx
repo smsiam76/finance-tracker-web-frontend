@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getOverallAnalytics, getReportDataByPeriod } from "../api/reportsApi";
+import { getReportDataByPeriod } from "../api/reportsApi";
 
-const useReportAnalytics = (email = null, period = "Monthly") => {
+const useReportAnalytics = (email = null, selectedBook="combined", period = "Monthly") => {
   const queryClient = useQueryClient();
 
   const invalidateReportCache = () => {
@@ -10,36 +10,37 @@ const useReportAnalytics = (email = null, period = "Monthly") => {
 
   // Get filtered report analytics data (Daily, Weekly, Monthly, Yearly)
   const {
-    data: reportAnalytics = null,
+    data: reportAnalytics = {},
     isLoading: isReportLoading,
     isError: isReportError,
     error: reportError,
     refetch: refetchReport,
   } = useQuery({
-    queryKey: ["reports", email, period],
-    queryFn: () => getReportDataByPeriod(email, period),
-    enabled: !!email, // email thakl-e shudhu query run hobe
+    queryKey: ["reports", email, period, selectedBook],
+    queryFn: () => getReportDataByPeriod(email, period, selectedBook),
+    enabled: !!email, // if email available then query run
   });
+
   // Get overall summary / lifetime metrics
-  const {
-    data: overallData = null,
-    isLoading: isOverallLoading,
-    error: overallError,
-  } = useQuery({
-    queryKey: ["reports", "overall", email],
-    queryFn: () => getOverallAnalytics(email),
-    enabled: !!email,
-  });
+  // const {
+  //   data: overallData = null,
+  //   isLoading: isOverallLoading,
+  //   error: overallError,
+  // } = useQuery({
+  //   queryKey: ["reports", "overall", email],
+  //   queryFn: () => getOverallAnalytics(email),
+  //   enabled: !!email,
+  // });
 
   return {
     // Data & States
     reportAnalytics,
-    overallData,
+    // overallData,
     isReportLoading,
-    isOverallLoading,
+    // isOverallLoading,
     isReportError,
     reportError,
-    overallError,
+    // overallError,
 
     // Actions & Refetching
     refetchReport,

@@ -1,20 +1,14 @@
 import useAxios from "../hooks/useAxios";
 
 
-// Get report analytics by period (Daily, Weekly, Monthly, Yearly)
-export const getReportDataByPeriod = async (email, period = "Monthly") => {
+export const getReportDataByPeriod = async (email, period = "Monthly", selectedBook = "combined") => {
   const params = new URLSearchParams();
 
   if (email) params.append("email", email);
   if (period) params.append("period", period);
+  if (selectedBook) params.append("selectedBook", selectedBook);
 
   const res = await useAxios.get(`/reports/analytics?${params.toString()}`);
-  return res.data;
-};
-
-// Get overall / lifetime analytics summary for a user
-export const getOverallAnalytics = async (email) => {
-  const res = await useAxios.get(`/reports/overall?email=${email}`);
   return res.data;
 };
 

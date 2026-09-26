@@ -2,34 +2,28 @@ import { useState } from "react";
 import useAuth from "../../../hooks/useAuth";
 import useReports from "../../../hooks/useReportAnalytics";
 import { Download, FileSpreadsheet } from "lucide-react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
+import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from "recharts";
 import Loader from "../../../component/Shared/Loader/Loader";
 import { motion } from "framer-motion";
+import ExpenseByCategoryChart from "../../../component/ExpenseByCategoryChart/ExpenseByCategoryChart";
+import useDashboardSummary from "../../../hooks/useDashboardSummary";
+import { handleExportData } from "../../../utility/settingsUtils";
 
 export const ReportAnalysis = () => {
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState("Monthly");
   const [selectedBook, setSelectedBook] = useState("combined");
 
-  // Custom hook call - selectedBook পাঠানো হচ্ছে
+  // Custom hook call for report analytics
   const { reportAnalytics, isReportLoading } = useReports(
     user?.email,
-    activeTab,
-    selectedBook
+    selectedBook,
+    activeTab
   );
 
-  if (isReportLoading) {
-    return <Loader />;
-  }
+  console.log(reportAnalytics);
+
+  const { isLoading: isDashboardLoading } = useDashboardSummary(user?.email);
 
   const {
     totalIncome = 0,
@@ -39,31 +33,12 @@ export const ReportAnalysis = () => {
     expenseGrowth = "0%",
     balanceTrend = [],
     categories = [],
-    userBooks = [], // Backend থেকে আসা ইউজার এর বইগুলোর তালিকা (যদি থাকে)
+    userBooks = [],
   } = reportAnalytics || {};
 
-  const handleExportPDF = () => {
-    window.print(); // দ্রুত PDF ডাউনলোডের জন্য স্ট্যান্ডার্ড অপশন
-  };
-
-  const handleExportCSV = () => {
-    if (!categories || categories.length === 0) return;
-
-    const headers = ["Category", "Amount"];
-    const rows = categories.map((cat) => [cat.name, cat.value]);
-
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `Report_${activeTab}_${selectedBook}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  if (isReportLoading || isDashboardLoading) {
+    return <Loader />;
+  }
 
   return (
     <div className="space-y-6 pt-6 pb-12">
@@ -88,21 +63,21 @@ export const ReportAnalysis = () => {
             className="border border-gray-200 px-3 py-2 rounded-lg text-sm bg-white font-semibold text-gray-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
           >
             <option value="combined">All Books (Combined)</option>
-            {userBooks.map((book) => (
+            {userBooks?.map((book) => (
               <option key={book._id} value={book._id}>
-                {book.title}
+                {book.bookName}
               </option>
             ))}
           </select>
 
           <button
-            onClick={handleExportPDF}
-            className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 transition cursor-pointer"
+            disabled
+            className="flex items-center gap-2 bg-white border border-gray-200 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-50 transition cursor-not-allowed opacity-60"
           >
             <Download className="w-4 h-4" /> Export PDF
           </button>
           <button
-            onClick={handleExportCSV}
+            onClick={() => handleExportData(user, "excel")}
             className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-emerald-700 transition cursor-pointer"
           >
             <FileSpreadsheet className="w-4 h-4" /> Export Excel/CSV
@@ -110,7 +85,7 @@ export const ReportAnalysis = () => {
         </div>
       </motion.div>
 
-      {/* Tabs */}
+      {/* Filter Tabs */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
         whileInView={{ y: 0, opacity: 1 }}
@@ -150,6 +125,7 @@ export const ReportAnalysis = () => {
             {incomeGrowth} from last period
           </span>
         </motion.div>
+
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
@@ -165,6 +141,7 @@ export const ReportAnalysis = () => {
             {expenseGrowth} from last period
           </span>
         </motion.div>
+
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
@@ -172,7 +149,7 @@ export const ReportAnalysis = () => {
           viewport={{ once: true, amount: 0.1 }}
           className="p-5 bg-white rounded-xl border border-gray-100 shadow-sm"
         >
-          <p className="text-sm text-gray-500 font-medium font-medium">Net Savings</p>
+          <p className="text-sm text-gray-500 font-medium">Net Savings</p>
           <h2 className="text-2xl font-bold text-emerald-700 mt-1">
             ৳{Number(currentBalance).toLocaleString()}
           </h2>
@@ -193,7 +170,7 @@ export const ReportAnalysis = () => {
             Balance Trend ({activeTab})
           </h3>
           <div className="h-64 w-full">
-            {balanceTrend.length > 0 ? (
+            {balanceTrend?.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={balanceTrend}>
                   <XAxis dataKey="time" axisLine={false} tickLine={false} />
@@ -228,60 +205,16 @@ export const ReportAnalysis = () => {
               Expense by Category
             </h3>
 
-            <div className="h-52 w-full">
-              {categories.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={categories}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={45}
-                      outerRadius={70}
-                      dataKey="value"
-                      nameKey="name"
-                    >
-                      {categories.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={entry.color || "#10B981"}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(val, name) => [`৳${val}`, name]} />
-                  </PieChart>
-                </ResponsiveContainer>
+            <div className="w-full">
+              {categories?.length > 0 ? (
+                <ExpenseByCategoryChart chartData={categories} />
               ) : (
-                <div className="h-full flex items-center justify-center text-xs text-gray-400">
-                  No categorical expense data
+                <div className="h-64 flex items-center justify-center text-xs text-gray-400">
+                  No categorical expense data available for this period
                 </div>
               )}
             </div>
           </div>
-
-          {categories.length > 0 && (
-            <div className="mt-4 pt-3 border-t border-gray-100 space-y-2 max-h-32 overflow-y-auto pr-1">
-              {categories.map((cat, idx) => (
-                <div
-                  key={cat.name || idx}
-                  className="flex items-center justify-between text-xs"
-                >
-                  <div className="flex items-center gap-2">
-                    <span
-                      className="w-2.5 h-2.5 rounded-full inline-block"
-                      style={{ backgroundColor: cat.color || "#10B981" }}
-                    ></span>
-                    <span className="font-medium text-gray-700">
-                      {cat.name || "Uncategorized"}
-                    </span>
-                  </div>
-                  <span className="font-semibold text-gray-900">
-                    ৳{Number(cat.value).toLocaleString()}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
         </motion.div>
       </div>
     </div>

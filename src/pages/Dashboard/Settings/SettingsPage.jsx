@@ -304,6 +304,7 @@ export const SettingsPage = () => {
 
             <div className="grid grid-cols-2 gap-3">
               <button
+                disabled={true}
                 onClick={() => handleExportData(user, "pdf")}
                 className="flex items-center justify-center gap-1.5 py-2.5 bg-emerald-50/60 hover:bg-emerald-100/60 border border-emerald-100 text-emerald-800 font-bold rounded-xl text-xs transition"
               >

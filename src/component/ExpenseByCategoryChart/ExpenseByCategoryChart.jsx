@@ -80,7 +80,7 @@ const ExpenseByCategoryChart = ({ chartData = [] }) => {
   // Merge API data with default colors and format amount values
   const formattedData = chartData.map((item, index) => ({
     ...item,
-    amount: Number(item.amount || item.totalAmount || 0),
+    amount: Number(item.amount || item.totalAmount || item.value || 0),
     color: item.color || DEFAULT_COLORS[index % DEFAULT_COLORS.length],
   }));
 

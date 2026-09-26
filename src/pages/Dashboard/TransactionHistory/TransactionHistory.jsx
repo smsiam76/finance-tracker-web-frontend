@@ -119,15 +119,15 @@ export const TransactionHistory = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this transaction?")) {
-      try {
-        await deleteTransaction(id);
-      } catch (err) {
-        console.error("Failed to delete", err);
-      }
-    }
-  };
+  // const handleDelete = async (id) => {
+  //   if (window.confirm("Are you sure you want to delete this transaction?")) {
+  //     try {
+  //       await deleteTransaction(id);
+  //     } catch (err) {
+  //       console.error("Failed to delete", err);
+  //     }
+  //   }
+  // };
 
   if (isLoading) {
     return <Loader />
@@ -429,14 +429,14 @@ export const TransactionHistory = () => {
 
                           {/* Action */}
                           <td className="py-4 px-6 text-right">
-                            <button
-                              onClick={() => handleDelete(tx._id)}
+                            {/* <button
+                              // onClick={() => handleDelete(tx._id)}
                               disabled={isDeleting}
                               className="p-1.5 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-lg transition"
                               title="Delete Transaction"
                             >
                               <Trash2 className="w-4 h-4" />
-                            </button>
+                            </button> */}
                           </td>
                         </tr>
                       );

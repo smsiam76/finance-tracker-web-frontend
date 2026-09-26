@@ -14,11 +14,11 @@ const useReminders = (email = null, id = null, bookId = null) => {
   const queryClient = useQueryClient();
 
   // Helper function to invalidate all reminder queries
-  const invalidateDataCache = () => {
-    queryClient.invalidateQueries({ queryKey: ["reminders"] });
-    // Reminders process করলে Book এর Balance/Transactions আপডেট হতে পারে
-    queryClient.invalidateQueries({ queryKey: ["books"] });
-  };
+ const invalidateDataCache = () => {
+  queryClient.invalidateQueries({ queryKey: ["reminders"] });
+  queryClient.invalidateQueries({ queryKey: ["books"] });
+  queryClient.invalidateQueries({ queryKey: ["transactions"] });
+};
 
   // 1. Get all reminders / email wise reminders
   const {

@@ -1,7 +1,7 @@
-import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router"; // react-router-dom ব্যবহার করা ভালো
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router"; 
 import LogoDashboard from "../component/Shared/LogoDashboard/LogoDashboard";
 import { MdOutlineDashboard } from "react-icons/md";
-import { FiSearch } from "react-icons/fi";
+// import { FiSearch } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { HiBookOpen } from "react-icons/hi";
 import { FaArrowLeft } from "react-icons/fa6";
@@ -19,9 +19,11 @@ import {
 } from "lucide-react";
 import useAuth from "../hooks/useAuth";
 import useSingleUser from "../hooks/useSingleUser";
-
+import RemindersNotification from "../component/RemindersNotification/RemindersNotification";
+// import { useState } from "react";
 
 const DashboardLayout = () => {
+  // const [isModalOpen, setIsModalOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logOut } = useAuth();
@@ -181,7 +183,7 @@ const DashboardLayout = () => {
             onClick={handleLogOut}
             className="w-full flex gap-2.5 items-center py-3 px-4 rounded-md font-medium text-red-500 hover:bg-red-50 transition-all duration-300 cursor-pointer"
           >
-            <FaArrowLeft className="font-medium" /> 
+            <FaArrowLeft className="font-medium" />
             Log Out
           </button>
           <span className="divider"></span>
@@ -209,7 +211,7 @@ const DashboardLayout = () => {
 
           <div className="flex flex-col md:flex-row gap-6 items-center">
             {/* Search Bar Input */}
-            <div className="relative flex-1 md:max-w-md">
+            {/* <div className="relative flex-1 md:max-w-md">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <FiSearch className="md:w-5 h-5 stroke-[2.2]" />
               </div>
@@ -218,9 +220,14 @@ const DashboardLayout = () => {
                 placeholder="Search transactions..."
                 className="w-full pl-11 pr-4 py-2.5 bg-[#e8f0eb] border border-[#cbdad0] rounded-full text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition-all"
               />
+            </div> */}
+
+            {/* notification button for reminder */}
+            <div className="">
+              <RemindersNotification />
             </div>
 
-            {/* User Avatar and Info (সংশোধিত Avatar Rendering) */}
+            {/* User Avatar and Info */}
             <div className="flex items-center gap-3 cursor-pointer select-none">
               <div className="relative p-0.5 bg-emerald-500 rounded-full flex items-center justify-center">
                 {singleUser?.photoURL ? (
@@ -248,7 +255,7 @@ const DashboardLayout = () => {
         </motion.header>
 
         <span className="divider"></span>
-        
+
         {/* Dynamic Page Content */}
         <Outlet />
       </div>

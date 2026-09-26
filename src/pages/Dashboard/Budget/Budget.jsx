@@ -28,7 +28,7 @@ export const Budget = () => {
   const { user } = useAuth();
 
   const { transactions = [], isLoading: isTransactionsLoading } =
-    useTransactions(user?.email);
+    useTransactions({ email: user?.email });
 
   // States
   const [selectedFilterBook, setSelectedFilterBook] = useState("all");

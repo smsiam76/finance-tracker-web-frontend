@@ -19,6 +19,7 @@ import { SettingsPage } from "../pages/Dashboard/Settings/SettingsPage";
 import { Budget } from "../pages/Dashboard/Budget/Budget";
 import { Categories } from "../pages/Dashboard/Categories/Categories";
 import RemindersPage from "../pages/Dashboard/RemindersPage/RemindersPage";
+import PrivateRoute from "./privateRoute";
 
 const router = createBrowserRouter([
   {
@@ -35,7 +36,11 @@ const router = createBrowserRouter([
 
   {
     path: "/dashboard",
-    element: <DashboardLayout />,
+    element: (
+      <PrivateRoute>
+        <DashboardLayout />
+      </PrivateRoute>
+    ),
     errorElement: <ErrorPage />,
     children: [
       {
