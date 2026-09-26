@@ -91,7 +91,7 @@ export const CashOut = () => {
       setValue("receiptUrl", imageUrl);
       setReceiptPreview(imageUrl);
     } catch (error) {
-      console.error("Image Upload Error:", error);
+      // console.error("Image Upload Error:", error);
       toast.error(error.message || "Failed to upload image.");
     } finally {
       setUploading(false);
@@ -154,7 +154,7 @@ export const CashOut = () => {
         navigate(`/dashboard/my-books/book-details/${data?.bookId}`);
       }
     } catch (error) {
-      console.error("Submission failed:", error);
+      // console.error("Submission failed:", error);
       toast.error(error?.message || "Something went wrong!");
     }
   };

@@ -25,12 +25,12 @@ const DashboardHome = () => {
     isLoading: isDashboardLoading,
   } = useDashboardSummary(email);
 
-  console.log(budgetOverview);
+  // console.log(budgetOverview);
 
   const { transactions= [], isLoading: isTransactionsLoading } =
     useTransactions({email});
 
-  console.log(transactions);
+  // console.log(transactions);
 
   const quickActions = [
     {

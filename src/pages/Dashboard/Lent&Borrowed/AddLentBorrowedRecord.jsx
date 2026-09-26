@@ -63,7 +63,7 @@ export const AddLentBorrowedRecord = () => {
         reset();
       }
     } catch (error){
-      console.log(error.message);
+      // console.log(error.message);
       toast.error(error.message || "Something went wrong!");
     }
   };

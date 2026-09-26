@@ -121,7 +121,7 @@ export const LentAndBorrowed = () => {
         },
       });
     } catch (err) {
-      console.error("Failed to settle debt", err);
+      // console.error("Failed to settle debt", err);
     } finally {
       setLoadingDebtId(null);
     }

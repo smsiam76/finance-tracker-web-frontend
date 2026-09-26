@@ -45,7 +45,7 @@ const SocialLogin = () => {
       navigate(from, { replace: true });
     } catch (error) {
       setLoading(false);
-      console.log("Google Login Error: ", error.message);
+      // console.log("Google Login Error: ", error.message);
       toast.error(error.message || "Failed to sign in with Google.", {
         position: "bottom-center",
       });

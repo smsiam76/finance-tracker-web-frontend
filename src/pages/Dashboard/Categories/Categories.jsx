@@ -70,7 +70,7 @@ export const Categories = () => {
       toast.error(
         error?.response?.data?.message || "Failed to create category!"
       );
-      console.error("Failed to create category:", error);
+      // console.error("Failed to create category:", error);
     }
   };
 

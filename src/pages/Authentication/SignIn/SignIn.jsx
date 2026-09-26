@@ -30,7 +30,7 @@ const SignIn = () => {
   } = useForm();
 
   const onSubmit = async (data) => {
-    console.log(data);
+    // console.log(data);
 
     const { email, password } = data;
 
@@ -40,7 +40,7 @@ const SignIn = () => {
       navigate(from, { replace: true });
     } catch (error) {
       setLoading(false);
-      console.log(error.message);
+      // console.log(error.message);
       toast.error(error.message || "Invalid email or password!");
     }
   };

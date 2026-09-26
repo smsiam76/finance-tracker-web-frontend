@@ -61,7 +61,7 @@ const RemindersPage = () => {
       resetForm();
       setIsModalOpen(false);
     } catch (err) {
-      console.error("Failed to add reminder:", err);
+      // console.error("Failed to add reminder:", err);
       toast.error(err?.response?.data?.message || "Failed to create reminder.");
     }
   };
@@ -86,7 +86,7 @@ const RemindersPage = () => {
           // React Hot Toast on successful payment
           toast.success("Transaction recorded and next due date updated!");
         } catch (err) {
-          console.error("Failed to process payment:", err);
+          // console.error("Failed to process payment:", err);
           toast.error(
             err?.response?.data?.message || "Failed to process payment.",
           );
@@ -122,7 +122,7 @@ const RemindersPage = () => {
             showConfirmButton: false,
           });
         } catch (err) {
-          console.error("Failed to delete reminder:", err);
+          // console.error("Failed to delete reminder:", err);
           Swal.fire({
             title: "Error!",
             text: err?.response?.data?.message || "Failed to delete reminder.",

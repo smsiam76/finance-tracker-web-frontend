@@ -21,7 +21,7 @@ export const ReportAnalysis = () => {
     activeTab
   );
 
-  console.log(reportAnalytics);
+  // console.log(reportAnalytics);
 
   const { isLoading: isDashboardLoading } = useDashboardSummary(user?.email);
 

@@ -76,7 +76,7 @@ const SignUp = () => {
       }
     } catch (error) {
       setLoading(false);
-      console.error("SignUp Error:", error);
+      // console.error("SignUp Error:", error);
       toast.error(error.message || `${fullName} Failed to create account!`);
     }
   };

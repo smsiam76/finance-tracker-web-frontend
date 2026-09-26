@@ -35,7 +35,7 @@ const MyBooks = () => {
     0,
   );
 
-  console.log("books from usebooks ", books);
+  // console.log("books from usebooks ", books);
 
   // Utility formatter for BDT Currency
   const formatCurrency = (amount) => {

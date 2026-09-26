@@ -34,7 +34,7 @@ const CustomTooltip = ({ active, payload }) => {
 
 // 2. Custom Legend Component (List rendered below the chart)
 const CustomLegend = ({ data }) => {
-  console.log(data);
+  // console.log(data);
   return (
     <div className="mt-8 space-y-3 px-2">
       {data.map((entry) => (

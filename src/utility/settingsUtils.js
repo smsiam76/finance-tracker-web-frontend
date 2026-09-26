@@ -38,7 +38,7 @@ export const handleLocalStorageBackup = async (user, setLastBackup) => {
       );
     }
   } catch (err) {
-    console.error("Backup Error:", err);
+    // console.error("Backup Error:", err);
     toast.error(
       err.response?.data?.message || "Failed to take full local backup.",
     );
@@ -87,7 +87,7 @@ export const handleRestoreData = async (user) => {
       toast.error(`Restore Failed: ${res.data?.error || "Unknown Error"}`);
     }
   } catch (err) {
-    console.error("Restore Error:", err);
+    // console.error("Restore Error:", err);
     toast.error(err.response?.data?.error || "Failed to restore full system data.");
   }
 };
@@ -106,7 +106,7 @@ export const handleExportData = async (user, type) => {
     //   exportToPDF(res.data);
     // }
   } catch (err) {
-    console.error("Failed to fetch data for export:", err);
+    // console.error("Failed to fetch data for export:", err);
     toast.error("Failed to export data. Please try again.", err.message);
   }
 };
@@ -128,7 +128,7 @@ export const handleDeleteAllData = async (user) => {
       window.location.reload();
     }
   } catch (err) {
-    console.error("Failed to delete user data:", err);
+    // console.error("Failed to delete user data:", err);
     toast.error("Failed to delete data. Please try again.", err.message);
   }
 };

@@ -127,9 +127,9 @@ export const Budget = () => {
         toast.success("Your Budget Added Successfully!");
         resetCreate();
       }
-      console.log(newBudget);
+      // console.log(newBudget);
     } catch (error) {
-      console.error("Failed to create budget:", error);
+      // console.error("Failed to create budget:", error);
       toast.error(error?.message || "Failed to create budget");
     }
   };
@@ -186,7 +186,7 @@ export const Budget = () => {
       toast.success("Budget updated successfully!");
       setEditingBudget(null);
     } catch (error) {
-      console.error("Failed to update budget:", error);
+      // console.error("Failed to update budget:", error);
       toast.error(error?.message || "Failed to update budget");
     }
   };
@@ -210,7 +210,7 @@ export const Budget = () => {
         setActiveMenuId(null);
       }
     } catch (error) {
-      console.error("Failed to delete budget:", error);
+      // console.error("Failed to delete budget:", error);
       toast.error(error?.message || "Failed to delete budget");
     }
   };
