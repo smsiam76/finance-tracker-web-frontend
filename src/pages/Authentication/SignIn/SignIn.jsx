@@ -5,7 +5,7 @@ import Logo from "../../../component/Logo/Logo";
 import { motion } from "framer-motion";
 
 import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
-import DemoLogin from "../../../component/Shared/DemoLogin/DemoLogin";
+// import DemoLogin from "../../../component/Shared/DemoLogin/DemoLogin";
 import SocialLogin from "../../../component/Shared/SocialLogin/SocialLogin";
 import useAuth from "../../../hooks/useAuth";
 import toast from "react-hot-toast";
@@ -189,7 +189,7 @@ const SignIn = () => {
 
           {/* Google Sign In */}
           <SocialLogin />
-          <DemoLogin />
+          {/* <DemoLogin /> */}
         </form>
 
         {/* Toggle Switch */}

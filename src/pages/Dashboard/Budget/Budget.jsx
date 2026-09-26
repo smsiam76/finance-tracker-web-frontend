@@ -23,6 +23,7 @@ import useTransactions from "../../../hooks/useTransactions";
 
 import Loader from "../../../component/Shared/Loader/Loader";
 import { renderCategoryIcon } from "../../../utility/renderCategoryIcon";
+import { Helmet } from "react-helmet-async";
 
 export const Budget = () => {
   const { user } = useAuth();
@@ -366,6 +367,11 @@ export const Budget = () => {
 
   return (
     <div className="pt-6 pb-12">
+
+      <Helmet>
+        <title>Budget Management | Dashboard | Finance Tracker</title>
+      </Helmet>
+
       <div className="space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* LEFT COLUMN */}
@@ -451,7 +457,7 @@ export const Budget = () => {
                   >
                     <option value="">Select Category</option>
                     {categories
-                      // Expense/CASH_OUT 
+                      // Expense/CASH_OUT
                       .filter(
                         (cat) =>
                           cat?.type === "EXPENSE" || cat?.type === "CASH_OUT",

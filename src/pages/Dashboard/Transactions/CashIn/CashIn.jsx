@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Calculator, Camera, Loader2, Plus, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 // Custom Hooks & Components
 import useBooks from "../../../../hooks/useBooks";
@@ -17,6 +17,7 @@ import { renderCategoryIcon } from "../../../../utility/renderCategoryIcon";
 import { renderIcon } from "../../../../utility/renderIcon";
 import { uploadToImageBB } from "../../../../utility/uploadToImageBB";
 import { useNavigate } from "react-router";
+import { Helmet } from "react-helmet-async";
 
 export const CashIn = () => {
   const { user } = useAuth();
@@ -30,14 +31,12 @@ export const CashIn = () => {
   // Get books and categories filtered by logged-in user email
   const { books = [], isLoading: isBooksLoading } = useBooks(user?.email);
   const { categories = [], isLoading: isCategoriesLoading } = useCategories(
-    user?.email
+    user?.email,
   );
 
   // Filter Categories specifically for CASH_IN (INCOME)
   const incomeCategories = useMemo(() => {
-    return categories.filter(
-      (cat) => cat?.type?.toUpperCase() === "INCOME"
-    );
+    return categories.filter((cat) => cat?.type?.toUpperCase() === "INCOME");
   }, [categories]);
 
   // Transaction mutation hook
@@ -162,7 +161,9 @@ export const CashIn = () => {
       viewport={{ once: true }}
       className="flex flex-col items-center justify-center pt-6 pb-12"
     >
-      <Toaster position="top-right" reverseOrder={false} />
+      <Helmet>
+        <title>Cash In | Dashboard | Finance Tracker</title>
+      </Helmet>
 
       {/* Main CashIn Form */}
       <form
@@ -321,7 +322,7 @@ export const CashIn = () => {
                           {renderCategoryIcon(
                             cat.icon,
                             activeIconColor,
-                            "w-5 h-5"
+                            "w-5 h-5",
                           )}
                         </div>
                         <span className="text-[10px] truncate max-w-full capitalize">

@@ -12,6 +12,7 @@ import useAuth from "../../../hooks/useAuth";
 import useDashboardSummary from "../../../hooks/useDashboardSummary";
 import useTransactions from "../../../hooks/useTransactions";
 import Loader from "../../../component/Shared/Loader/Loader";
+import { Helmet } from "react-helmet-async";
 
 const DashboardHome = () => {
   const { user } = useAuth();
@@ -27,8 +28,8 @@ const DashboardHome = () => {
 
   // console.log(budgetOverview);
 
-  const { transactions= [], isLoading: isTransactionsLoading } =
-    useTransactions({email});
+  const { transactions = [], isLoading: isTransactionsLoading } =
+    useTransactions({ email });
 
   // console.log(transactions);
 
@@ -75,6 +76,9 @@ const DashboardHome = () => {
 
   return (
     <div className="pt-6 pb-12">
+      <Helmet>
+        <title> Dashboard Home | Finance Tracker</title>
+      </Helmet>
       {/* ------------------------------
           Part 1: Key Financial Metrics
       ------------------------------ */}

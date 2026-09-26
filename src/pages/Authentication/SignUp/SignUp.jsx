@@ -11,7 +11,7 @@ import {
 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router";
 import Logo from "../../../component/Logo/Logo";
-import DemoLogin from "../../../component/Shared/DemoLogin/DemoLogin";
+// import DemoLogin from "../../../component/Shared/DemoLogin/DemoLogin";
 import SocialLogin from "../../../component/Shared/SocialLogin/SocialLogin";
 import { Helmet } from "react-helmet-async";
 import useAuth from "../../../hooks/useAuth";
@@ -292,7 +292,7 @@ const SignUp = () => {
 
             {/* Google Sign In */}
             <SocialLogin />
-            <DemoLogin />
+            {/* <DemoLogin /> */}
           </form>
           {/* Toggle Switch */}
           <div className="mt-6 text-center text-xs text-gray-500">

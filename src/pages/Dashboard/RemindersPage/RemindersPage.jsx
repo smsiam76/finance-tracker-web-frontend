@@ -12,6 +12,7 @@ import Loader from "../../../component/Shared/Loader/Loader";
 import ReminderCard from "../../../component/RemindersCard/ReminderCard";
 import AddReminderModal from "../../../component/AddReminderModal/AddReminderModal";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 
 // Utility Helpers
 const formatDate = (dateString) =>
@@ -142,6 +143,9 @@ const RemindersPage = () => {
 
   return (
     <div className="pt-6 pb-12 space-y-6 max-w-7xl mx-auto px-4">
+      <Helmet>
+        <title>Reminders | Dashboard | Finance Tracker</title>
+      </Helmet>
       {/* Header Bar */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}

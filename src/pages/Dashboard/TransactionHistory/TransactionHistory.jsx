@@ -10,15 +10,21 @@ import {
   CreditCard,
   Calendar,
   Filter,
-  Trash2,
+  // Trash2,
 } from "lucide-react";
 import useAuth from "../../../hooks/useAuth";
 import useTransactions from "../../../hooks/useTransactions";
 import Loader from "../../../component/Shared/Loader/Loader";
+import { Helmet } from "react-helmet-async";
 
 export const TransactionHistory = () => {
   const { user } = useAuth(); // Logged-in user information
-  const { transactions = [], isLoading, deleteTransaction, isDeleting } = useTransactions({
+  const {
+    transactions = [],
+    isLoading,
+    // deleteTransaction,
+    // isDeleting,
+  } = useTransactions({
     email: user?.email,
   });
 
@@ -104,7 +110,14 @@ export const TransactionHistory = () => {
         if (sortOrder === "NEWEST") return new Date(b.date) - new Date(a.date);
         return new Date(a.date) - new Date(b.date);
       });
-  }, [transactions, searchTerm, typeFilter, categoryFilter, dateRangeFilter, sortOrder]);
+  }, [
+    transactions,
+    searchTerm,
+    typeFilter,
+    categoryFilter,
+    dateRangeFilter,
+    sortOrder,
+  ]);
 
   // --- Pagination Slice ---
   const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
@@ -130,11 +143,14 @@ export const TransactionHistory = () => {
   // };
 
   if (isLoading) {
-    return <Loader />
+    return <Loader />;
   }
 
   return (
     <div className="pt-6 pb-12">
+      <Helmet>
+        <title>Transaction History | Dashboard | Finance Tracker</title>
+      </Helmet>
       <div className="space-y-10">
         {/* --- Dynamic Top 4 Stat Cards --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -178,7 +194,9 @@ export const TransactionHistory = () => {
                 <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
                   Total Income
                 </p>
-                <h3 className="text-2xl font-bold">৳{stats.totalIncome.toLocaleString()}</h3>
+                <h3 className="text-2xl font-bold">
+                  ৳{stats.totalIncome.toLocaleString()}
+                </h3>
               </div>
             </div>
           </motion.div>
@@ -199,7 +217,9 @@ export const TransactionHistory = () => {
                 <p className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
                   Total Expense
                 </p>
-                <h3 className="text-2xl font-bold">৳{stats.totalExpense.toLocaleString()}</h3>
+                <h3 className="text-2xl font-bold">
+                  ৳{stats.totalExpense.toLocaleString()}
+                </h3>
               </div>
             </div>
           </motion.div>
@@ -220,7 +240,9 @@ export const TransactionHistory = () => {
                 <p className="text-[11px] font-medium text-emerald-200 uppercase tracking-wider">
                   Net Balance
                 </p>
-                <h3 className="text-2xl font-bold">৳{stats.netBalance.toLocaleString()}</h3>
+                <h3 className="text-2xl font-bold">
+                  ৳{stats.netBalance.toLocaleString()}
+                </h3>
               </div>
             </div>
             <div className="absolute -right-4 -bottom-4 w-28 h-28 bg-white/5 rounded-full pointer-events-none" />
@@ -357,11 +379,14 @@ export const TransactionHistory = () => {
                       const txDate = new Date(tx.date);
                       const formattedDate = `${txDate.getDate()} ${txDate.toLocaleString(
                         "default",
-                        { month: "short" }
+                        { month: "short" },
                       )} ${txDate.getFullYear()}`;
 
                       return (
-                        <tr key={tx._id} className="hover:bg-slate-50 transition">
+                        <tr
+                          key={tx._id}
+                          className="hover:bg-slate-50 transition"
+                        >
                           {/* Date */}
                           <td className="py-4 px-6 w-28">
                             <span className="font-semibold block text-slate-700">
@@ -395,15 +420,15 @@ export const TransactionHistory = () => {
                                 tx.type === "CASH_IN"
                                   ? "text-emerald-600"
                                   : tx.type === "CASH_OUT"
-                                  ? "text-red-500"
-                                  : "text-amber-600"
+                                    ? "text-red-500"
+                                    : "text-amber-600"
                               }`}
                             >
                               {tx.type === "CASH_IN"
                                 ? "Income"
                                 : tx.type === "CASH_OUT"
-                                ? "Expense"
-                                : "Transfer"}
+                                  ? "Expense"
+                                  : "Transfer"}
                             </span>
                           </td>
 
@@ -414,15 +439,15 @@ export const TransactionHistory = () => {
                                 tx.type === "CASH_IN"
                                   ? "text-emerald-600"
                                   : tx.type === "CASH_OUT"
-                                  ? "text-red-500"
-                                  : "text-slate-700"
+                                    ? "text-red-500"
+                                    : "text-slate-700"
                               }`}
                             >
                               {tx.type === "CASH_IN"
                                 ? "+"
                                 : tx.type === "CASH_OUT"
-                                ? "-"
-                                : ""}
+                                  ? "-"
+                                  : ""}
                               ৳{tx.amount?.toLocaleString()}
                             </span>
                           </td>
@@ -443,7 +468,10 @@ export const TransactionHistory = () => {
                     })
                   ) : (
                     <tr>
-                      <td colSpan="6" className="text-center py-8 font-medium text-slate-500">
+                      <td
+                        colSpan="6"
+                        className="text-center py-8 font-medium text-slate-500"
+                      >
                         No transactions found matching your filter.
                       </td>
                     </tr>
@@ -457,13 +485,18 @@ export const TransactionHistory = () => {
               <div>
                 Showing{" "}
                 <span className="font-bold text-slate-900">
-                  {filteredData.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1}
+                  {filteredData.length === 0
+                    ? 0
+                    : (currentPage - 1) * itemsPerPage + 1}
                 </span>{" "}
                 to{" "}
                 <span className="font-bold text-slate-900">
                   {Math.min(currentPage * itemsPerPage, filteredData.length)}
                 </span>{" "}
-                of <span className="font-bold text-slate-900">{filteredData.length}</span>{" "}
+                of{" "}
+                <span className="font-bold text-slate-900">
+                  {filteredData.length}
+                </span>{" "}
                 transactions
               </div>
 
@@ -477,19 +510,21 @@ export const TransactionHistory = () => {
                   Previous
                 </button>
 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`w-8 h-8 rounded-lg font-bold text-xs transition ${
-                      currentPage === page
-                        ? "bg-emerald-700 text-white shadow-sm"
-                        : "bg-white border border-slate-200 hover:bg-slate-50 text-slate-700"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`w-8 h-8 rounded-lg font-bold text-xs transition ${
+                        currentPage === page
+                          ? "bg-emerald-700 text-white shadow-sm"
+                          : "bg-white border border-slate-200 hover:bg-slate-50 text-slate-700"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ),
+                )}
 
                 <button
                   onClick={() => handlePageChange(currentPage + 1)}

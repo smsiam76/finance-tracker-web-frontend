@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router"; 
+import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router";
 import LogoDashboard from "../component/Shared/LogoDashboard/LogoDashboard";
 import { MdOutlineDashboard } from "react-icons/md";
 // import { FiSearch } from "react-icons/fi";
@@ -20,6 +20,7 @@ import {
 import useAuth from "../hooks/useAuth";
 import useSingleUser from "../hooks/useSingleUser";
 import RemindersNotification from "../component/RemindersNotification/RemindersNotification";
+import { Helmet } from "react-helmet-async";
 // import { useState } from "react";
 
 const DashboardLayout = () => {
@@ -163,6 +164,11 @@ const DashboardLayout = () => {
 
   return (
     <div className="flex flex-col md:flex-row bg-base-100 md:min-h-screen">
+      {/* dynamic page title */}
+      <Helmet>
+        <title>Dashboard | Finance Tracker</title>
+      </Helmet>
+
       {/* Left Sidebar */}
       <motion.aside
         initial={{ x: -40, opacity: 0 }}

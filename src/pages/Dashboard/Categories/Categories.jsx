@@ -7,15 +7,22 @@ import toast from "react-hot-toast";
 import useAuth from "../../../hooks/useAuth";
 import useCategories from "../../../hooks/useCategories";
 import Loader from "../../../component/Shared/Loader/Loader";
-import { AVAILABLE_COLORS, AVAILABLE_ICONS, renderCategoryIcon } from "../../../utility/renderCategoryIcon";
+import {
+  AVAILABLE_COLORS,
+  AVAILABLE_ICONS,
+  renderCategoryIcon,
+} from "../../../utility/renderCategoryIcon";
+import { Helmet } from "react-helmet-async";
 
 export const Categories = () => {
   const { user } = useAuth();
-  
 
-  const { categories = [], isLoading, createCategory, isCreating } = useCategories(
-    user?.email
-  );
+  const {
+    categories = [],
+    isLoading,
+    createCategory,
+    isCreating,
+  } = useCategories(user?.email);
 
   const [activeTab, setActiveTab] = useState("EXPENSE"); // EXPENSE or INCOME
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -39,7 +46,7 @@ export const Categories = () => {
   // Safe Array Check & Case Insensitive Filtering
   const safeCategories = Array.isArray(categories) ? categories : [];
   const filteredCategories = safeCategories.filter(
-    (item) => item?.type?.toUpperCase() === activeTab.toUpperCase()
+    (item) => item?.type?.toUpperCase() === activeTab.toUpperCase(),
   );
 
   const onAddCategory = async (data) => {
@@ -68,7 +75,7 @@ export const Categories = () => {
       }
     } catch (error) {
       toast.error(
-        error?.response?.data?.message || "Failed to create category!"
+        error?.response?.data?.message || "Failed to create category!",
       );
       // console.error("Failed to create category:", error);
     }
@@ -90,6 +97,9 @@ export const Categories = () => {
 
   return (
     <div className="pt-6 pb-12">
+      <Helmet>
+        <title>Categories | Dashboard | Finance Tracker</title>
+      </Helmet>
       {/* Top Filter Tabs */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
@@ -150,10 +160,16 @@ export const Categories = () => {
                   <div
                     className="p-2.5 rounded-xl shrink-0"
                     style={{
-                      backgroundColor: item.color ? `${item.color}20` : "#22c55e20",
+                      backgroundColor: item.color
+                        ? `${item.color}20`
+                        : "#22c55e20",
                     }}
                   >
-                    {renderCategoryIcon(item.icon, item.color || "#22c55e", "w-5 h-5")}
+                    {renderCategoryIcon(
+                      item.icon,
+                      item.color || "#22c55e",
+                      "w-5 h-5",
+                    )}
                   </div>
                   <div className="flex flex-col min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-1">
@@ -290,7 +306,7 @@ export const Categories = () => {
                             {renderCategoryIcon(
                               item.name,
                               isSelected ? "#22c55e" : "#64748b",
-                              "w-5 h-5"
+                              "w-5 h-5",
                             )}
                           </button>
                         );

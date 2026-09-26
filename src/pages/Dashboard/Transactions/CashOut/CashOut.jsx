@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Calculator, Camera, Loader2, Minus, Plus, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 // Custom Hooks & Components
 import useBooks from "../../../../hooks/useBooks";
@@ -17,6 +17,7 @@ import { renderCategoryIcon } from "../../../../utility/renderCategoryIcon";
 import { renderIcon } from "../../../../utility/renderIcon";
 import { uploadToImageBB } from "../../../../utility/uploadToImageBB";
 import { useNavigate } from "react-router";
+import { Helmet } from "react-helmet-async";
 
 export const CashOut = () => {
   const { user } = useAuth();
@@ -171,7 +172,9 @@ export const CashOut = () => {
       viewport={{ once: true }}
       className="flex flex-col items-center justify-center pt-6 pb-12"
     >
-      <Toaster position="top-right" reverseOrder={false} />
+      <Helmet>
+        <title>Cash Out | Dashboard | Finance Tracker</title>
+      </Helmet>
 
       {/* Main CashOut Form */}
       <form

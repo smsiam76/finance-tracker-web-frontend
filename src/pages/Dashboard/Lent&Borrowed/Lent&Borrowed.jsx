@@ -17,6 +17,8 @@ import { motion } from "framer-motion";
 import useDebts from "../../../hooks/useDebts";
 import Loader from "../../../component/Shared/Loader/Loader";
 import useAuth from "../../../hooks/useAuth";
+import toast from "react-hot-toast";
+import { Helmet } from "react-helmet-async";
 
 // Helper function moved to top level
 const debtStatusCalc = (record) => {
@@ -31,10 +33,16 @@ const debtStatusCalc = (record) => {
 };
 
 export const LentAndBorrowed = () => {
-  const {user} = useAuth();
+  const { user } = useAuth();
   const [loadingDebtId, setLoadingDebtId] = useState(null);
 
-  const { debts = [], isLoading, isError, settleDebt, isSettling } = useDebts(user?.email);
+  const {
+    debts = [],
+    isLoading,
+    isError,
+    settleDebt,
+    isSettling,
+  } = useDebts(user?.email);
 
   const [activeTab, setActiveTab] = useState("LENT"); // LENT or BORROWED
   const [searchTerm, setSearchTerm] = useState("");
@@ -122,6 +130,7 @@ export const LentAndBorrowed = () => {
       });
     } catch (err) {
       // console.error("Failed to settle debt", err);
+      toast.error(err.message);
     } finally {
       setLoadingDebtId(null);
     }
@@ -141,6 +150,9 @@ export const LentAndBorrowed = () => {
 
   return (
     <div className="pt-6 pb-12">
+      <Helmet>
+        <title>Lent & Borrowed | Dashboard | Finance Tracker</title>
+      </Helmet>
       <div className="space-y-10">
         {/* --- Top 4 Stat Cards --- */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -402,7 +414,9 @@ export const LentAndBorrowed = () => {
                                 <Loader2 className="w-3.5 h-3.5 animate-spin" />
                               )}
                               <span>
-                                {isItemLoading ? "Processing..." : "Mark as Paid"}
+                                {isItemLoading
+                                  ? "Processing..."
+                                  : "Mark as Paid"}
                               </span>
                             </button>
                           </div>
@@ -534,7 +548,7 @@ export const LentAndBorrowed = () => {
                             Due:{" "}
                             {reminder.dueDate
                               ? new Date(reminder.dueDate).toLocaleDateString(
-                                  "en-GB"
+                                  "en-GB",
                                 )
                               : "N/A"}
                           </p>

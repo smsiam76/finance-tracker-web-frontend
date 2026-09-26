@@ -8,6 +8,7 @@ import useTransactions from "../../../../hooks/useTransactions";
 import Loader from "../../../../component/Shared/Loader/Loader";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { Helmet } from "react-helmet-async";
 
 const TransferMoney = () => {
   const { user } = useAuth();
@@ -101,7 +102,6 @@ const TransferMoney = () => {
   //   }
   // };
   const onSubmit = async (data) => {
-
     // Prevent transfer to the same account
     if (data.sourceBookId === data.destinationBookId) {
       return toast.error("Source and Destination books cannot be the same!");
@@ -170,6 +170,10 @@ const TransferMoney = () => {
       viewport={{ once: true }}
       className="w-full md:max-w-1/2 mx-auto pt-6 pb-12 sm:p-6 flex flex-col justify-center"
     >
+      <Helmet>
+        <title>Transfer Money | Dashboard | Finance Tracker</title>
+      </Helmet>
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         {/* Form Container Card */}
         <div className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-primary/10 space-y-6">

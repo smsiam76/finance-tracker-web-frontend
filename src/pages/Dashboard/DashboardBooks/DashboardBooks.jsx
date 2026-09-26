@@ -5,7 +5,7 @@ import {
   FiTrendingUp,
   FiTrendingDown,
   FiPieChart,
-  FiBook
+  FiBook,
 } from "react-icons/fi";
 import { CiWallet } from "react-icons/ci";
 import { FaMoneyBills } from "react-icons/fa6";
@@ -15,11 +15,18 @@ import CreateBookModal from "../../../component/CreateBookModal/CreateBookModal"
 import useBooks from "../../../hooks/useBooks";
 import Loader from "../../../component/Shared/Loader/Loader";
 import { FaPiggyBank } from "react-icons/fa";
-import { IoAirplaneOutline, IoBagHandleOutline, IoCardOutline, IoHomeOutline, IoWalletOutline } from "react-icons/io5";
+import {
+  IoAirplaneOutline,
+  IoBagHandleOutline,
+  IoCardOutline,
+  IoHomeOutline,
+  IoWalletOutline,
+} from "react-icons/io5";
 import useAuth from "../../../hooks/useAuth";
+import { Helmet } from "react-helmet-async";
 
 const MyBooks = () => {
-  const {user} = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   // get books data through useBooks
@@ -43,31 +50,36 @@ const MyBooks = () => {
   };
 
   const renderIcon = (iconName, color = "#006A4E") => {
-  const iconStyle = { color: color };
-  
-  switch (iconName?.toLowerCase()) {
-    case "wallet":
-      return <IoWalletOutline className="w-6 h-6" style={iconStyle} />;
-    case "card":
-      return <IoCardOutline className="w-6 h-6" style={iconStyle} />;
-    case "piggy":
-      return <FaPiggyBank className="w-5 h-5" style={iconStyle} />;
-    case "plane":
-      return <IoAirplaneOutline className="w-6 h-6" style={iconStyle} />;
-    case "home":
-      return <IoHomeOutline className="w-6 h-6" style={iconStyle} />;
-    case "bag":
-      return <IoBagHandleOutline className="w-6 h-6" style={iconStyle} />;
-    default:
-      return <FiPieChart className="w-6 h-6" style={iconStyle} />;
-  }
-};
+    const iconStyle = { color: color };
+
+    switch (iconName?.toLowerCase()) {
+      case "wallet":
+        return <IoWalletOutline className="w-6 h-6" style={iconStyle} />;
+      case "card":
+        return <IoCardOutline className="w-6 h-6" style={iconStyle} />;
+      case "piggy":
+        return <FaPiggyBank className="w-5 h-5" style={iconStyle} />;
+      case "plane":
+        return <IoAirplaneOutline className="w-6 h-6" style={iconStyle} />;
+      case "home":
+        return <IoHomeOutline className="w-6 h-6" style={iconStyle} />;
+      case "bag":
+        return <IoBagHandleOutline className="w-6 h-6" style={iconStyle} />;
+      default:
+        return <FiPieChart className="w-6 h-6" style={iconStyle} />;
+    }
+  };
   // loading states
   if (isLoading) {
     return <Loader />;
   }
   return (
     <div className="pt-6 pb-12">
+      {/* dynamic page title */}
+      <Helmet>
+        <title>Books | Dashboard | Finance Tracker</title>
+      </Helmet>
+
       <div className="space-y-6">
         {/* --- Top Header Section --- */}
         <motion.div
@@ -86,7 +98,9 @@ const MyBooks = () => {
               <FiFilter /> Filter
             </button>
             <button
-              onClick={() => document.getElementById("create_book_modal_cashin").showModal()}
+              onClick={() =>
+                document.getElementById("create_book_modal_cashin").showModal()
+              }
               className="flex items-center gap-2 px-4 py-2 bg-primary/80 hover:bg-primary text-white font-medium rounded-xl text-sm shadow-sm cursor-pointer transition-all duration-300 ease-linear"
             >
               <FiPlus className="md:text-sm lg:text-lg" /> Create Book
@@ -229,7 +243,9 @@ const MyBooks = () => {
             whileInView={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.15, ease: "easeInOut" }}
             viewport={{ once: true, amount: 0.1 }}
-            onClick={() => document.getElementById("create_book_modal_cashin").showModal()}
+            onClick={() =>
+              document.getElementById("create_book_modal_cashin").showModal()
+            }
             className="border-2 border-dashed border-gray-300 hover:border-primary bg-gray-100/70 hover:bg-emerald-50/30 rounded-3xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all group min-h-[180px]"
           >
             <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-primary shadow-sm mb-3 group-hover:scale-110 transition-transform">

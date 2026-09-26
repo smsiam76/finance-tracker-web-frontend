@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import ExpenseByCategoryChart from "../../../component/ExpenseByCategoryChart/ExpenseByCategoryChart";
 import useDashboardSummary from "../../../hooks/useDashboardSummary";
 import { handleExportData } from "../../../utility/settingsUtils";
+import { Helmet } from "react-helmet-async";
 
 export const ReportAnalysis = () => {
   const { user } = useAuth();
@@ -18,7 +19,7 @@ export const ReportAnalysis = () => {
   const { reportAnalytics, isReportLoading } = useReports(
     user?.email,
     selectedBook,
-    activeTab
+    activeTab,
   );
 
   // console.log(reportAnalytics);
@@ -42,6 +43,10 @@ export const ReportAnalysis = () => {
 
   return (
     <div className="space-y-6 pt-6 pb-12">
+      <Helmet>
+        <title>Reports | Dashboard | Finance Tracker</title>
+      </Helmet>
+
       {/* Header */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
