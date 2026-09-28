@@ -32,6 +32,8 @@ const MyBooks = () => {
   // get books data through useBooks
   const { books = [], isLoading } = useBooks(user?.email);
 
+  console.log(books);
+
   // Dynamic calculations based on fetched books
   const totalNetWorth = books.reduce(
     (acc, curr) => acc + (curr.currentBalance || 0),
@@ -94,9 +96,9 @@ const MyBooks = () => {
           </p>
 
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-gray-300 hover:bg-gray-200 font-medium rounded-xl text-sm transition-all duration-300 ease-linear cursor-pointer">
+            {/* <button className="flex items-center gap-2 px-4 py-2 bg-gray-300 hover:bg-gray-200 font-medium rounded-xl text-sm transition-all duration-300 ease-linear cursor-pointer">
               <FiFilter /> Filter
-            </button>
+            </button> */}
             <button
               onClick={() =>
                 document.getElementById("create_book_modal_cashin").showModal()

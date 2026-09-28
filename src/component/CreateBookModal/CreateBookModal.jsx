@@ -60,55 +60,10 @@ const CreateBookModal = () => {
 
   const bookTypes = [
     { id: "STANDARD", label: "Standard Ledger" },
-    // { id: "SAVINGS", label: "Savings / Emergency" },
+    { id: "SAVINGS", label: "Savings / Emergency" },
     // { id: "TARGET_PROGRESS", label: "Target (Progress Bar)" },
     // { id: "TARGET_REMAINING", label: "Target (Remaining)" },
   ];
-
-  // Form Submission Handler
-  // const onSubmit = async (data) => {
-  //   const bookInfo = {
-  //     ...data,
-  //     icon: selectedIcon,
-  //     themeColor: selectedColor,
-  //     openingBalance: parseFloat(data.openingBalance || 0),
-  //     currentBalance: parseFloat(data.openingBalance || 0),
-  //     targetAmount: bookType.startsWith("TARGET")
-  //       ? parseFloat(data.targetAmount || 0)
-  //       : null,
-  //     createdAt: new Date().toISOString(),
-  //     type: bookType,
-  //     createdBy: {
-  //       email: user?.email,
-  //       displayName: user?.displayName || "",
-  //       photoURL: user?.photoURL || "",
-  //     },
-  //     status: "active",
-  //     totalIncome: 0,
-  //     totalExpense: 0,
-  //     budgets: [],
-  //   };
-
-  //   try {
-  //     const res = await createBook(bookInfo);
-
-  //     if (res?.insertedId || res?.acknowledged) {
-  //       toast.success(`"${data.bookName}" created successfully!`);
-
-  //       // Reset input and default values
-  //       reset();
-  //       setSelectedIcon("wallet");
-  //       setSelectedColor("#006A4E");
-  //       setBookType("STANDARD");
-
-  //       // Close modal
-  //       document.getElementById("create_book_modal_cashin")?.close();
-  //     }
-  //   } catch (error) {
-  //     console.error(error.message);
-  //     toast.error(error?.message || `Failed to create "${data.bookName}"`);
-  //   }
-  // };
 
   // CreateBookModal.jsx
 

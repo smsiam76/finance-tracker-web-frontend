@@ -12,7 +12,7 @@ const RemindersNotification = () => {
 
   // Helper function to format ISO date strings into readable dates
   const formatDate = (dateString) =>
-    new Date(dateString).toLocaleDateString("en-GB", {
+    new Date(dateString).toLocaleDateString("en-GB", { //Day Month Year
       day: "numeric",
       month: "short",
       year: "numeric",

@@ -168,7 +168,7 @@ const TransferMoney = () => {
       whileInView={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.4, delay: 0.2, ease: "easeInOut" }}
       viewport={{ once: true }}
-      className="w-full md:max-w-1/2 mx-auto pt-6 pb-12 sm:p-6 flex flex-col justify-center"
+      className="w-full lg:max-w-1/2 mx-auto pt-6 pb-12 sm:p-6 flex flex-col justify-center"
     >
       <Helmet>
         <title>Transfer Money | Dashboard | Finance Tracker</title>

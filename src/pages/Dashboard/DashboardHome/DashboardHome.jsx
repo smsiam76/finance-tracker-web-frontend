@@ -13,6 +13,7 @@ import useDashboardSummary from "../../../hooks/useDashboardSummary";
 import useTransactions from "../../../hooks/useTransactions";
 import Loader from "../../../component/Shared/Loader/Loader";
 import { Helmet } from "react-helmet-async";
+import useBooks from "../../../hooks/useBooks";
 
 const DashboardHome = () => {
   const { user } = useAuth();
@@ -25,6 +26,18 @@ const DashboardHome = () => {
     // lendingSummary,
     isLoading: isDashboardLoading,
   } = useDashboardSummary(email);
+
+  const { books } = useBooks(email);
+  console.log(books);
+
+  // get the savings type books
+  const savingsBooks = books?.filter((b) => b.type === "SAVINGS") || [];
+  
+  const totalSavingsBalance = savingsBooks.reduce(
+    (acc, book) => acc + (Number(book.currentBalance) || 0),
+    0,
+  );
+  console.log(savingsBooks, totalSavingsBalance);
 
   // console.log(budgetOverview);
 
@@ -70,7 +83,7 @@ const DashboardHome = () => {
     totalNetBalance: 0,
     totalBudgeted: 0,
     totalExpense: 0,
-    netSavings: 0,
+    netSavings: totalSavingsBalance,
   };
   const categoryExpenses = summaryData?.categoryExpenses || [];
 
@@ -151,7 +164,7 @@ const DashboardHome = () => {
             </div>
           </div>
           <h3 className="text-xl md:text-3xl pb-4 font-bold ml-2">
-            {metrics.netSavings.toLocaleString()}
+            {totalSavingsBalance.toLocaleString()}
           </h3>
         </motion.div>
       </div>
