@@ -9,6 +9,7 @@ import ExpenseByCategoryChart from "../../../component/ExpenseByCategoryChart/Ex
 import useDashboardSummary from "../../../hooks/useDashboardSummary";
 import { handleExportData } from "../../../utility/settingsUtils";
 import { Helmet } from "react-helmet-async";
+import useBooks from "../../../hooks/useBooks";
 
 export const ReportAnalysis = () => {
   const { user } = useAuth();
@@ -27,15 +28,27 @@ export const ReportAnalysis = () => {
   const { isLoading: isDashboardLoading } = useDashboardSummary(user?.email);
 
   const {
-    totalIncome = 0,
-    totalExpense = 0,
-    currentBalance = 0,
-    incomeGrowth = "0%",
-    expenseGrowth = "0%",
+    // totalIncome = 0,
+    // totalExpense = 0,
+    // currentBalance = 0,
+    // incomeGrowth = "0%",
+    // expenseGrowth = "0%",
     balanceTrend = [],
     categories = [],
     userBooks = [],
   } = reportAnalytics || {};
+
+
+   const { books } = useBooks(user?.email);
+  console.log(books);
+
+  // get the savings type books
+  // const savingsBooks = books?.filter((b) => b.type === "SAVINGS") || [];
+  
+  // const totalSavingsBalance = savingsBooks.reduce(
+  //   (acc, book) => acc + (Number(book.currentBalance) || 0),
+  //   0,
+  // );
 
   if (isReportLoading || isDashboardLoading) {
     return <Loader />;
@@ -114,7 +127,7 @@ export const ReportAnalysis = () => {
       </motion.div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <motion.div
           initial={{ y: -20, opacity: 0 }}
           whileInView={{ y: 0, opacity: 1 }}
@@ -159,7 +172,7 @@ export const ReportAnalysis = () => {
             ৳{Number(currentBalance).toLocaleString()}
           </h2>
         </motion.div>
-      </div>
+      </div> */}
 
       {/* Dynamic Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">

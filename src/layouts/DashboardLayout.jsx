@@ -14,6 +14,7 @@ import {
   RotateCcwClock,
   Settings,
   Tags,
+  Users,
   Vault,
   Wallet,
 } from "lucide-react";
@@ -159,6 +160,17 @@ const DashboardLayout = () => {
         <Settings className="font-medium text-xl" />
         <span>Settings</span>
       </NavLink>
+
+      {/* admin */}
+      {singleUser?.role === "admin" && (
+        <NavLink
+          to="/dashboard/users"
+          className="flex gap-2.5 items-center py-3 px-4 rounded-md font-medium hover:bg-primary hover:text-base-100 transition-all duration-300 ease-linear"
+        >
+          <Users className="font-medium text-xl" />
+          <span>Users</span>
+        </NavLink>
+      )}
     </>
   );
 

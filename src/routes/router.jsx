@@ -20,6 +20,7 @@ import { Budget } from "../pages/Dashboard/Budget/Budget";
 import { Categories } from "../pages/Dashboard/Categories/Categories";
 import RemindersPage from "../pages/Dashboard/RemindersPage/RemindersPage";
 import PrivateRoute from "./privateRoute";
+import Users from "../pages/Dashboard/Users/Users";
 
 const router = createBrowserRouter([
   {
@@ -94,6 +95,10 @@ const router = createBrowserRouter([
       {
         path: "settings",
         element: <SettingsPage />,
+      },
+      {
+        path: "users",
+        element: <Users />,
       },
     ],
   },

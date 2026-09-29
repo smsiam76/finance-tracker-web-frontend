@@ -28,7 +28,7 @@ const DashboardHome = () => {
   } = useDashboardSummary(email);
 
   const { books } = useBooks(email);
-  console.log(books);
+  // console.log(books);
 
   // get the savings type books
   const savingsBooks = books?.filter((b) => b.type === "SAVINGS") || [];
@@ -37,7 +37,7 @@ const DashboardHome = () => {
     (acc, book) => acc + (Number(book.currentBalance) || 0),
     0,
   );
-  console.log(savingsBooks, totalSavingsBalance);
+  // console.log(savingsBooks, totalSavingsBalance);
 
   // console.log(budgetOverview);
 
